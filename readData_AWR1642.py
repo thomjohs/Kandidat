@@ -121,7 +121,7 @@ def readAndParseData16xx(Dataport, configParameters):
     in_waiting=Dataport.in_waiting
     #print(in_waiting)
     if(in_waiting>0):
-        #print("debug",debug)
+        print("debug",debug)
         debug=0
         elapsed=time.time()-tic
         #print("Tid mellan hämtning", elapsed)
@@ -394,12 +394,16 @@ def frameDataToFile(frameData,filePath):
 
 def listOfDictToFile(toCSV):
     import csv
-    print(toCSV)
+    #print(toCSV)    
+    #toCSV=list(toCSV)
+    #print(toCSV)
     keys = toCSV[0].keys()
+    #print(keys)
     with open('frameData.csv', 'w') as output_file:
         dict_writer = csv.DictWriter(output_file, keys)
         dict_writer.writeheader()
-        dict_writer.writerows(toCSV)
+        for dick in toCSV:
+            dict_writer.writerow(dick)
 
 # -------------------------    MAIN   -----------------------------------------  
 
@@ -432,7 +436,7 @@ app = QtGui.QApplication([])
 
 # Main loop 
 detObj = {}  
-frameData = {}    
+frameData = []    
 currentIndex = 0
 while True:
     try:
@@ -444,16 +448,17 @@ while True:
         dataOk = update()
         #print("after update")
         if dataOk:
-            #elapsed=time.time()-toc
-            #print("Tid för update", elapsed)
-            #toc=time.time()
+            elapsed=time.time()-toc
+            print("Tid för update", elapsed)
+            toc=time.time()
             #print("ok main")
             # Store the current frame into frameData
-            frameData[currentIndex] = detObj
+            #frameData[currentIndex] = detObj
+            frameData.append(detObj)
             currentIndex += 1
-        
+            
         #
-        #time.sleep(0.00) # Sampling frequency of 30 Hz
+        # Sampling frequency of 30 Hz
         #elapsed=time.time()-tic
         #print("t: ",elapsed)
         
@@ -464,9 +469,9 @@ while True:
         CLIport.close()
         Dataport.close()
         #print(frameData)
-        filename=input("What's the file name?")
-        frameDataToFile(frameData,filename)
-        #listOfDictToFile(frameData)
+        #filename=input("What's the file name?")
+        #frameDataToFile(frameData,filename)
+        listOfDictToFile(frameData)
         #win.close()
         break
         
