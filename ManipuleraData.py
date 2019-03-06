@@ -50,9 +50,11 @@ def mergeSort(alist):
             k=k+1
     #print("Merging ",alist)
 
-def compareIndex(alist,sortedalist):
+def compareIndex(alist,alist_sorted):
+    mappedIndexes=[]
     for i in alist:
-        index = recSearch(sortedalist, i)
+        index = binaryIndexSearch(alist_sorted, i)
+
 
 def binaryIndexSearch(asortedlist, i):
     first=0

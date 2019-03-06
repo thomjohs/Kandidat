@@ -456,14 +456,13 @@ while True:
             #frameData[currentIndex] = detObj
             frameData.append(detObj)
             currentIndex += 1
-            
+
         #
         # Sampling frequency of 30 Hz
         #elapsed=time.time()-tic
         #print("t: ",elapsed)
         
     # Stop the program and close everything if Ctrl + c is pressed
-    # detObj = {"numObj": tlv_numObj, "rangeIdx": rangeIdx, "range": rangeVal, "dopplerIdx": dopplerIdx, \"doppler": dopplerVal, "peakVal": peakVal, "x": x, "y": y, "z": z}
     except KeyboardInterrupt:
         CLIport.write(('sensorStop\n').encode())
         CLIport.close()
