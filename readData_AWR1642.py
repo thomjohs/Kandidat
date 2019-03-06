@@ -3,6 +3,7 @@ import time
 import numpy as np
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtGui
+import msvcrt
 
 # Change the configuration file name
 configFileName = '1642config4.cfg'
@@ -434,7 +435,8 @@ app = QtGui.QApplication([])
 #q.setLabel('bottom', text= 'R distance (m)')
 #t = q.plot([],[],pen=None,symbol='o')
 
-# Main loop 
+# Main loop
+label = 'background'
 detObj = {}  
 frameData = []    
 currentIndex = 0
@@ -454,6 +456,13 @@ while True:
             #print("ok main")
             # Store the current frame into frameData
             #frameData[currentIndex] = detObj
+            if msvcrt.kbhit():
+                key = msvcrt.getch()
+                if key == 'b':
+                    label = 'background'
+                else:
+                    label = key
+            detObj['Label'] = label
             frameData.append(detObj)
             currentIndex += 1
 
