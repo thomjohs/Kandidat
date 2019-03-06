@@ -5,10 +5,12 @@ import pyqtgraph as pg
 from pyqtgraph.Qt import QtGui
 
 # Change the configuration file name
-configFileName = '1642config6.cfg'
+configFileName = '1642config4.cfg'
 CLIport = {}
 Dataport = {}
-
+tic=time.time()
+toc=time.time()
+debug=0
 
 # ------------------------------------------------------------------
 
@@ -95,75 +97,88 @@ def parseConfigFile(configFileName):
 # Funtion to read and parse the incoming data
 def readAndParseData16xx(Dataport, configParameters):
     #global byteBuffer, byteBufferLength
-    byteBuffer = np.zeros(2**30,dtype = 'uint8')
+    byteBuffer = np.zeros(2**15,dtype = 'uint8')
     byteBufferLength = 0;
     
+
     # Constants
     OBJ_STRUCT_SIZE_BYTES = 12;
-    BYTE_VEC_ACC_MAX_SIZE = 2**30;
+    BYTE_VEC_ACC_MAX_SIZE = 2**15;
     MMWDEMO_UART_MSG_DETECTED_POINTS = 1;
     MMWDEMO_UART_MSG_RANGE_PROFILE   = 2;
-    maxBufferSize = 2**30;
+    maxBufferSize = 2**15;
     magicWord = [2, 1, 4, 3, 6, 5, 8, 7]
     
+    #debug
+    global tic
+    global debug
+
     # Initialize variables
     magicOK = 0 # Checks if magic number has been read
     dataOK = 0 # Checks if the data has been read correctly
     frameNumber = 0
     detObj = {}
-    
-    readBuffer = Dataport.read(Dataport.in_waiting)
-    #print("ReadBuffer: ", readBuffer)
-    byteVec = np.frombuffer(readBuffer, dtype = 'uint8')
-    #print("byteVec: ", byteVec)
-    byteCount = len(byteVec)
-    print("byteCount: ", byteCount," maxBufferSize: ", maxBufferSize)
-    
-    # Check that the buffer is not full, and then add the data to the buffer
-    if (byteBufferLength + byteCount) < maxBufferSize:
-        byteBuffer[byteBufferLength:byteBufferLength + byteCount] = byteVec[:byteCount]
-        byteBufferLength = byteBufferLength + byteCount
-        print("in if:",byteBufferLength," , ", byteCount)
-    #print("out if:",byteBufferLength)
-    # Check that the buffer has some data
-    if byteBufferLength > 16:
-        print("length gt 16")
-        # Check for all possible locations of the magic word
-        possibleLocs = np.where(byteVec == magicWord[0])[0]
+    in_waiting=Dataport.in_waiting
+    #print(in_waiting)
+    if(in_waiting>0):
+        #print("debug",debug)
+        debug=0
+        elapsed=time.time()-tic
+        #print("Tid mellan hämtning", elapsed)
+        tic=time.time()
+        readBuffer = Dataport.read(Dataport.in_waiting)
+        #print("ReadBuffer: ", readBuffer)
+        byteVec = np.frombuffer(readBuffer, dtype = 'uint8')
+        #print("byteVec: ", byteVec)
+        byteCount = len(byteVec)
+        #print("byteCount: ", byteCount," maxBufferSize: ", maxBufferSize)
+        # Check that the buffer is not full, and then add the data to the buffer
+        if (byteBufferLength + byteCount) < maxBufferSize:
+            byteBuffer[byteBufferLength:byteBufferLength + byteCount] = byteVec[:byteCount]
+            byteBufferLength = byteBufferLength + byteCount
+            #print("in if:",byteBufferLength," , ", byteCount)
+        #print("out if:",byteBufferLength)
+        # Check that the buffer has some data
+        if byteBufferLength > 16:
+            #print("length gt 16")
+            # Check for all possible locations of the magic word
+            possibleLocs = np.where(byteVec == magicWord[0])[0]
 
-        # Confirm that is the beginning of the magic word and store the index in startIdx
-        startIdx = []
-        for loc in possibleLocs:
-            check = byteVec[loc:loc+8]
-            if np.all(check == magicWord):
-                startIdx.append(loc)
-               
-        # Check that startIdx is not empty
-        if startIdx:
-            print("startIdx" ,startIdx)
-            # Remove the data before the first start index
-            if startIdx[0] > 0:
-                byteBuffer[:byteBufferLength-startIdx[0]] = byteBuffer[startIdx[0]:byteBufferLength]
-                byteBufferLength = byteBufferLength - startIdx[0]
+            # Confirm that is the beginning of the magic word and store the index in startIdx
+            startIdx = []
+            for loc in possibleLocs:
+                check = byteVec[loc:loc+8]
+                if np.all(check == magicWord):
+                    startIdx.append(loc)
                 
-            # Check that there have no errors with the byte buffer length
-            if byteBufferLength < 0:
-                byteBufferLength = 0
+            # Check that startIdx is not empty
+            if startIdx:
+                #print("startIdx" ,startIdx)
+                # Remove the data before the first start index
+                if startIdx[0] > 0:
+                    byteBuffer[:byteBufferLength-startIdx[0]] = byteBuffer[startIdx[0]:byteBufferLength]
+                    byteBufferLength = byteBufferLength - startIdx[0]
+                    
+                # Check that there have no errors with the byte buffer length
+                if byteBufferLength < 0:
+                    byteBufferLength = 0
+                    
+                # word array to convert 4 bytes to a 32 bit number
+                word = [1, 2**8, 2**16, 2**24]
                 
-            # word array to convert 4 bytes to a 32 bit number
-            word = [1, 2**8, 2**16, 2**24]
-            
-            # Read the total packet length
-            totalPacketLen = np.matmul(byteBuffer[12:12+4],word)
-            print("totalPacketLen, ",totalPacketLen)
-            
-            # Check that all the packet has been read
-            if (byteBufferLength >= totalPacketLen) and (byteBufferLength != 0):
-                magicOK = 1
-    
+                # Read the total packet length
+                totalPacketLen = np.matmul(byteBuffer[12:12+4],word)
+                #print("totalPacketLen, ",totalPacketLen)
+                
+                # Check that all the packet has been read
+                if (byteBufferLength >= totalPacketLen) and (byteBufferLength != 0):
+                    magicOK = 1
+    else:
+        debug=debug+1
+        
     # If magicOK is equal to 1 then process the message
     if magicOK:
-        print("magic")
+        #print("magic")
         # word array to convert 4 bytes to a 32 bit number
         word = [1, 2**8, 2**16, 2**24]
         
@@ -191,7 +206,7 @@ def readAndParseData16xx(Dataport, configParameters):
         subFrameNumber = np.matmul(byteBuffer[idX:idX+4],word)
         idX += 4
 
-        print("TLVs: ", numTLVs)
+        #print("TLVs: ", numTLVs)
         # Read the TLV messages
         for tlvIdx in range(numTLVs):
             
@@ -269,30 +284,31 @@ def readAndParseData16xx(Dataport, configParameters):
                 #print("2D-FFt")
             elif tlv_type == 5:
                 idX += tlv_length
-                print("RangeDopplerHeat")
+                #print("RangeDopplerHeat")
             elif tlv_type == 6:
-                print("stats info")
+                #print("stats info")
                 # word array to convert 4 bytes to a 32 bit number
                 word = [1, 2**8, 2**16, 2**24]
                 #ReadStats
                 interFrameProcessingTime=np.matmul(byteBuffer[idX:idX+4],word)
-                print("interFrameProcessingTime: ", interFrameProcessingTime)
+                #print("interFrameProcessingTime: ", interFrameProcessingTime)
                 idX += 4
                 transmitOutputTime=np.matmul(byteBuffer[idX:idX+4],word)
                 idX += 4
-                print("transmitOutputTime: ",transmitOutputTime)
+                #print("transmitOutputTime: ",transmitOutputTime)
                 interFrameProcessingMargin=np.matmul(byteBuffer[idX:idX+4],word)
                 idX += 4
-                print("interFrameProcessingMargin: ",interFrameProcessingMargin)
+                #print("interFrameProcessingMargin: ",interFrameProcessingMargin)
                 interChirpProcessingMargin=np.matmul(byteBuffer[idX:idX+4],word)
-                print("interChirpProcessingMargin: ",interChirpProcessingMargin)
+                #print("interChirpProcessingMargin: ",interChirpProcessingMargin)
                 idX += 4
                 activFrameCPULoad=np.matmul(byteBuffer[idX:idX+4],word)
-                print("activFrameCPULoad: ", activFrameCPULoad)
+                #print("activFrameCPULoad: ", activFrameCPULoad)
                 idX += 4
                 interframeCPULoad=np.matmul(byteBuffer[idX:idX+4],word)
-                print("interframeCPULoad: ",interframeCPULoad)
+                #print("interframeCPULoad: ",interframeCPULoad)
                 idX += 4
+    
 
                 
         
@@ -309,6 +325,9 @@ def readAndParseData16xx(Dataport, configParameters):
             # Check that there are no errors with the buffer length
             if byteBufferLength < 0:
                 byteBufferLength = 0
+        elapsed=time.time()-tic
+        #print("Tid efter hämtning", elapsed)
+
                 
 
 
@@ -321,31 +340,57 @@ def update():
      
     dataOk = 0
     global detObj
+    global toc
     x = []
     y = []
     r = []
     v = []
       
     # Read and parse the received data
-    dataOk, frameNumber, detObj = readAndParseData16xx(Dataport, configParameters)
     
+    dataOk, frameNumber, detObj = readAndParseData16xx(Dataport, configParameters)
+    #print("readAnd...Klar")
+    #print("Ok in update")
     if dataOk:
-        #print("Ok in update")
+        
+        #
         #print(detObj)
         x = -detObj["x"]
-        print("x: ",x)
+        #print("x: ",x)
         y = detObj["y"]
-        print("y: ",y)
+        #print("y: ",y)
         r = detObj["range"]
-        print("r: ", r)
+        #print("r: ", r)
         v = detObj["doppler"]
-        print("v: ", v)
+        #print("v: ", v)
         
-    s.setData(x,y)
-    t.setData(r,v)
-    QtGui.QApplication.processEvents()
+    #s.setData(x,y)
+    #t.setData(r,v)
+    #QtGui.QApplication.processEvents()
     
     return dataOk
+
+def frameDataToFile(frameData,filePath):
+    path="Data\\" + filePath
+    file=open(path,"w")
+    file.write("frameData \n")
+    for i in frameData:
+        frame="Frame: "+ str(i) + "\n"
+        obj="Number of objects: " + str(frameData[i]["numObj"])+ "\n"
+        rangeData="Range data: " + str(frameData[i]["range"])+ "\n"
+        dopplerData="Doppler data: " + str(frameData[i]["doppler"])+ "\n"
+        peakValData="peakVal: " + str(frameData[i]["peakVal"])+ "\n"
+        xData="x: " + str(frameData[i]["x"])+ "\n"
+        yData="y: " + str(frameData[i]["y"])+ "\n"
+
+        file.write(frame)
+        file.write(obj)
+        file.write(rangeData)
+        file.write(dopplerData)
+        file.write(peakValData)
+        file.write(xData)
+        file.write(yData)
+    file.close()
 
 def listOfDictToFile(toCSV):
     import csv
@@ -368,22 +413,22 @@ configParameters = parseConfigFile(configFileName)
 app = QtGui.QApplication([])
 
 # Set the plot 
-pg.setConfigOption('background','w')
-win = pg.GraphicsWindow(title="2D scatter plot")
-p = win.addPlot()
-p.setXRange(-0.5,0.5)
-p.setYRange(0,1.5)
-p.setLabel('left',text = 'Y position (m)')
-p.setLabel('bottom', text= 'X position (m)')
-s = p.plot([],[],pen=None,symbol='o')
+#pg.setConfigOption('background','w')
+#win = pg.GraphicsWindow(title="2D scatter plot")
+#p = win.addPlot()
+#p.setXRange(-0.5,0.5)
+#p.setYRange(0,1.5)
+#p.setLabel('left',text = 'Y position (m)')
+#p.setLabel('bottom', text= 'X position (m)')
+#s = p.plot([],[],pen=None,symbol='o')
 
-vin = pg.GraphicsWindow(title="Velocity scatter plot")
-q = vin.addPlot()
-q.setXRange(0,2.0)
-q.setYRange(-round(configParameters["maxVelocity"]+0.5),round(configParameters["maxVelocity"]+0.5))
-q.setLabel('left',text = 'V radial vilocity (m/s)')
-q.setLabel('bottom', text= 'R distance (m)')
-t = q.plot([],[],pen=None,symbol='o')
+#vin = pg.GraphicsWindow(title="Velocity scatter plot")
+#q = vin.addPlot()
+#q.setXRange(0,2.0)
+#q.setYRange(-round(configParameters["maxVelocity"]+0.5),round(configParameters["maxVelocity"]+0.5))
+#q.setLabel('left',text = 'V radial vilocity (m/s)')
+#q.setLabel('bottom', text= 'R distance (m)')
+#t = q.plot([],[],pen=None,symbol='o')
 
 # Main loop 
 detObj = {}  
@@ -391,27 +436,38 @@ frameData = {}
 currentIndex = 0
 while True:
     try:
-        tic=time.time()
+        
+        #elapsed=time.time()-tic
+        #print("Tid mellan hämtning", elapsed)
+        #tic=time.time()
         # Update the data and check if the data is okay
         dataOk = update()
-        
+        #print("after update")
         if dataOk:
+            #elapsed=time.time()-toc
+            #print("Tid för update", elapsed)
+            #toc=time.time()
             #print("ok main")
             # Store the current frame into frameData
             frameData[currentIndex] = detObj
             currentIndex += 1
         
-        time.sleep(2) # Sampling frequency of 30 Hz
-        elapsed=time.time()-tic
+        #
+        #time.sleep(0.00) # Sampling frequency of 30 Hz
+        #elapsed=time.time()-tic
         #print("t: ",elapsed)
         
     # Stop the program and close everything if Ctrl + c is pressed
+    # detObj = {"numObj": tlv_numObj, "rangeIdx": rangeIdx, "range": rangeVal, "dopplerIdx": dopplerIdx, \"doppler": dopplerVal, "peakVal": peakVal, "x": x, "y": y, "z": z}
     except KeyboardInterrupt:
         CLIport.write(('sensorStop\n').encode())
         CLIport.close()
         Dataport.close()
+        #print(frameData)
+        filename=input("What's the file name?")
+        frameDataToFile(frameData,filename)
         #listOfDictToFile(frameData)
-        win.close()
+        #win.close()
         break
         
     
