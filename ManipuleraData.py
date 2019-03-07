@@ -1,4 +1,5 @@
 import csv
+import numpy as np
 dataObj={}
 frameData=[]
 standardLen=10
@@ -18,10 +19,47 @@ cutOfIndex=40
 
 def toStandardVector(dataObj):
     global standardLen
-    rangeIdx=dataObj['rangeIdx']
+    #returns copy and not reference
+    rangeIdx=dataObj['rangeIdx'][:]
     mergeSort(rangeIdx)
+    #mappes where the range idexes lands after sorting
     mappedIndexes=compareIndex(dataObj['rangeIdx'],rangeIdx)
     dataObj['rangeIdx']=rangeIdx
+    #output is at most standardLen but can be shorter
+    sortOthersAndCutOf(dataObj, mappedIndexes)
+
+    #padding
+    numObj=dataObj['numObj']
+    skip=0
+    if numObj<standardLen:
+        #skip the amount of zeros which is supposed to be added
+        skip=standardLen-numObj-1
+    standardVector=[0]*(1+standardLen*5)
+    currentIndex=0
+    standardVector[currentIndex]=numObj
+    currentIndex+=1
+    for r in dataObj['rangeIdx']:
+        standardVector[currentIndex]=r
+        currentIndex+=1
+    currentIndex+=skip
+    for d in dataObj['dopplerIdx']:
+        standardVector[currentIndex]=d
+        currentIndex+=1
+    currentIndex+=skip
+    for p in dataObj['peakVal']:
+        standardVector[currentIndex]=p
+        currentIndex+=1
+    currentIndex+=skip
+    for x in dataObj['x']:
+        standardVector[currentIndex]=x
+        currentIndex+=1
+    currentIndex+=skip
+    for y in dataObj['y']:
+        standardVector[currentIndex]=y
+        currentIndex+=1
+    currentIndex+=skip
+    return standardVector
+
 
 
 
@@ -88,43 +126,56 @@ def binaryIndexSearch(asortedlist, i):
             first=midpoint+1
     return -1
 
-def sortOthers(dataObj,mappedIndexes):
+def sortOthersAndCutOf(dataObj,mappedIndexes):
+    global standardLen
+    global cutOfIndex
     numberOfCutOffs=0
     numObj=dataObj['numObj']
-    dopplerIdx=[]
-    peakVal=[]
-    x=[]
-    y=[]
+    dopplerIdx = [0] * numObj
+    peakVal = [0] * numObj
+    x = [0] * numObj
+    y = [0] * numObj
+    j=0
     #print(mappedIndexes)
     for i in mappedIndexes:
-        if i<=-numObj-1:
-            j=0
+        if i<0:
+            a=0
             #exception
-        elif i<0:
-            #numberOfCutOffs+=1
-            #dataObj['numObj']-=1
-            #del dataObj['rangeIdx'][-(i+1)]
-            dopplerIdx.append(dataObj['dopplerIdx'][-(i+1)])
-            peakVal.append(dataObj['peakVal'][-(i+1)])
-            x.append(dataObj['x'][-(i+1)])
-            y.append(dataObj['y'][-(i+1)])
         else:
             #print(numberOfCutOffs)
-            dopplerIdx.append(dataObj['dopplerIdx'][i+numberOfCutOffs])
-            peakVal.append(dataObj['peakVal'][i+numberOfCutOffs])
-            x.append(dataObj['x'][i+numberOfCutOffs])
-            y.append(dataObj['y'][i+numberOfCutOffs])
+            dopplerIdx[i]=dataObj['dopplerIdx'][j]
+            peakVal[i]=dataObj['peakVal'][j]
+            x[i]=dataObj['x'][j]
+            y[i]=dataObj['y'][j]
+            j+=1
     dataObj['dopplerIdx']=dopplerIdx
     dataObj['peakVal']=peakVal
     dataObj['x']=x
     dataObj['y']=y
-        
+    #CutOf
+    if numObj>standardLen:
+        dataObj['rangeIdx']=dataObj['rangeIdx'][:standardLen]
+        dataObj['dopplerIdx']=dataObj['dopplerIdx'][:standardLen]
+        dataObj['peakVal']=dataObj['peakVal'][:standardLen]
+        dataObj['x']=dataObj['x'][:standardLen]
+        dataObj['y']=dataObj['y'][:standardLen]
+    r=np.asarray(dataObj['rangeIdx'])
+    d=np.asarray(dataObj['dopplerIdx'])
+    p=np.asarray(dataObj['peakVal'])
+    x=np.asarray(dataObj['x'])
+    y=np.asarray(dataObj['y'])
+    b=1*(r<cutOfIndex)
+    dataObj['numObj']=np.sum(b)
+    dataObj['rangeIdx']=(r*b).tolist()
+    dataObj['dopplerIdx']=(d*b).tolist()
+    dataObj['peakVal']=(p*b).tolist()
+    dataObj['x']=(x*b).tolist()
+    dataObj['y']=(y*b).tolist()
+
+#Main for testing    
 dataObj={'numObj':5,'rangeIdx':[1,12,41,6,2],'dopplerIdx':[1,2,3,4,5],'peakVal':[1,2,3,4,5],'x':[1,2,3,4,5],'y':[1,2,3,4,5],}
 print(dataObj)
-rangeIdx=dataObj['rangeIdx'][:]
-mergeSort(rangeIdx)
-mappedIndexes=compareIndex(dataObj['rangeIdx'],rangeIdx)
-dataObj['rangeIdx']=rangeIdx
-sortOthers(dataObj,mappedIndexes)
+standardVector=toStandardVector(dataObj)
 print(dataObj)
-
+print(standardVector)
+print(len(standardVector))
