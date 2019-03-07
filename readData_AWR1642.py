@@ -403,8 +403,15 @@ def listOfDictToFile(toCSV):
     with open('frameData.csv', 'w') as output_file:
         dict_writer = csv.DictWriter(output_file, keys)
         dict_writer.writeheader()
-        for dick in toCSV:
-            dict_writer.writerow(dick)
+        for dct in toCSV:
+            dict_writer.writerow(dct)
+
+
+def removeLabel(list, label):
+    i = len(list) - 1
+    while list[i]['Label'] == label:
+        list.pop()
+        i -= 1
 
 # -------------------------    MAIN   -----------------------------------------  
 
@@ -470,6 +477,9 @@ while True:
                     label = 'swipePrev'
                 elif key == '6':
                     label = 'flop'
+                elif key == 'c':
+                    removeLabel(frameData, label)
+                    label = 'background'
                 else:
                     label = 'background'
                 print(f'Current label: {label}')
