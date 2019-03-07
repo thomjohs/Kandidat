@@ -3,6 +3,7 @@ import time
 import numpy as np
 import pyqtgraph as pg
 from pyqtgraph.Qt import QtGui
+import msvcrt
 
 # Change the configuration file name
 configFileName = '1642config4.cfg'
@@ -402,8 +403,15 @@ def listOfDictToFile(toCSV):
     with open('frameData.csv', 'w') as output_file:
         dict_writer = csv.DictWriter(output_file, keys)
         dict_writer.writeheader()
-        for dick in toCSV:
-            dict_writer.writerow(dick)
+        for dct in toCSV:
+            dict_writer.writerow(dct)
+
+
+def removeLabel(list, label):
+    i = len(list) - 1
+    while list[i]['Label'] == label:
+        list.pop()
+        i -= 1
 
 # -------------------------    MAIN   -----------------------------------------  
 
@@ -434,7 +442,8 @@ app = QtGui.QApplication([])
 #q.setLabel('bottom', text= 'R distance (m)')
 #t = q.plot([],[],pen=None,symbol='o')
 
-# Main loop 
+# Main loop
+label = 'background'
 detObj = {}  
 frameData = []    
 currentIndex = 0
@@ -454,6 +463,27 @@ while True:
             #print("ok main")
             # Store the current frame into frameData
             #frameData[currentIndex] = detObj
+            if msvcrt.kbhit():
+                key = msvcrt.getch()
+                if key == '1':
+                    label = 'slideUp'
+                elif key == '2':
+                    label = 'slideDown'
+                elif key == '3':
+                    label = 'button'
+                elif key == '4':
+                    label = 'swipeNext'
+                elif key == '5':
+                    label = 'swipePrev'
+                elif key == '6':
+                    label = 'flop'
+                elif key == 'c':
+                    removeLabel(frameData, label)
+                    label = 'background'
+                else:
+                    label = 'background'
+                print(f'Current label: {label}')
+            detObj['Label'] = label
             frameData.append(detObj)
             currentIndex += 1
 
