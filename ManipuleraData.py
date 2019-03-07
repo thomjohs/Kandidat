@@ -1,21 +1,30 @@
 import csv
 dataObj={}
 frameData=[]
-with open('frameData.csv') as csvfile:
-    reader = csv.DictReader(csvfile)
-    #print(reader.header())
-    for row in reader:
-        dataObj['numObj'] = row['numObj']
-        dataObj['rangeIdx'] = row['rangeIdx']
-        dataObj['dopplerIdx'] = row['dopplerIdx']
-        dataObj['peakVal'] = row['peakVal']
-        dataObj['x'] = row['x']
-        dataObj['y'] = row['y']
-        frameData.append(dataObj)
+standardLen=10
+cutOfIndex=40
+#with open('frameData.csv') as csvfile:
+#    global dataObj
+#    reader = csv.DictReader(csvfile)
+#    #print(reader.header())
+#    for row in reader:
+#        dataObj['numObj'] = row['numObj']
+#        dataObj['rangeIdx'] = row['rangeIdx']
+#        dataObj['dopplerIdx'] = row['dopplerIdx']
+#        dataObj['peakVal'] = row['peakVal']
+#        dataObj['x'] = row['x']
+#        dataObj['y'] = row['y']
+#        frameData.append(dataObj)
 
-#def toStandard vector(dataObj):
-#    rangeIdx=dataObj[rangeIdx]
-#    mergeSort(alist)
+def toStandardVector(dataObj):
+    global standardLen
+    rangeIdx=dataObj['rangeIdx']
+    mergeSort(rangeIdx)
+    mappedIndexes=compareIndex(dataObj['rangeIdx'],rangeIdx)
+    dataObj['rangeIdx']=rangeIdx
+
+
+
 
 def mergeSort(alist):
     #print("Splitting ",alist)
@@ -55,12 +64,21 @@ def compareIndex(alist,alist_sorted):
     for i in alist:
         index = binaryIndexSearch(alist_sorted, i)
 
+        # If the object is to far away, returns the negativ index minus 1
+        #if i>cutOfIndex:
+        #    mappedIndexes.append(-index-1)
+        # Maps the change of index when sorted
+        #else:
+        #   mappedIndexes.append(index)
+        mappedIndexes.append(index)
+        
+    return mappedIndexes
 
 def binaryIndexSearch(asortedlist, i):
     first=0
     last=len(asortedlist)
     while first<=last:
-        midpoint=(first-last)/2
+        midpoint=int((first+last)/2)
         currentValue=asortedlist[midpoint]
         if currentValue==i:
             return midpoint
@@ -70,5 +88,43 @@ def binaryIndexSearch(asortedlist, i):
             first=midpoint+1
     return -1
 
-    
-binaryIndexSearch([1,2,3],2)
+def sortOthers(dataObj,mappedIndexes):
+    numberOfCutOffs=0
+    numObj=dataObj['numObj']
+    dopplerIdx=[]
+    peakVal=[]
+    x=[]
+    y=[]
+    #print(mappedIndexes)
+    for i in mappedIndexes:
+        if i<=-numObj-1:
+            j=0
+            #exception
+        elif i<0:
+            #numberOfCutOffs+=1
+            #dataObj['numObj']-=1
+            #del dataObj['rangeIdx'][-(i+1)]
+            dopplerIdx.append(dataObj['dopplerIdx'][-(i+1)])
+            peakVal.append(dataObj['peakVal'][-(i+1)])
+            x.append(dataObj['x'][-(i+1)])
+            y.append(dataObj['y'][-(i+1)])
+        else:
+            #print(numberOfCutOffs)
+            dopplerIdx.append(dataObj['dopplerIdx'][i+numberOfCutOffs])
+            peakVal.append(dataObj['peakVal'][i+numberOfCutOffs])
+            x.append(dataObj['x'][i+numberOfCutOffs])
+            y.append(dataObj['y'][i+numberOfCutOffs])
+    dataObj['dopplerIdx']=dopplerIdx
+    dataObj['peakVal']=peakVal
+    dataObj['x']=x
+    dataObj['y']=y
+        
+dataObj={'numObj':5,'rangeIdx':[1,12,41,6,2],'dopplerIdx':[1,2,3,4,5],'peakVal':[1,2,3,4,5],'x':[1,2,3,4,5],'y':[1,2,3,4,5],}
+print(dataObj)
+rangeIdx=dataObj['rangeIdx'][:]
+mergeSort(rangeIdx)
+mappedIndexes=compareIndex(dataObj['rangeIdx'],rangeIdx)
+dataObj['rangeIdx']=rangeIdx
+sortOthers(dataObj,mappedIndexes)
+print(dataObj)
+
