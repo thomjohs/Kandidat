@@ -1,21 +1,50 @@
 import csv
 import numpy as np
-dataObj={}
-frameData=[]
+#dataObj={}
+#frameData=[]
 standardLen=10
 cutOfIndex=40
-#with open('frameData.csv') as csvfile:
-#    global dataObj
-#    reader = csv.DictReader(csvfile)
-#    #print(reader.header())
-#    for row in reader:
-#        dataObj['numObj'] = row['numObj']
-#        dataObj['rangeIdx'] = row['rangeIdx']
-#        dataObj['dopplerIdx'] = row['dopplerIdx']
-#        dataObj['peakVal'] = row['peakVal']
-#        dataObj['x'] = row['x']
-#        dataObj['y'] = row['y']
-#        frameData.append(dataObj)
+
+in_file = 'frameData.csv'
+out_file = 'standardData.csv'
+
+def dString_to_iarray(indata, label, ):
+    ilist = []
+    s = ''
+    for i in indata[label]:
+        if str.isdigit(i) or i == '-' or i == '.':
+            s += i
+        elif s != '':
+            ilist.append(int(s))
+            s = ''
+    return ilist
+
+def dString_to_farray(indata, label, ):
+    ilist = []
+    s = ''
+    for i in indata[label]:
+        if str.isdigit(i) or i == '-' or i == '.':
+            s += i
+        elif s != '':
+            ilist.append(float(s))
+            s = ''
+    return ilist
+
+def file_to_framedata(csv_file):
+    with open(csv_file) as csvfile:
+
+        dataList = []
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            data = {}
+            data['numObj'] = int(row['numObj'])
+            data['rangeIdx'] = dString_to_iarray(row, 'rangeIdx')
+            data['dopplerIdx'] = dString_to_iarray(row, 'dopplerIdx')
+            data['peakVal'] = dString_to_iarray(row, 'peakVal')
+            data['x'] = dString_to_farray(row, 'x')
+            data['y'] = dString_to_farray(row, 'y')
+            dataList.append(data)
+        return dataList
 
 def toStandardVector(dataObj):
     global standardLen
@@ -172,10 +201,15 @@ def sortOthersAndCutOf(dataObj,mappedIndexes):
     dataObj['x']=(x*b).tolist()
     dataObj['y']=(y*b).tolist()
 
+
 #Main for testing    
-dataObj={'numObj':5,'rangeIdx':[1,12,41,6,2],'dopplerIdx':[1,2,3,4,5],'peakVal':[1,2,3,4,5],'x':[1,2,3,4,5],'y':[1,2,3,4,5],}
-print(dataObj)
-standardVector=toStandardVector(dataObj)
-print(dataObj)
+#dataObj={'numObj':5,'rangeIdx':[1,12,41,6,2],'dopplerIdx':[1,2,3,4,5],'peakVal':[1,2,3,4,5],'x':[1,2,3,4,5],'y':[1,2,3,4,5],}
+#print(dataObj)
+frameData = file_to_framedata(in_file)
+print(frameData[0])
+
+standardVector=toStandardVector(frameData[0])
+#print(dataObj)
 print(standardVector)
 print(len(standardVector))
+
