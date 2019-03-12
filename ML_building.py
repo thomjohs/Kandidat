@@ -9,20 +9,53 @@ import numpy as np
 import csv
 import random
 import matplotlib.pyplot as plt
+import supp
 
 vector_size = 52
-time_steps = 10
-batch_size = 10
+
 
 input_file = "frameData.csv"
+
+# Number of categories
 outputs = 3
 
+# training hyperparameters
+epochs = 5
+time_steps = 20
+batch_size = 20
+training_ratio = 0.8
+
+# used in both models
+lstm_output = 12
+stateful = False
+
+# only used in combined model
+num_filters = 64
+kernel_size = 5
+
+
 def load_data(input_file):
-   pass
+    frameList = []
+    with open(input_file) as inp:
+        for row in inp:
+            frame = supp.dString_to_farray(row)
+            frameList.append(frame)
+    return frameList
+
+def label_to_int(frame):
+    last = len(frame)-1
+    if frame[last] == 'slideUp':
+        frame[last] = 0
+    elif frame[last] == 'button':
+        frame[last] = 1
+    else:
+        frame[last] = 2
+    return frame
+
 
 
 def noise(num):
-    num += num/5*random.randint(-1, 1)
+    num += num/2*random.randint(-1, 1)
     return num
 
 
@@ -30,11 +63,12 @@ def create_gesture1(amount):
     frameList = []
     for i in range(amount):
         frame = []
-        for i in range(vector_size):
-            frame.append(noise(i))
-        frame.append(0)
+        for j in range(vector_size):
+            frame.append(noise(j))
+        frame.append('slideUp')
         frameList.append(frame)
     return frameList
+
 
 def create_gesture2(amount):
     frameList = []
@@ -42,9 +76,10 @@ def create_gesture2(amount):
         frame = []
         for _ in range(vector_size):
             frame.append(noise(11))
-        frame.append(1)
+        frame.append('button')
         frameList.append(frame)
     return frameList
+
 
 def create_gesture3(amount):
     frameList = []
@@ -52,9 +87,10 @@ def create_gesture3(amount):
         frame = []
         for _ in range(vector_size):
             frame.append(random.randint(0, 40))
-        frame.append(2)
+        frame.append('swipe')
         frameList.append(frame)
     return frameList
+
 
 def create_data():
     frameList = []
@@ -73,30 +109,31 @@ def create_data():
 
 
 def split_data(frameList):
-    x = np.empty((4000, 51), dtype=np.float32)
-    y = np.empty((4000, 1), dtype=np.float32)
+    x = np.empty((len(frameList), vector_size-1), dtype=np.float32)
+    y = np.empty((len(frameList), 1), dtype=np.float32)
     i = 0
     for frame in frameList:
-        x[i] = np.array(frame[:51])
-        y[i] = frame[52]
+        x[i] = np.array(frame[:vector_size-1])
+        y[i] = frame[vector_size]
         i += 1
     y = utils.to_categorical(y, outputs, dtype=np.float32)
-    x_train = x[:3500]
-    x_test = x[3500:4000]
-    y_train = y[:3500]
-    y_test = y[3500:4000]
+    x_train = x[:int(len(frameList)*training_ratio)]
+    x_test = x[int(len(frameList)*training_ratio):len(frameList)]
+    y_train = y[:int(len(frameList)*training_ratio)]
+    y_test = y[int(len(frameList)*training_ratio):len(frameList)]
     return x_train, x_test, y_train, y_test
 
 
-x_train, x_test, y_train, y_test = split_data(create_data())
+x_train, x_test, y_train, y_test = split_data(list(map(label_to_int, create_data())))
 
 train_seq = sequence.TimeseriesGenerator(x_train, y_train, length=time_steps, batch_size=batch_size)
 test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch_size=batch_size)
 
-#print(x_train[0])
-#print(test_seq[0])
 
-def build_clstm(num_filters, kernel_size, lstm_output):
+def build_clstm():
+    global num_filters
+    global kernel_size
+    global lstm_output
     model = Sequential()
     model.add(Conv1D(num_filters, kernel_size, input_shape=(time_steps, vector_size-1), activation='relu'))
     model.add(LSTM(lstm_output, return_sequences=True))
@@ -105,8 +142,10 @@ def build_clstm(num_filters, kernel_size, lstm_output):
     return model
 
 
-def build_lstm(lstm_output, stateful=False):
+def build_lstm():
     global batch_size
+    global lstm_output
+    global stateful
     model = Sequential()
     model.add(LSTM(lstm_output,
                    return_sequences=True,
@@ -122,14 +161,15 @@ def build_lstm(lstm_output, stateful=False):
     return model
 
 
-model = build_lstm(64, False)
-#model = build_clstm(64, 5, 64)
+model = build_lstm()
+# model = build_clstm()
+
 model.compile(loss='categorical_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
 
-history = model.fit_generator(train_seq, epochs=5,
-                    validation_data=test_seq)
+history = model.fit_generator(train_seq, epochs=epochs,
+                              validation_data=test_seq)
 
 score, acc = model.evaluate_generator(test_seq)
 print('Test score:', score)
@@ -142,3 +182,15 @@ plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper left')
 plt.show()
+
+plt.plot(history.history['acc'])
+plt.plot(history.history['val_acc'])
+plt.title('model accuracy')
+plt.ylabel('accuracy')
+plt.xlabel('epoch')
+plt.legend(['train', 'test'], loc='upper left')
+plt.show()
+
+predict_seq = test_seq = sequence.TimeseriesGenerator(x_test[100:200], y_test[100:200], length=time_steps, batch_size=batch_size)
+predict = model.predict_generator(predict_seq, verbose=1)
+

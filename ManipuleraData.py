@@ -1,5 +1,7 @@
 import csv
 import numpy as np
+import supp
+
 #dataObj={}
 #frameData=[]
 standardLen=10
@@ -8,27 +10,7 @@ cutOfIndex=40
 in_file = 'frameData.csv'
 out_file = 'standardData.csv'
 
-def dString_to_iarray(indata, label, ):
-    ilist = []
-    s = ''
-    for i in indata[label]:
-        if str.isdigit(i) or i == '-' or i == '.':
-            s += i
-        elif s != '':
-            ilist.append(int(s))
-            s = ''
-    return ilist
 
-def dString_to_farray(indata, label, ):
-    ilist = []
-    s = ''
-    for i in indata[label]:
-        if str.isdigit(i) or i == '-' or i == '.':
-            s += i
-        elif s != '':
-            ilist.append(float(s))
-            s = ''
-    return ilist
 
 def file_to_framedata(csv_file):
     with open(csv_file) as csvfile:
@@ -38,11 +20,11 @@ def file_to_framedata(csv_file):
         for row in reader:
             data = {}
             data['numObj'] = int(row['numObj'])
-            data['rangeIdx'] = dString_to_iarray(row, 'rangeIdx')
-            data['dopplerIdx'] = dString_to_iarray(row, 'dopplerIdx')
-            data['peakVal'] = dString_to_iarray(row, 'peakVal')
-            data['x'] = dString_to_farray(row, 'x')
-            data['y'] = dString_to_farray(row, 'y')
+            data['rangeIdx'] = supp.dString_to_iarray(row, 'rangeIdx')
+            data['dopplerIdx'] = supp.dString_to_iarray(row, 'dopplerIdx')
+            data['peakVal'] = supp.dString_to_iarray(row, 'peakVal')
+            data['x'] = supp.dString_to_farray(row, 'x')
+            data['y'] = supp.dString_to_farray(row, 'y')
             dataList.append(data)
         return dataList
 
