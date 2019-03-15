@@ -6,7 +6,7 @@ from pyqtgraph.Qt import QtGui
 import msvcrt
 
 # Change the configuration file name
-configFileName = '1642config4.cfg'
+configFileName = 'config\\1642config4.cfg'
 CLIport = {}
 Dataport = {}
 tic=time.time()
@@ -122,8 +122,8 @@ def readAndParseData16xx(Dataport, configParameters):
     in_waiting=Dataport.in_waiting
     #print(in_waiting)
     if(in_waiting>0):
-        print("debug",debug)
-        debug=0
+        #print("debug",debug)
+        #debug=0
         elapsed=time.time()-tic
         #print("Tid mellan hämtning", elapsed)
         tic=time.time()
@@ -174,8 +174,8 @@ def readAndParseData16xx(Dataport, configParameters):
                 # Check that all the packet has been read
                 if (byteBufferLength >= totalPacketLen) and (byteBufferLength != 0):
                     magicOK = 1
-    else:
-        debug=debug+1
+    #else:
+        #debug=debug+1
         
     # If magicOK is equal to 1 then process the message
     if magicOK:
@@ -292,22 +292,22 @@ def readAndParseData16xx(Dataport, configParameters):
                 word = [1, 2**8, 2**16, 2**24]
                 #ReadStats
                 interFrameProcessingTime=np.matmul(byteBuffer[idX:idX+4],word)
-                #print("interFrameProcessingTime: ", interFrameProcessingTime)
+                print("interFrameProcessingTime: ", interFrameProcessingTime)
                 idX += 4
                 transmitOutputTime=np.matmul(byteBuffer[idX:idX+4],word)
                 idX += 4
-                #print("transmitOutputTime: ",transmitOutputTime)
+                print("transmitOutputTime: ",transmitOutputTime)
                 interFrameProcessingMargin=np.matmul(byteBuffer[idX:idX+4],word)
                 idX += 4
-                #print("interFrameProcessingMargin: ",interFrameProcessingMargin)
+                print("interFrameProcessingMargin: ",interFrameProcessingMargin)
                 interChirpProcessingMargin=np.matmul(byteBuffer[idX:idX+4],word)
-                #print("interChirpProcessingMargin: ",interChirpProcessingMargin)
+                print("interChirpProcessingMargin: ",interChirpProcessingMargin)
                 idX += 4
                 activFrameCPULoad=np.matmul(byteBuffer[idX:idX+4],word)
-                #print("activFrameCPULoad: ", activFrameCPULoad)
+                print("activFrameCPULoad: ", activFrameCPULoad)
                 idX += 4
                 interframeCPULoad=np.matmul(byteBuffer[idX:idX+4],word)
-                #print("interframeCPULoad: ",interframeCPULoad)
+                print("interframeCPULoad: ",interframeCPULoad)
                 idX += 4
     
 
@@ -393,14 +393,11 @@ def frameDataToFile(frameData,filePath):
         file.write(yData)
     file.close()
 
-def listOfDictToFile(toCSV):
+def listOfDictToFile(toCSV, filePath):
     import csv
-    #print(toCSV)    
-    #toCSV=list(toCSV)
-    #print(toCSV)
     keys = toCSV[0].keys()
-    #print(keys)
-    with open('frameData.csv', 'w') as output_file:
+    path="PreprocessedData\\" + filePath+".csv"
+    with open(path, 'w') as output_file:
         dict_writer = csv.DictWriter(output_file, keys)
         dict_writer.writeheader()
         for dct in toCSV:
@@ -465,20 +462,22 @@ while True:
             #frameData[currentIndex] = detObj
             if msvcrt.kbhit():
                 key = msvcrt.getch()
-                if key == '1':
+                print(key)
+                if key == b'1':
                     label = 'slideUp'
-                elif key == '2':
+                    print('Hej')
+                elif key == b'2':
                     label = 'slideDown'
-                elif key == '3':
+                elif key == b'3':
                     label = 'button'
-                elif key == '4':
+                elif key == b'4':
                     label = 'swipeNext'
-                elif key == '5':
+                elif key == b'5':
                     label = 'swipePrev'
-                elif key == '6':
+                elif key == b'6':
                     label = 'flop'
-                elif key == 'c':
-                    removeLabel(frameData, label)
+                elif key == b'c':
+                    #removeLabel(frameData, label)
                     label = 'background'
                 else:
                     label = 'background'
@@ -498,9 +497,9 @@ while True:
         CLIport.close()
         Dataport.close()
         #print(frameData)
-        #filename=input("What's the file name?")
+        filename=input("What's the file name?")
         #frameDataToFile(frameData,filename)
-        listOfDictToFile(frameData)
+        listOfDictToFile(frameData,filename)
         #win.close()
         break
         
