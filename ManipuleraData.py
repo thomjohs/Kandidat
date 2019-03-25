@@ -7,8 +7,8 @@ import supp
 standardLen=10
 cutOfIndex=40
 
-in_file = 'PreprocessedData\JohanswipeNext1.csv'
-out_file = 'ProcessedData\JohanSwipeNext1.csv'
+in_file = 'PreprocessedData\\alex_button1.csv'
+out_file = 'ProcessedData\AlexButton1.csv'
 
 
 def file_to_framedata(csv_file):
