@@ -444,6 +444,7 @@ label = 'background'
 detObj = {}  
 frameData = []    
 currentIndex = 0
+j=0
 while True:
     try:
         
@@ -462,22 +463,20 @@ while True:
             #frameData[currentIndex] = detObj
             if msvcrt.kbhit():
                 key = msvcrt.getch()
-                print(key)
                 if key == b'1':
-                    label = 'slideUp'
-                    print('Hej')
-                elif key == b'2':
-                    label = 'slideDown'
+                        label = 'slideUp'
+                #elif key == b'2':
+                #    label = 'slideDown'
                 elif key == b'3':
                     label = 'button'
                 elif key == b'4':
                     label = 'swipeNext'
-                elif key == b'5':
-                    label = 'swipePrev'
-                elif key == b'6':
-                    label = 'flop'
+                #elif key == b'5':
+                #    label = 'swipePrev'
+                #elif key == b'6':
+                #    label = 'flop'
                 elif key == b'c':
-                    #removeLabel(frameData, label)
+                    removeLabel(frameData, label)
                     label = 'background'
                 else:
                     label = 'background'
