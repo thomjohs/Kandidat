@@ -7,8 +7,8 @@ import supp
 standardLen=10
 cutOfIndex=40
 
-in_file = 'frameData.csv'
-out_file = 'standardData.csv'
+in_file = 'PreprocessedData/ArenSwipeNext1.csv'
+out_file = 'ProcessedData/ArenSwipeNext1.csv'
 
 
 
@@ -28,6 +28,13 @@ def file_to_framedata(csv_file):
             dataList.append(data)
         return dataList
 
+def frame_to_file(frames, out_path):
+    with open(out_path, 'w') as out:
+        writer = csv.writer(out)
+        for frame in frames:
+            writer.writerow(frame)
+
+
 def toStandardVector(dataObj):
     global standardLen
     #returns copy and not reference
@@ -38,13 +45,12 @@ def toStandardVector(dataObj):
     dataObj['rangeIdx']=rangeIdx
     #output is at most standardLen but can be shorter
     sortOthersAndCutOf(dataObj, mappedIndexes)
+    print(dataObj)
 
     #padding
     numObj=dataObj['numObj']
-    skip=0
-    if numObj<standardLen:
-        #skip the amount of zeros which is supposed to be added
-        skip=standardLen-numObj-1
+
+
     standardVector=[0]*(1+standardLen*5)
     currentIndex=0
     standardVector[currentIndex]=numObj
@@ -52,23 +58,23 @@ def toStandardVector(dataObj):
     for r in dataObj['rangeIdx']:
         standardVector[currentIndex]=r
         currentIndex+=1
-    currentIndex+=skip
+
     for d in dataObj['dopplerIdx']:
         standardVector[currentIndex]=d
         currentIndex+=1
-    currentIndex+=skip
+
     for p in dataObj['peakVal']:
         standardVector[currentIndex]=p
         currentIndex+=1
-    currentIndex+=skip
+
     for x in dataObj['x']:
         standardVector[currentIndex]=x
         currentIndex+=1
-    currentIndex+=skip
+
     for y in dataObj['y']:
         standardVector[currentIndex]=y
         currentIndex+=1
-    currentIndex+=skip
+    
     return standardVector
 
 
@@ -189,12 +195,14 @@ def sortOthersAndCutOf(dataObj,mappedIndexes):
 # print(dataObj)
 
 frameData = file_to_framedata(in_file)
-print(frameData[0])
 
-standardVector = toStandardVector(frameData[0])
-# print(dataObj)
-print(standardVector)
-print(len(standardVector))
+standardFrame = []
+for frame in frameData:
+    standardFrame.append(toStandardVector(frame))
+
+frame_to_file(standardFrame, out_file)
+
+
 
 
 # Synthesize data

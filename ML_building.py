@@ -58,10 +58,6 @@ def split_data(frameList):
     return x_train, x_test, y_train, y_test
 
 
-x_train, x_test, y_train, y_test = split_data(list(map(supp.label_to_int, supp.create_data(vector_size))))
-
-train_seq = sequence.TimeseriesGenerator(x_train, y_train, length=time_steps, batch_size=batch_size)
-test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch_size=batch_size)
 
 
 def build_clstm():
@@ -93,6 +89,12 @@ def build_lstm():
                    stateful=stateful))
     model.add(Dense(outputs, activation='softmax'))
     return model
+
+
+x_train, x_test, y_train, y_test = split_data(list(map(supp.label_to_int, load_data(input_file))))
+
+train_seq = sequence.TimeseriesGenerator(x_train, y_train, length=time_steps, batch_size=batch_size)
+test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch_size=batch_size)
 
 
 model = build_lstm()
