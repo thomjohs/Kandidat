@@ -179,6 +179,7 @@ def sortOthersAndCutOf(dataObj,mappedIndexes):
         dataObj['peakVal']=dataObj['peakVal'][:standardLen]
         dataObj['x']=dataObj['x'][:standardLen]
         dataObj['y']=dataObj['y'][:standardLen]
+    r=np.array(dataObj['rangeIdx'])
     b=1*(r<cutOfIndex)
     numRemaningObj=np.sum(b)
     dataObj['numObj']=numRemaningObj
