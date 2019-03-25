@@ -7,8 +7,8 @@ import supp
 standardLen=10
 cutOfIndex=40
 
-in_file = 'frameData.csv'
-out_file = 'standardData.csv'
+in_file = 'PreprocessedData\Test2.csv'
+out_file = 'ProcessedData\standardData.csv'
 
 
 
@@ -25,7 +25,7 @@ def file_to_framedata(csv_file):
             data['peakVal'] = supp.dString_to_iarray(row, 'peakVal')
             data['x'] = supp.dString_to_farray(row, 'x')
             data['y'] = supp.dString_to_farray(row, 'y')
-            data['label'] = supp.dString_to_farray(row, 'label')
+            data['Label'] = row['Label']
             standardVec=toStandardVector(data)
             dataList.append(standardVec)
         return dataList
@@ -43,10 +43,6 @@ def toStandardVector(dataObj):
 
     #padding
     numObj=dataObj['numObj']
-    skip=0
-    if numObj<standardLen:
-        #skip the amount of zeros which is supposed to be added
-        skip=standardLen-numObj-1
     standardVector=[0]*(2+standardLen*5)
     currentIndex=0
     standardVector[currentIndex]=numObj
@@ -54,25 +50,19 @@ def toStandardVector(dataObj):
     for r in dataObj['rangeIdx']:
         standardVector[currentIndex]=r
         currentIndex+=1
-    currentIndex+=skip
     for d in dataObj['dopplerIdx']:
         standardVector[currentIndex]=d
         currentIndex+=1
-    currentIndex+=skip
     for p in dataObj['peakVal']:
         standardVector[currentIndex]=p
         currentIndex+=1
-    currentIndex+=skip
     for x in dataObj['x']:
         standardVector[currentIndex]=x
         currentIndex+=1
-    currentIndex+=skip
     for y in dataObj['y']:
         standardVector[currentIndex]=y
         currentIndex+=1
-    currentIndex+=skip
-    standardVector[currentIndex]=dataObj['label']
-    currentIndex+=1
+    standardVector[currentIndex]=dataObj['Label']
     return standardVector
 
 
@@ -196,10 +186,10 @@ frameData = file_to_framedata(in_file)
 
 print(frameData[0])
 
-standardVector = toStandardVector(frameData[0])
+#standardVector = toStandardVector(frameData[0])
 # print(dataObj)
-print(standardVector)
-print(len(standardVector))
+print(frameData[0])
+print(len(frameData[0]))
 
 
 # Synthesize data
