@@ -184,14 +184,24 @@ def sortOthersAndCutOf(dataObj,mappedIndexes):
     dataObj['y']=(y*b).tolist()
 
 
-#Main for testing    
-#dataObj={'numObj':5,'rangeIdx':[1,12,41,6,2],'dopplerIdx':[1,2,3,4,5],'peakVal':[1,2,3,4,5],'x':[1,2,3,4,5],'y':[1,2,3,4,5],}
-#print(dataObj)
+# Main for testing
+# dataObj={'numObj':5,'rangeIdx':[1,12,41,6,2],'dopplerIdx':[1,2,3,4,5],'peakVal':[1,2,3,4,5],'x':[1,2,3,4,5],'y':[1,2,3,4,5],}
+# print(dataObj)
+
 frameData = file_to_framedata(in_file)
 print(frameData[0])
 
-standardVector=toStandardVector(frameData[0])
-#print(dataObj)
+standardVector = toStandardVector(frameData[0])
+# print(dataObj)
 print(standardVector)
 print(len(standardVector))
+
+
+# Synthesize data
+
+# Translate
+
+# Mirror some gestures
+
+# Random noise
 

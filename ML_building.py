@@ -13,7 +13,6 @@ import supp
 
 vector_size = 52
 
-
 input_file = "frameData.csv"
 
 # Number of categories
@@ -42,71 +41,6 @@ def load_data(input_file):
             frameList.append(frame)
     return frameList
 
-def label_to_int(frame):
-    last = len(frame)-1
-    if frame[last] == 'slideUp':
-        frame[last] = 0
-    elif frame[last] == 'button':
-        frame[last] = 1
-    else:
-        frame[last] = 2
-    return frame
-
-
-
-def noise(num):
-    num += num/2*random.randint(-1, 1)
-    return num
-
-
-def create_gesture1(amount):
-    frameList = []
-    for i in range(amount):
-        frame = []
-        for j in range(vector_size):
-            frame.append(noise(j))
-        frame.append('slideUp')
-        frameList.append(frame)
-    return frameList
-
-
-def create_gesture2(amount):
-    frameList = []
-    for i in range(amount):
-        frame = []
-        for _ in range(vector_size):
-            frame.append(noise(11))
-        frame.append('button')
-        frameList.append(frame)
-    return frameList
-
-
-def create_gesture3(amount):
-    frameList = []
-    for i in range(amount):
-        frame = []
-        for _ in range(vector_size):
-            frame.append(random.randint(0, 40))
-        frame.append('swipe')
-        frameList.append(frame)
-    return frameList
-
-
-def create_data():
-    frameList = []
-    for i in range(135):
-        randGest = random.randint(1, 2)
-        randAmount = 40 + random.randint(-10, 10)
-        if randGest == 1:
-            frameList.extend(create_gesture1(randAmount))
-        elif randGest == 2:
-            frameList.extend(create_gesture2(randAmount))
-        else:
-            frameList.extend(create_gesture3(randAmount))
-
-    return frameList[:4000]
-
-
 
 def split_data(frameList):
     x = np.empty((len(frameList), vector_size-1), dtype=np.float32)
@@ -124,7 +58,7 @@ def split_data(frameList):
     return x_train, x_test, y_train, y_test
 
 
-x_train, x_test, y_train, y_test = split_data(list(map(label_to_int, create_data())))
+x_train, x_test, y_train, y_test = split_data(list(map(supp.label_to_int, supp.create_data(vector_size))))
 
 train_seq = sequence.TimeseriesGenerator(x_train, y_train, length=time_steps, batch_size=batch_size)
 test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch_size=batch_size)
