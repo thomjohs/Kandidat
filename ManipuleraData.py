@@ -196,7 +196,6 @@ def sortOthersAndCutOf(dataObj,mappedIndexes):
 
 frameData = file_to_framedata(in_file)
 print(frameData[0])
-
 frame_to_data(frameData, out_file)
 
 

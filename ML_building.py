@@ -17,7 +17,7 @@ input_file = "ArenSwipeNext1"
 input_files = ["ArenButton1", "ArenSlideUp1", "ArenSwipeNext1", "JohanButton1", "JohanSwipeUp1", "JohanSlideNext1"]
 
 # Number of categories
-outputs = 3
+outputs = 4
 
 # training hyperparameters
 epochs = 5
