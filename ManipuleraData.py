@@ -11,7 +11,6 @@ in_file = 'PreprocessedData\ArenSwipeNext1.csv'
 out_file = 'ProcessedData\ArenSwipeNext1.csv'
 
 
-
 def file_to_framedata(csv_file):
     with open(csv_file) as csvfile:
 
@@ -50,6 +49,10 @@ def toStandardVector(dataObj):
 
     #padding
     numObj=dataObj['numObj']
+    skip=0
+    if numObj<standardLen:
+        skip=standardLen-numObj
+
     standardVector=[0]*(2+standardLen*5)
     currentIndex=0
     standardVector[currentIndex]=numObj
@@ -57,18 +60,23 @@ def toStandardVector(dataObj):
     for r in dataObj['rangeIdx']:
         standardVector[currentIndex]=r
         currentIndex+=1
+    currentIndex+=skip
     for d in dataObj['dopplerIdx']:
         standardVector[currentIndex]=d
         currentIndex+=1
+    currentIndex+=skip
     for p in dataObj['peakVal']:
         standardVector[currentIndex]=p
         currentIndex+=1
+    currentIndex+=skip    
     for x in dataObj['x']:
         standardVector[currentIndex]=x
         currentIndex+=1
+    currentIndex+=skip    
     for y in dataObj['y']:
         standardVector[currentIndex]=y
         currentIndex+=1
+    currentIndex+=skip    
     standardVector[currentIndex]=dataObj['Label']
     return standardVector
 
@@ -171,18 +179,15 @@ def sortOthersAndCutOf(dataObj,mappedIndexes):
         dataObj['peakVal']=dataObj['peakVal'][:standardLen]
         dataObj['x']=dataObj['x'][:standardLen]
         dataObj['y']=dataObj['y'][:standardLen]
-    r=np.asarray(dataObj['rangeIdx'])
-    d=np.asarray(dataObj['dopplerIdx'])
-    p=np.asarray(dataObj['peakVal'])
-    x=np.asarray(dataObj['x'])
-    y=np.asarray(dataObj['y'])
+    r=np.array(dataObj['rangeIdx'])
     b=1*(r<cutOfIndex)
-    dataObj['numObj']=np.sum(b)
-    dataObj['rangeIdx']=(r*b).tolist()
-    dataObj['dopplerIdx']=(d*b).tolist()
-    dataObj['peakVal']=(p*b).tolist()
-    dataObj['x']=(x*b).tolist()
-    dataObj['y']=(y*b).tolist()
+    numRemaningObj=np.sum(b)
+    dataObj['numObj']=numRemaningObj
+    dataObj['rangeIdx']=dataObj['rangeIdx'][:numRemaningObj]
+    dataObj['dopplerIdx']=dataObj['dopplerIdx'][:numRemaningObj]
+    dataObj['peakVal']=dataObj['peakVal'][:numRemaningObj]
+    dataObj['x']=dataObj['x'][:numRemaningObj]
+    dataObj['y']=dataObj['y'][:numRemaningObj]
 
 
 # Main for testing
@@ -190,6 +195,7 @@ def sortOthersAndCutOf(dataObj,mappedIndexes):
 # print(dataObj)
 
 frameData = file_to_framedata(in_file)
+print(frameData[0])
 
 frame_to_data(frameData, out_file)
 
