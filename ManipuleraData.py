@@ -7,8 +7,8 @@ import supp
 standardLen=10
 cutOfIndex=40
 
-in_file = 'PreprocessedData\Test2.csv'
-out_file = 'ProcessedData\standardData.csv'
+in_file = 'PreprocessedData\ArenSwipeNext1.csv'
+out_file = 'ProcessedData\ArenSwipeNext1.csv'
 
 
 
@@ -29,6 +29,13 @@ def file_to_framedata(csv_file):
             standardVec=toStandardVector(data)
             dataList.append(standardVec)
         return dataList
+
+def frame_to_data(frames, out_path):
+    with open(out_path, 'w', newline='') as out:
+        writer = csv.writer(out)
+        for frame in frames:
+            writer.writerow(frame)
+
 
 def toStandardVector(dataObj):
     global standardLen
@@ -184,12 +191,7 @@ def sortOthersAndCutOf(dataObj,mappedIndexes):
 
 frameData = file_to_framedata(in_file)
 
-print(frameData[0])
-
-#standardVector = toStandardVector(frameData[0])
-# print(dataObj)
-print(frameData[0])
-print(len(frameData[0]))
+frame_to_data(frameData, out_file)
 
 
 # Synthesize data
