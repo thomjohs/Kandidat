@@ -25,7 +25,9 @@ def file_to_framedata(csv_file):
             data['peakVal'] = supp.dString_to_iarray(row, 'peakVal')
             data['x'] = supp.dString_to_farray(row, 'x')
             data['y'] = supp.dString_to_farray(row, 'y')
-            dataList.append(data)
+            data['label'] = supp.dString_to_farray(row, 'label')
+            standardVec=toStandardVector(data)
+            dataList.append(standardVec)
         return dataList
 
 def toStandardVector(dataObj):
@@ -45,7 +47,7 @@ def toStandardVector(dataObj):
     if numObj<standardLen:
         #skip the amount of zeros which is supposed to be added
         skip=standardLen-numObj-1
-    standardVector=[0]*(1+standardLen*5)
+    standardVector=[0]*(2+standardLen*5)
     currentIndex=0
     standardVector[currentIndex]=numObj
     currentIndex+=1
@@ -69,6 +71,8 @@ def toStandardVector(dataObj):
         standardVector[currentIndex]=y
         currentIndex+=1
     currentIndex+=skip
+    standardVector[currentIndex]=dataObj['label']
+    currentIndex+=1
     return standardVector
 
 
