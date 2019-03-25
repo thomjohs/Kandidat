@@ -292,22 +292,22 @@ def readAndParseData16xx(Dataport, configParameters):
                 word = [1, 2**8, 2**16, 2**24]
                 #ReadStats
                 interFrameProcessingTime=np.matmul(byteBuffer[idX:idX+4],word)
-                print("interFrameProcessingTime: ", interFrameProcessingTime)
+                #print("interFrameProcessingTime: ", interFrameProcessingTime)
                 idX += 4
                 transmitOutputTime=np.matmul(byteBuffer[idX:idX+4],word)
                 idX += 4
-                print("transmitOutputTime: ",transmitOutputTime)
+                #print("transmitOutputTime: ",transmitOutputTime)
                 interFrameProcessingMargin=np.matmul(byteBuffer[idX:idX+4],word)
                 idX += 4
-                print("interFrameProcessingMargin: ",interFrameProcessingMargin)
+                #print("interFrameProcessingMargin: ",interFrameProcessingMargin)
                 interChirpProcessingMargin=np.matmul(byteBuffer[idX:idX+4],word)
-                print("interChirpProcessingMargin: ",interChirpProcessingMargin)
+                #print("interChirpProcessingMargin: ",interChirpProcessingMargin)
                 idX += 4
                 activFrameCPULoad=np.matmul(byteBuffer[idX:idX+4],word)
-                print("activFrameCPULoad: ", activFrameCPULoad)
+                #print("activFrameCPULoad: ", activFrameCPULoad)
                 idX += 4
                 interframeCPULoad=np.matmul(byteBuffer[idX:idX+4],word)
-                print("interframeCPULoad: ",interframeCPULoad)
+                #print("interframeCPULoad: ",interframeCPULoad)
                 idX += 4
     
 
@@ -455,9 +455,9 @@ while True:
         dataOk = update()
         #print("after update")
         if dataOk:
-            elapsed=time.time()-toc
-            print("Tid för update", elapsed)
-            toc=time.time()
+            #elapsed=time.time()-toc
+            #print("Tid för update", elapsed)
+            #toc=time.time()
             #print("ok main")
             # Store the current frame into frameData
             #frameData[currentIndex] = detObj
