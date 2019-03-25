@@ -193,6 +193,7 @@ def sortOthersAndCutOf(dataObj,mappedIndexes):
 # print(dataObj)
 
 frameData = file_to_framedata(in_file)
+
 print(frameData[0])
 
 standardVector = toStandardVector(frameData[0])
