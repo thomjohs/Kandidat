@@ -7,8 +7,8 @@ import supp
 standardLen=10
 cutOfIndex=40
 
-in_file = 'PreprocessedData\JohanswipeNext1.csv'
-out_file = 'ProcessedData\JohanSwipeNext1.csv'
+in_file = 'PreprocessedData\\alex_button1.csv'
+out_file = 'ProcessedData\AlexButton1.csv'
 
 
 def file_to_framedata(csv_file):
@@ -39,11 +39,11 @@ def frame_to_data(frames, out_path):
 def toStandardVector(dataObj):
     global standardLen
     #returns copy and not reference
-    rangeIdx=dataObj['rangeIdx'][:]
+    rangeIdx = dataObj['rangeIdx'][:]
     mergeSort(rangeIdx)
     #mappes where the range idexes lands after sorting
-    mappedIndexes=compareIndex(dataObj['rangeIdx'],rangeIdx)
-    dataObj['rangeIdx']=rangeIdx
+    mappedIndexes = compareIndex(dataObj['rangeIdx'], rangeIdx)
+    dataObj['rangeIdx'] = rangeIdx
     #output is at most standardLen but can be shorter
     sortOthersAndCutOf(dataObj, mappedIndexes)
 
