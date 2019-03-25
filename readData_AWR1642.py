@@ -462,6 +462,7 @@ while True:
             # Store the current frame into frameData
             #frameData[currentIndex] = detObj
             if msvcrt.kbhit():
+                
                 key = msvcrt.getch()
                 if key == b'1':
                         label = 'slideUp'
@@ -479,6 +480,8 @@ while True:
                     removeLabel(frameData, label)
                     label = 'background'
                 else:
+                    j+=1
+                    print(j)
                     label = 'background'
                 print(f'Current label: {label}')
             detObj['Label'] = label
