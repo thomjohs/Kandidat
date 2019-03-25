@@ -11,16 +11,26 @@ def dString_to_iarray(indata, label):
             s = ''
     return ilist
 
-def dString_to_farray(indata, label):
+
+def dString_to_farray(indata, label='0'):
     ilist = []
     s = ''
-    for i in indata[label]:
-        if str.isdigit(i) or i == '-' or i == '.':
-            s += i
-        elif s != '':
-            ilist.append(float(s))
-            s = ''
-    return ilist
+    if label == '0':
+        for i in indata:
+            if str.isdigit(i) or i == '-' or i == '.':
+                s += i
+            elif s != '':
+                ilist.append(float(s))
+                s = ''
+        return ilist
+    else:
+        for i in indata[label]:
+            if str.isdigit(i) or i == '-' or i == '.':
+                s += i
+            elif s != '':
+                ilist.append(float(s))
+                s = ''
+        return ilist
 
 def shuffle_gestures(frameList):
     shuffled = []
@@ -64,8 +74,10 @@ def label_to_int(frame):
         frame[last] = 0
     elif frame[last] == 'button':
         frame[last] = 1
-    else:
+    elif frame[last] == 'swipeNext':
         frame[last] = 2
+    else:
+        frame[last] = 3
     return frame
 
 
