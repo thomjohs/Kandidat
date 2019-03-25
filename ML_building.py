@@ -14,7 +14,7 @@ import supp
 vector_size = 52
 
 input_file = "ArenSwipeNext1"
-input_files = ["ArenSwipeNext1", "standardData"]
+input_files = ["ArenButton1", "ArenSlideUp1", "ArenSwipeNext1", "JohanButton1", "JohanSwipeUp1", "JohanSlideNext1"]
 
 # Number of categories
 outputs = 3
