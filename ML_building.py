@@ -13,7 +13,8 @@ import supp
 
 vector_size = 52
 
-input_file = "frameData.csv"
+input_file = "ArenSwipeNext1"
+input_files = ["ArenButton1", "ArenSlideUp1", "ArenSwipeNext1", "JohanButton1", "JohanSwipeUp1", "JohanSlideNext1"]
 
 # Number of categories
 outputs = 3
@@ -33,12 +34,20 @@ num_filters = 64
 kernel_size = 5
 
 
+def load_data_multiple(input_files):
+    frameList = []
+    for file in input_files:
+        frameList.extend(load_data(file))
+    return frameList
+
+
 def load_data(input_file):
     frameList = []
-    with open(input_file) as inp:
+    with open("ProcessedData\\" + input_file + ".csv") as inp:
         for row in inp:
             frame = supp.dString_to_farray(row)
-            frameList.append(frame)
+            if len(frame) != 0:
+                frameList.append(frame)
     return frameList
 
 
@@ -91,7 +100,7 @@ def build_lstm():
     return model
 
 
-x_train, x_test, y_train, y_test = split_data(list(map(supp.label_to_int, load_data(input_file))))
+x_train, x_test, y_train, y_test = split_data(list(map(supp.label_to_int, load_data_multiple(input_files))))
 
 train_seq = sequence.TimeseriesGenerator(x_train, y_train, length=time_steps, batch_size=batch_size)
 test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch_size=batch_size)
