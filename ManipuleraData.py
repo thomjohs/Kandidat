@@ -39,11 +39,11 @@ def frame_to_data(frames, out_path):
 def toStandardVector(dataObj):
     global standardLen
     #returns copy and not reference
-    rangeIdx=dataObj['rangeIdx'][:]
+    rangeIdx = dataObj['rangeIdx'][:]
     mergeSort(rangeIdx)
     #mappes where the range idexes lands after sorting
-    mappedIndexes=compareIndex(dataObj['rangeIdx'],rangeIdx)
-    dataObj['rangeIdx']=rangeIdx
+    mappedIndexes = compareIndex(dataObj['rangeIdx'], rangeIdx)
+    dataObj['rangeIdx'] = rangeIdx
     #output is at most standardLen but can be shorter
     sortOthersAndCutOf(dataObj, mappedIndexes)
 

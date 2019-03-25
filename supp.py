@@ -38,17 +38,21 @@ def shuffle_gestures(frameList):
     gestures = []
     group = []
     label = 'background'
+    i = 0
     for frame in frameList:
         if frame[len(frame) - 1] == label:
             group.append(frame)
         else:
             if label == 'background':
-                backgrounds.append(group)
+                if False:
+                    backgrounds.append(group)
+                i += 1
             else:
                 gestures.append(group)
 
             label = frame[len(frame) - 1]
             group = [frame]
+
 
     while len(backgrounds) != 0 and len(gestures) != 0:
         i = random.randint(0, len(backgrounds)-1)

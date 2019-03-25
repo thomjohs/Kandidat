@@ -14,20 +14,20 @@ import supp
 vector_size = 52
 
 input_file = "ArenSwipeNext1"
-input_files = ["ArenButton1", "ArenSlideUp1", "ArenSwipeNext1", "JohanButton1", "JohanSwipeUp1", "JohanSlideNext1"]
+input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1", "ArenButton1", "ArenSlideUp1", "ArenSwipeNext1"]
 
 # Number of categories
-outputs = 3
+outputs = 4
 
 # training hyperparameters
-epochs = 5
-time_steps = 20
-batch_size = 20
-training_ratio = 0.8
+epochs = 15
+time_steps = 10
+batch_size = 10
+training_ratio = 0.7
 
 # used in both models
-lstm_output = 12
-stateful = False
+lstm_output = 5
+stateful = True
 
 # only used in combined model
 num_filters = 64
@@ -44,8 +44,9 @@ def load_data_multiple(input_files):
 def load_data(input_file):
     frameList = []
     with open("ProcessedData\\" + input_file + ".csv") as inp:
-        for row in inp:
-            frame = supp.dString_to_farray(row)
+        reader = csv.reader(inp, delimiter=',')
+        for row in reader:
+            frame = row
             if len(frame) != 0:
                 frameList.append(frame)
     return frameList
@@ -57,7 +58,7 @@ def split_data(frameList):
     i = 0
     for frame in frameList:
         x[i] = np.array(frame[:vector_size-1])
-        y[i] = frame[vector_size]
+        y[i] = frame[vector_size-1]
         i += 1
     y = utils.to_categorical(y, outputs, dtype=np.float32)
     x_train = x[:int(len(frameList)*training_ratio)]
@@ -76,6 +77,7 @@ def build_clstm():
     model = Sequential()
     model.add(Conv1D(num_filters, kernel_size, input_shape=(time_steps, vector_size-1), activation='relu'))
     model.add(LSTM(lstm_output, return_sequences=True))
+    model.add(Dropout(0.1))
     model.add(LSTM(lstm_output))
     model.add(Dense(outputs, activation='softmax'))
     return model
@@ -91,6 +93,7 @@ def build_lstm():
                    stateful=stateful,
                    input_shape=(time_steps, vector_size - 1),
                    batch_size=batch_size))
+    model.add(Dropout(0.1))
     model.add(LSTM(lstm_output,
                    return_sequences=True,
                    stateful=stateful))
@@ -100,7 +103,25 @@ def build_lstm():
     return model
 
 
-x_train, x_test, y_train, y_test = split_data(list(map(supp.label_to_int, load_data_multiple(input_files))))
+data = supp.shuffle_gestures(load_data_multiple(input_files))
+
+data = data[:len(data)//100 * 100]
+
+
+gestFrames = 0
+backFrames = 0
+for frame in data:
+    if frame[len(frame) -1] == 'background':
+        backFrames += 1
+    else:
+        gestFrames += 1
+
+print(gestFrames)
+print(backFrames)
+print(f'Percentage of gestures: {gestFrames/(gestFrames+backFrames)}')
+
+
+x_train, x_test, y_train, y_test = split_data(list(map(supp.label_to_int, data)))
 
 train_seq = sequence.TimeseriesGenerator(x_train, y_train, length=time_steps, batch_size=batch_size)
 test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch_size=batch_size)
@@ -136,6 +157,6 @@ plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper left')
 plt.show()
 
-predict_seq = test_seq = sequence.TimeseriesGenerator(x_test[100:200], y_test[100:200], length=time_steps, batch_size=batch_size)
-predict = model.predict_generator(predict_seq, verbose=1)
+# predict_seq = test_seq = sequence.TimeseriesGenerator(x_test[100:200], y_test[100:200], length=time_steps, batch_size=batch_size)
+# predict = model.predict_generator(predict_seq, verbose=1)
 
