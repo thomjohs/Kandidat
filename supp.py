@@ -85,6 +85,16 @@ def label_to_int(frame):
     return frame
 
 
+def int_to_label(i):
+    if i == 0:
+        return 'slideUp'
+    elif i == 1:
+        return 'button'
+    elif i == 2:
+        return 'swipeNext'
+    else:
+        return 'background'
+
 
 def noise(num):
     num += num/2*random.randint(-1, 1)

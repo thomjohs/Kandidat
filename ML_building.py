@@ -1,20 +1,15 @@
-import tensorflow as tf
-from keras.preprocessing import sequence
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation
-from keras.layers import Embedding
-from keras import utils
-from keras.layers import LSTM, Conv1D
-import numpy as np
-import csv
-import random
-import matplotlib.pyplot as plt
 import supp
+import ML_functions as ml
+from keras.preprocessing import sequence
+import matplotlib.pyplot as plt
+import numpy as np
+
 
 vector_size = 52
 
 input_file = "ArenSwipeNext1"
-input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1", "ArenButton1", "ArenSlideUp1", "ArenSwipeNext1"]
+input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
+               "ArenButton1", "ArenSlideUp1", "ArenSwipeNext1"]
 
 # Number of categories
 outputs = 4
@@ -33,78 +28,14 @@ stateful = True
 num_filters = 64
 kernel_size = 5
 
-
-def load_data_multiple(input_files):
-    frameList = []
-    for file in input_files:
-        frameList.extend(load_data(file))
-    return frameList
-
-
-def load_data(input_file):
-    frameList = []
-    with open("ProcessedData\\" + input_file + ".csv") as inp:
-        reader = csv.reader(inp, delimiter=',')
-        for row in reader:
-            frame = row
-            if len(frame) != 0:
-                frameList.append(frame)
-    return frameList
-
-
-def split_data(frameList):
-    x = np.empty((len(frameList), vector_size-1), dtype=np.float32)
-    y = np.empty((len(frameList), 1), dtype=np.float32)
-    i = 0
-    for frame in frameList:
-        x[i] = np.array(frame[:vector_size-1])
-        y[i] = frame[vector_size-1]
-        i += 1
-    y = utils.to_categorical(y, outputs, dtype=np.float32)
-    x_train = x[:int(len(frameList)*training_ratio)]
-    x_test = x[int(len(frameList)*training_ratio):len(frameList)]
-    y_train = y[:int(len(frameList)*training_ratio)]
-    y_test = y[int(len(frameList)*training_ratio):len(frameList)]
-    return x_train, x_test, y_train, y_test
+# for saving the model and weights
+export = True
+modelFile = "model.json"
+weightFile = "weights.h5"
 
 
 
-
-def build_clstm():
-    global num_filters
-    global kernel_size
-    global lstm_output
-    model = Sequential()
-    model.add(Conv1D(num_filters, kernel_size, input_shape=(time_steps, vector_size-1), activation='relu'))
-    model.add(LSTM(lstm_output, return_sequences=True))
-    model.add(Dropout(0.1))
-    model.add(LSTM(lstm_output))
-    model.add(Dense(outputs, activation='softmax'))
-    return model
-
-
-def build_lstm():
-    global batch_size
-    global lstm_output
-    global stateful
-    model = Sequential()
-    model.add(LSTM(lstm_output,
-                   return_sequences=True,
-                   stateful=stateful,
-                   input_shape=(time_steps, vector_size - 1),
-                   batch_size=batch_size))
-    model.add(Dropout(0.1))
-    model.add(LSTM(lstm_output,
-                   return_sequences=True,
-                   stateful=stateful))
-    model.add(LSTM(lstm_output,
-                   stateful=stateful))
-    model.add(Dense(outputs, activation='softmax'))
-    return model
-
-
-data = supp.shuffle_gestures(load_data_multiple(input_files))
-
+data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
 data = data[:len(data)//100 * 100]
 
 
@@ -121,14 +52,14 @@ print(backFrames)
 print(f'Percentage of gestures: {gestFrames/(gestFrames+backFrames)}')
 
 
-x_train, x_test, y_train, y_test = split_data(list(map(supp.label_to_int, data)))
+x_train, x_test, y_train, y_test = ml.split_data(list(map(supp.label_to_int, data)), vector_size, outputs, training_ratio)
 
 train_seq = sequence.TimeseriesGenerator(x_train, y_train, length=time_steps, batch_size=batch_size)
 test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch_size=batch_size)
 
 
-model = build_lstm()
-# model = build_clstm()
+model = ml.build_lstm(time_steps, vector_size, outputs, batch_size, lstm_output, stateful)
+# model = ml.build_clstm(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output)
 
 model.compile(loss='categorical_crossentropy',
               optimizer='adam',
@@ -157,6 +88,10 @@ plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper left')
 plt.show()
 
-# predict_seq = test_seq = sequence.TimeseriesGenerator(x_test[100:200], y_test[100:200], length=time_steps, batch_size=batch_size)
-# predict = model.predict_generator(predict_seq, verbose=1)
+if export:
+    json_model = model.to_json()
+    with open("Model\\" + modelFile, 'w') as file:
+        file.write(json_model)
+    model.save_weights("Model\\" + weightFile)
+
 
