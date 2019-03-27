@@ -75,7 +75,6 @@ while True:
                 print(f'Current label: {label}')
             detObj['Label'] = label
             frameData.append(detObj)
-            print("new frame")
             currentIndex += 1
 
         #
