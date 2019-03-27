@@ -29,7 +29,7 @@ num_filters = 64
 kernel_size = 5
 
 # for saving the model and weights
-export = True
+export = False
 modelFile = "model.json"
 weightFile = "weights.h5"
 
