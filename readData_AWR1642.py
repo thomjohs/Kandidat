@@ -28,8 +28,8 @@ def serialConfig(configFileName):
     #Dataport = serial.Serial('/dev/ttyACM1', 921600)
     
     # Windows
-    CLIport = serial.Serial('COM3', 115200)
-    Dataport = serial.Serial('COM4', 921600)
+    CLIport = serial.Serial('COM5', 115200)
+    Dataport = serial.Serial('COM6', 921600)
 
     # Read the configuration file and send it to the board
     config = [line.rstrip('\r\n') for line in open(configFileName)]
@@ -337,10 +337,8 @@ def readAndParseData16xx(Dataport, configParameters):
 # ------------------------------------------------------------------
 
 # Funtion to update the data and display in the plot
-def update():
-     
+def update(detObj):
     dataOk = 0
-    global detObj
     global toc
     x = []
     y = []
@@ -369,7 +367,7 @@ def update():
     #t.setData(r,v)
     #QtGui.QApplication.processEvents()
     
-    return dataOk
+    return dataOk, detObj
 
 def frameDataToFile(frameData,filePath):
     path="Data\\" + filePath
@@ -413,6 +411,14 @@ def removeLabel(list, label):
 # -------------------------    MAIN   -----------------------------------------  
 
 
+# Configurate the serial port
+CLIport, Dataport = serialConfig(configFileName)
+
+# Get the configuration parameters from the configuration file
+configParameters = parseConfigFile(configFileName)
+
+# START QtAPPfor the plot
+app = QtGui.QApplication([])
 
 
 

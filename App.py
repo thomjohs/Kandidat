@@ -4,6 +4,7 @@ import supp
 import ML_functions as ml
 import numpy as np
 from keras.preprocessing import sequence
+import ManipuleraData as manip
 
 input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
                "ArenButton1", "ArenSlideUp1", "ArenSwipeNext1"]
@@ -11,14 +12,10 @@ data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
 data = data[:len(data)//100 * 100]
 
 
-# Configurate the serial port
-#CLIport, Dataport = radar.serialConfig(radar.configFileName)
+# ML variables set to the same as current model
 
-# Get the configuration parameters from the configuration file
-#configParameters = radar.parseConfigFile(radar.configFileName)
+batch_size = 5
 
-# START QtAPPfor the plot
-#app = radar.QtGui.QApplication([])
 
 # Model loading data
 modelFile = "model.json"
@@ -51,17 +48,20 @@ model.compile(loss='categorical_crossentropy',
 # print(f' Data = {test}\n Label = {test_label}')
 # print(model.predict(np.array(test).reshape(1, 10)))
 
+'''
 test = []
 test_label = []
 for j in range(10):
-    test.append(data[2040 + j][:51])
-    test_label.append(2040 + j)
+    test.append(data[40 + j][:51])
+    test_label.append(40 + j)
 
-for i in range(3):
+for i in range(1):
     for j in range(10):
-        test.append(data[2040 + i*10 + j + 1][:51])
-        test_label.append(2040 + i*10 + j + 1)
+        test.append(data[40 + i*10 + j + 10][:51])
+        test_label.append(40 + i*10 + j + 10)
 
+    print(test)
+    print(test_label)
     predict_seq = test_seq = sequence.TimeseriesGenerator(test, test_label, length=10, batch_size=10, start_index=0)
     predict = model.predict_generator(predict_seq, verbose=1)
 
@@ -72,41 +72,43 @@ for i in range(3):
 
     test = test[10:]
     test_label = test_label[10:]
-
+'''
 
 
 while True:
     try:
         # Update the data and check if the data is okay
-        dataOk = radar.update()
+        dataOk, detObj = radar.update(detObj)
 
         if dataOk:
+            detObj = manip.toStandardVector(detObj)
             # Store the current frame into frameData
             frameData.append(detObj)
             currentIndex += 1
 
-        if currentIndex == 10:
-            lastFrames = frameData
-            frameData = []
-            test_label = []
+            if len(frameData) == 10:
+                lastFrames.extend(frameData)
+                frameData = []
+                test_label = [0] * 20
 
-            if len(lastFrames) == 20:
+                if len(lastFrames) == 20:
+                    print(lastFrames)
+                    predict_seq = sequence.TimeseriesGenerator(lastFrames, test_label, length=10, batch_size=batch_size)
+                    predict = model.predict_generator(predict_seq, verbose=1)
+                    lastFrames = lastFrames[10:]
 
-                predict_seq = test_seq = sequence.TimeseriesGenerator(test, test_label, length=10, batch_size=2)
-                predict = model.predict_generator(predict_seq, verbose=1)
-                lastFrames = lastFrames[10:]
 
-                i = 0
-                for pred in predict:
-                    print(f'Prediction: {supp.int_to_label(np.where(pred == np.amax(pred))[0])}, Confidence: {np.amax(pred)}, Actual: {test_label[i]}')
-                    i += 1
+                    i = 0
+                    for pred in predict:
+                        print(f'Prediction: {supp.int_to_label(np.where(pred == np.amax(pred))[0])}, Confidence: {np.amax(pred)}, Actual: {test_label[i]}')
+                        i += 1
 
 
     # Stop the program and close everything if Ctrl + c is pressed
     except KeyboardInterrupt:
-        CLIport.write(('sensorStop\n').encode())
-        CLIport.close()
-        Dataport.close()
+        radar.CLIport.write(('sensorStop\n').encode())
+        radar.CLIport.close()
+        radar.Dataport.close()
         # print(frameData)
         # win.close()
         break

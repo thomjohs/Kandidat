@@ -44,7 +44,7 @@ def shuffle_gestures(frameList):
             group.append(frame)
         else:
             if label == 'background':
-                if False:
+                if i % 2 == 0:
                     backgrounds.append(group)
                 i += 1
             else:

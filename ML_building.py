@@ -15,9 +15,9 @@ input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
 outputs = 4
 
 # training hyperparameters
-epochs = 15
+epochs = 5
 time_steps = 10
-batch_size = 10
+batch_size = 5
 training_ratio = 0.7
 
 # used in both models
@@ -36,8 +36,8 @@ weightFile = "weights.h5"
 
 
 data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
-data = data[:len(data)//100 * 100]
-
+data = data[:len(data)//1000 * 1000]
+print(len(data))
 
 gestFrames = 0
 backFrames = 0

@@ -52,8 +52,10 @@ def toStandardVector(dataObj):
     skip=0
     if numObj<standardLen:
         skip=standardLen-numObj
-
-    standardVector=[0]*(2+standardLen*5)
+    if 'Label' in dataObj.keys():
+        standardVector=[0]*(2+standardLen*5)
+    else:
+        standardVector = [0] * (1 + standardLen * 5)
     currentIndex=0
     standardVector[currentIndex]=numObj
     currentIndex+=1
@@ -76,8 +78,10 @@ def toStandardVector(dataObj):
     for y in dataObj['y']:
         standardVector[currentIndex]=y
         currentIndex+=1
-    currentIndex+=skip    
-    standardVector[currentIndex]=dataObj['Label']
+
+    if 'Label' in dataObj.keys():
+        currentIndex += skip
+        standardVector[currentIndex]=dataObj['Label']
     return standardVector
 
 
@@ -193,10 +197,10 @@ def sortOthersAndCutOf(dataObj,mappedIndexes):
 # Main for testing
 # dataObj={'numObj':5,'rangeIdx':[1,12,41,6,2],'dopplerIdx':[1,2,3,4,5],'peakVal':[1,2,3,4,5],'x':[1,2,3,4,5],'y':[1,2,3,4,5],}
 # print(dataObj)
-
-frameData = file_to_framedata(in_file)
-print(frameData[0])
-frame_to_data(frameData, out_file)
+def main():
+    frameData = file_to_framedata(in_file)
+    print(frameData[0])
+    frame_to_data(frameData, out_file)
 
 
 # Synthesize data

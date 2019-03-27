@@ -2,13 +2,13 @@ import readData_AWR1642 as radar
 import msvcrt
 
 # Configurate the serial port
-CLIport, Dataport = radar.serialConfig(radar.configFileName)
+#CLIport, Dataport = radar.serialConfig(radar.configFileName)
 
 # Get the configuration parameters from the configuration file
-configParameters = radar.parseConfigFile(radar.configFileName)
+#configParameters = radar.parseConfigFile(radar.configFileName)
 
 # START QtAPPfor the plot
-app = radar.QtGui.QApplication([])
+#app = radar.QtGui.QApplication([])
 
 # Set the plot
 # pg.setConfigOption('background','w')
@@ -41,7 +41,7 @@ while True:
         # print("Tid mellan hämtning", elapsed)
         # tic=time.time()
         # Update the data and check if the data is okay
-        dataOk = radar.update()
+        dataOk, detObj = radar.update(detObj)
         # print("after update")
         if dataOk:
             # elapsed=time.time()-toc
@@ -75,6 +75,7 @@ while True:
                 print(f'Current label: {label}')
             detObj['Label'] = label
             frameData.append(detObj)
+            print("new frame")
             currentIndex += 1
 
         #
@@ -84,9 +85,9 @@ while True:
 
     # Stop the program and close everything if Ctrl + c is pressed
     except KeyboardInterrupt:
-        CLIport.write(('sensorStop\n').encode())
-        CLIport.close()
-        Dataport.close()
+        radar.CLIport.write(('sensorStop\n').encode())
+        radar.CLIport.close()
+        radar.Dataport.close()
         # print(frameData)
         filename = input("What's the file name?")
         # frameDataToFile(frameData,filename)
