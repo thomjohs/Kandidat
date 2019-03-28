@@ -11,7 +11,7 @@ in_file = 'PreprocessedData\\alex_button1.csv'
 out_file = 'ProcessedData\AlexButton1.csv'
 
 
-def file_to_framedata(csv_file):
+def file_to_frames(csv_file):
     with open(csv_file) as csvfile:
 
         dataList = []
@@ -29,7 +29,14 @@ def file_to_framedata(csv_file):
             dataList.append(standardVec)
         return dataList
 
-def frame_to_data(frames, out_path):
+def framedata_to_file(frameData,out_path):
+    dataList = []
+    for frame in frameData:
+        standardVector = toStandardVector(frame)
+        dataList.append(standardVector)
+    frames_to_file(dataList,out_path)
+
+def frames_to_file(frames, out_path):
     with open(out_path, 'w', newline='') as out:
         writer = csv.writer(out)
         for frame in frames:
@@ -153,7 +160,6 @@ def binaryIndexSearch(asortedlist, i):
 def sortOthersAndCutOf(dataObj,mappedIndexes):
     global standardLen
     global cutOfIndex
-    numberOfCutOffs=0
     numObj=dataObj['numObj']
     dopplerIdx = [0] * numObj
     peakVal = [0] * numObj
@@ -166,7 +172,6 @@ def sortOthersAndCutOf(dataObj,mappedIndexes):
             a=0
             #exception
         else:
-            #print(numberOfCutOffs)
             dopplerIdx[i]=dataObj['dopplerIdx'][j]
             peakVal[i]=dataObj['peakVal'][j]
             x[i]=dataObj['x'][j]
@@ -198,9 +203,9 @@ def sortOthersAndCutOf(dataObj,mappedIndexes):
 # dataObj={'numObj':5,'rangeIdx':[1,12,41,6,2],'dopplerIdx':[1,2,3,4,5],'peakVal':[1,2,3,4,5],'x':[1,2,3,4,5],'y':[1,2,3,4,5],}
 # print(dataObj)
 def main():
-    frameData = file_to_framedata(in_file)
+    frameData = file_to_frames(in_file)
     print(frameData[0])
-    frame_to_data(frameData, out_file)
+    frames_to_file(frameData, out_file)
 
 
 # Synthesize data

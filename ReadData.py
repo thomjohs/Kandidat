@@ -1,5 +1,6 @@
 import readData_AWR1642 as radar
 import msvcrt
+import ManipuleraData as mainp
 
 # Configurate the serial port
 #CLIport, Dataport = radar.serialConfig(radar.configFileName)
@@ -60,6 +61,9 @@ while True:
         filename = input("What's the file name? ([Namn]+[Gest]+[nummer i serie])")
         # frameDataToFile(frameData,filename)
         radar.listOfDictToFile(frameData, filename)
+        #create processed path
+        path=f"ProcessedData\{filename}.csv"
+        mainp.framedata_to_file(frameData, path)
         # win.close()
         break
 
