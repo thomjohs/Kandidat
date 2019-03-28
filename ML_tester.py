@@ -1,3 +1,5 @@
+import supp
+import ML_functions as ml
 from pandas import DataFrame
 from pandas import Series
 from pandas import concat
@@ -5,6 +7,7 @@ from pandas import read_csv
 from pandas import datetime
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import MinMaxScaler
+from keras.preprocessing import sequence
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import LSTM
@@ -14,6 +17,8 @@ import matplotlib
 matplotlib.use('Agg')
 from matplotlib import pyplot
 import numpy
+
+vector_size = 52
 
 # date-time parsing function for loading the dataset
 def parser(x):
@@ -80,59 +85,129 @@ def evaluate(model, raw_data, scaled_dataset, scaler, offset, batch_size):
 	return rmse
 
 # fit an LSTM network to training data
-def fit_lstm(train, test, raw, scaler, batch_size, nb_epoch, neurons):
-	X, y = train[:, 0:-1], train[:, -1]
-	X = X.reshape(X.shape[0], 1, X.shape[1])
-	# prepare model
-	model = Sequential()
-	model.add(LSTM(neurons, batch_input_shape=(batch_size, X.shape[1], X.shape[2]), stateful=True))
-	model.add(Dense(1))
-	model.compile(loss='mean_squared_error', optimizer='adam')
-	# fit model
-	train_rmse, test_rmse = list(), list()
-	for i in range(nb_epoch):
-		model.fit(X, y, epochs=1, batch_size=batch_size, verbose=0, shuffle=False)
-		model.reset_states()
-		# evaluate model on train data
-		raw_train = raw[-(len(train)+len(test)+1):-len(test)]
-		train_rmse.append(evaluate(model, raw_train, train, scaler, 0, batch_size))
-		model.reset_states()
-		# evaluate model on test data
-		raw_test = raw[-(len(test)+1):]
-		test_rmse.append(evaluate(model, raw_test, test, scaler, 0, batch_size))
-		model.reset_states()
-	history = DataFrame()
-	history['train'], history['test'] = train_rmse, test_rmse
+def run_ml(train_seq, test_seq, batch_size, epochs, time_steps, outputs, lstm_output, stateful):
+	## NEW
+	model = ml.build_lstm(time_steps, vector_size, outputs, batch_size, lstm_output, stateful)
+	model = ml.build_clstm(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output)
+
+	model.compile(loss='categorical_crossentropy',
+				  optimizer='adam',
+				  metrics=['accuracy'])
+
+	history = model.fit_generator(train_seq, epochs=epochs, validation_data=test_seq)
 	return history
+
+
+
+	## OLD
+	# X, y = train[:, 0:-1], train[:, -1]
+	# X = X.reshape(X.shape[0], 1, X.shape[1])
+	# # prepare model
+	# model = Sequential()
+	# model.add(LSTM(neurons, batch_input_shape=(batch_size, X.shape[1], X.shape[2]), stateful=True))
+	# model.add(Dense(1))
+	# model.compile(loss='mean_squared_error', optimizer='adam')
+	# # fit model
+	# train_rmse, test_rmse = list(), list()
+	# for i in range(nb_epoch):
+	# 	model.fit(X, y, epochs=1, batch_size=batch_size, verbose=0, shuffle=False)
+	# 	model.reset_states()
+	# 	# evaluate model on train data
+	# 	raw_train = raw[-(len(train)+len(test)+1):-len(test)]
+	# 	train_rmse.append(evaluate(model, raw_train, train, scaler, 0, batch_size))
+	# 	model.reset_states()
+	# 	# evaluate model on test data
+	# 	raw_test = raw[-(len(test)+1):]
+	# 	test_rmse.append(evaluate(model, raw_test, test, scaler, 0, batch_size))
+	# 	model.reset_states()
+	# history = DataFrame()
+	# history['train'], history['test'] = train_rmse, test_rmse
+	# return history
 
 # run diagnostic experiments
 def run():
-	# load dataset
-	series = read_csv('shampoo-sales.csv', header=0, parse_dates=[0], index_col=0, squeeze=True, date_parser=parser)
-	# transform data to be stationary
-	raw_values = series.values
-	diff_values = difference(raw_values, 1)
-	# transform data to be supervised learning
-	supervised = timeseries_to_supervised(diff_values, 1)
-	supervised_values = supervised.values
-	# split data into train and test-sets
-	train, test = supervised_values[0:-12], supervised_values[-12:]
-	# transform the scale of the data
-	scaler, train_scaled, test_scaled = scale(train, test)
-	# fit and evaluate model
-	train_trimmed = train_scaled[2:, :]
+	## NEW
+
+	# Config for data
+	outputs = 4
+	training_ratio = 0.7
+	time_steps = 10
+	batch_size = 10
+
+	# Load data
+	input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
+				   "ArenButton1", "ArenSlideUp1", "ArenSwipeNext1"]
+	data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
+	data = data[:len(data) // 1000 * 1000]
+	print(len(data))
+
+
+	gestFrames = 0
+	backFrames = 0
+	for frame in data:
+		if frame[len(frame) - 1] == 'background':
+			backFrames += 1
+		else:
+			gestFrames += 1
+
+	print(gestFrames)
+	print(backFrames)
+	print(f'Percentage of gestures: {gestFrames / (gestFrames + backFrames)}')
+
+	# Split data
+	x_train, x_test, y_train, y_test = ml.split_data(list(map(supp.label_to_int, data)), vector_size, outputs,
+													 training_ratio)
+
+
+	train_seq = sequence.TimeseriesGenerator(x_train, y_train, length=time_steps, batch_size=batch_size)
+	test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch_size=batch_size)
+
 	# config
 	repeats = 10
 	n_batch = 4
 	n_epochs = 500
-	n_neurons = 1
-	# run diagnostic tests
+	time_steps = 10
+	outputs = 4
+	lstm_output = 5
+
+
 	for i in range(repeats):
-		history = fit_lstm(train_trimmed, test_scaled, raw_values, scaler, n_batch, n_epochs, n_neurons)
+		history = run_ml(train_seq, test_seq, n_batch, n_epochs, time_steps, outputs, lstm_output)
 		pyplot.plot(history['train'], color='blue')
 		pyplot.plot(history['test'], color='orange')
 		print('%d) TrainRMSE=%f, TestRMSE=%f' % (i, history['train'].iloc[-1], history['test'].iloc[-1]))
 	pyplot.savefig('epochs_diagnostic.png')
+
+
+	##OLD
+
+
+	# # load dataset
+	# series = read_csv('shampoo-sales.csv', header=0, parse_dates=[0], index_col=0, squeeze=True, date_parser=parser)
+	# # transform data to be stationary
+	# raw_values = data.values
+	# diff_values = difference(raw_values, 1)
+	# # transform data to be supervised learning
+	# supervised = timeseries_to_supervised(diff_values, 1)
+	# supervised_values = supervised.values
+	# # split data into train and test-sets
+	# train, test = supervised_values[0:-12], supervised_values[-12:]
+	# # transform the scale of the data
+	# scaler, train_scaled, test_scaled = scale(train, test)
+	# # fit and evaluate model
+	# train_trimmed = train_scaled[2:, :]
+	# # config
+	# repeats = 10
+	# n_batch = 4
+	# n_epochs = 500
+	# n_neurons = 1
+	# # run diagnostic tests
+	# for i in range(repeats):
+	# 	history = run_ml(train_trimmed, test_scaled, raw_values, scaler, n_batch, n_epochs, n_neurons)
+	# 	pyplot.plot(history['train'], color='blue')
+	# 	pyplot.plot(history['test'], color='orange')
+	# 	print('%d) TrainRMSE=%f, TestRMSE=%f' % (i, history['train'].iloc[-1], history['test'].iloc[-1]))
+	# pyplot.savefig('epochs_diagnostic.png')
 
 # entry point
 run()
