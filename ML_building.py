@@ -13,20 +13,20 @@ input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
                "ArenButton2", "ArenSlideUp2", "ArenSwipeNext2",
                "AndreasButton1", "AndreasSlideUp1", "AndreasSwipeNext1",
                "AndreasButton2", "AndreasSlideUp2", "AndreasSwipeNext2",
-               "GoodBackground1"]
+               "GoodBackground1", "GoodBackground2"]
 
 # Number of categories
 outputs = 4
 
 # training hyperparameters
 epochs = 10
-time_steps = 10
-batch_size = 10
+time_steps = 5
+batch_size = 40
 training_ratio = 0.7
 
 # used in both models
-lstm_output = 5
-stateful = True
+lstm_output = 20
+stateful = False
 
 # only used in combined model
 num_filters = 64
@@ -37,6 +37,9 @@ export = False
 modelFile = "model.json"
 weightFile = "weights.h5"
 
+# saves plot
+plot = False
+plotFile = f'Plots\\ts{time_steps}bs{batch_size}lstmOut{lstm_output}st{stateful}.pdf'
 
 data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
 data = data[:len(data)//1000 * 1000]
@@ -52,9 +55,7 @@ for frame in data:
     else:
         gestFrames += 1
 
-print(f'Gestures: {gestFrames}')
-print(f'Backgrounds: {backFrames}')
-print(f'Percentage of gestures: {gestFrames/(gestFrames+backFrames)}')
+
 
 
 x_train, x_test, y_train, y_test = ml.split_data(list(map(supp.label_to_int, data)), vector_size, outputs, training_ratio)
@@ -91,12 +92,20 @@ plt.title('model accuracy')
 plt.ylabel('accuracy')
 plt.xlabel('epoch')
 plt.legend(['train', 'test'], loc='upper left')
+if plot:
+    plt.savefig(plotFile, bbox_inches='tight')
 plt.show()
+
+print(f'Gestures: {gestFrames}')
+print(f'Backgrounds: {backFrames}')
+print(f'Percentage of gestures: {gestFrames/(gestFrames+backFrames)}')
 
 if export:
     json_model = model.to_json()
     with open("Model\\" + modelFile, 'w') as file:
         file.write(json_model)
     model.save_weights("Model\\" + weightFile)
+
+
 
 
