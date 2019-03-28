@@ -9,7 +9,11 @@ vector_size = 52
 
 input_file = "ArenSwipeNext1"
 input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
-               "ArenButton1", "ArenSlideUp1", "ArenSwipeNext1"]
+               "ArenButton1", "ArenSlideUp1", "ArenSwipeNext1",
+               "ArenButton2", "ArenSlideUp2", "ArenSwipeNext2",
+               "AndreasButton1", "AndreasSlideUp1", "AndreasSwipeNext1",
+               "AndreasButton2", "AndreasSlideUp2", "AndreasSwipeNext2",
+               "GoodBackground1"]
 
 # Number of categories
 outputs = 4
@@ -36,18 +40,20 @@ weightFile = "weights.h5"
 
 data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
 data = data[:len(data)//1000 * 1000]
-print(len(data))
+
 
 gestFrames = 0
 backFrames = 0
 for frame in data:
-    if frame[len(frame) -1] == 'background':
+    if len(frame) != 52:
+        print(frame[51])
+    if frame[len(frame) -1] == 'goodBackground':
         backFrames += 1
     else:
         gestFrames += 1
 
-print(gestFrames)
-print(backFrames)
+print(f'Gestures: {gestFrames}')
+print(f'Backgrounds: {backFrames}')
 print(f'Percentage of gestures: {gestFrames/(gestFrames+backFrames)}')
 
 

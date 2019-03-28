@@ -7,8 +7,8 @@ import supp
 standardLen=10
 cutOfIndex=40
 
-in_file = 'PreprocessedData\\alex_button1.csv'
-out_file = 'ProcessedData\AlexButton1.csv'
+in_file = 'PreprocessedData\\ArenSlideUp2.csv'
+out_file = 'ProcessedData\\ArenSlideUp2.csv'
 
 
 def file_to_frames(csv_file):
@@ -204,10 +204,9 @@ def sortOthersAndCutOf(dataObj,mappedIndexes):
 # print(dataObj)
 def main():
     frameData = file_to_frames(in_file)
-    print(frameData[0])
     frames_to_file(frameData, out_file)
 
-
+# main()
 # Synthesize data
 
 # Translate
