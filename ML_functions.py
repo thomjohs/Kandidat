@@ -63,7 +63,7 @@ def build_lstm(time_steps, vector_size, outputs, batch_size, lstm_output, statef
                    stateful=stateful,
                    input_shape=(time_steps, vector_size - 1),
                    batch_size=batch_size))
-    model.add(Dropout(0.1))
+    # model.add(Dropout(0.1))
     model.add(LSTM(lstm_output,
                    return_sequences=True,
                    stateful=stateful))
