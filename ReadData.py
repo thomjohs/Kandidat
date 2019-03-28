@@ -36,6 +36,8 @@ while True:
                 elif key == b'c':
                     radar.removeLabel(frameData, label)
                     label = 'background'
+                elif key == b'g':
+                    label = 'goodBackground'
                 else:
                     j += 1
                     print(j)
@@ -55,7 +57,7 @@ while True:
         filename = input("What's the file name? ([Namn]+[Gest]+[nummer i serie])")
         radar.listOfDictToFile(frameData, filename)
         #create processed path
-        path=format("ProcessedData\{}.csv",filename)
+        path="ProcessedData\\{}.csv".format(filename)
         mainp.framedata_to_file(frameData, path)
         break
 

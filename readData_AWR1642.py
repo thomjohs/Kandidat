@@ -6,7 +6,7 @@ from pyqtgraph.Qt import QtGui
 import msvcrt
 
 # Change the configuration file name
-configFileName = 'config\\1642config4.cfg'
+configFileName = 'config\\ConfigThatIsUsed.cfg'
 CLIport = {}
 Dataport = {}
 tic=time.time()
