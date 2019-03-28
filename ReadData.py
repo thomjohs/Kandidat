@@ -47,23 +47,15 @@ while True:
             frameData.append(detObj)
             currentIndex += 1
 
-        #
-        # Sampling frequency of 30 Hz
-        # elapsed=time.time()-tic
-        # print("t: ",elapsed)
-
     # Stop the program and close everything if Ctrl + c is pressed
     except KeyboardInterrupt:
         radar.CLIport.write(('sensorStop\n').encode())
         radar.CLIport.close()
         radar.Dataport.close()
-        # print(frameData)
         filename = input("What's the file name? ([Namn]+[Gest]+[nummer i serie])")
-        # frameDataToFile(frameData,filename)
         radar.listOfDictToFile(frameData, filename)
         #create processed path
-        path=f"ProcessedData\{filename}.csv"
+        path=format("ProcessedData\{}.csv",filename)
         mainp.framedata_to_file(frameData, path)
-        # win.close()
         break
 
