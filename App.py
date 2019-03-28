@@ -5,6 +5,7 @@ import ML_functions as ml
 import numpy as np
 from keras.preprocessing import sequence
 import ManipuleraData as manip
+import msvcrt
 
 input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
                "ArenButton1", "ArenSlideUp1", "ArenSwipeNext1"]
@@ -32,11 +33,15 @@ def loadModel(jsonFile, weightFile):
 
 
 # Main loop
+mute = False
 detObj = {}
+key = '0'
 frameData = []
+frameKeys = []
 currentIndex = 0
 j = 0
 lastFrames = []
+lastLabels = []
 
 
 model = loadModel(modelFile, weightFile)
@@ -81,27 +86,36 @@ while True:
         dataOk, detObj = radar.update(detObj)
 
         if dataOk:
+            if msvcrt.kbhit():
+                key = msvcrt.getch()
+                if key == b'm':
+                    mute = not(mute)
+
+
             detObj = manip.toStandardVector(detObj)
             # Store the current frame into frameData
             frameData.append(detObj)
+            frameKeys.append(key)
             currentIndex += 1
 
             if len(frameData) == 10:
                 lastFrames.extend(frameData)
+                lastLabels.extend(frameKeys)
                 frameData = []
-                test_label = [0] * 20
+                frameKeys = []
 
                 if len(lastFrames) == 20:
                     print(lastFrames)
-                    predict_seq = sequence.TimeseriesGenerator(lastFrames, test_label, length=10, batch_size=batch_size)
+                    predict_seq = sequence.TimeseriesGenerator(lastFrames, lastLabels, length=10, batch_size=batch_size)
                     predict = model.predict_generator(predict_seq, verbose=1)
                     lastFrames = lastFrames[10:]
-
+                    lastLabels = lastLabels [10:]
 
                     i = 0
-                    for pred in predict:
-                        print(f'Prediction: {supp.int_to_label(np.where(pred == np.amax(pred))[0])}, Confidence: {np.amax(pred)}, Actual: {test_label[i]}')
-                        i += 1
+                    if not(mute):
+                        for pred in predict:
+                            print(f'Prediction: {supp.int_to_label(np.where(pred == np.amax(pred))[0])}, Confidence: {np.amax(pred)}, Actual: {lastLabels[i]}')
+                            i += 1
 
 
     # Stop the program and close everything if Ctrl + c is pressed

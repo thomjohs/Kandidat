@@ -15,9 +15,9 @@ input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
 outputs = 4
 
 # training hyperparameters
-epochs = 5
+epochs = 10
 time_steps = 10
-batch_size = 5
+batch_size = 10
 training_ratio = 0.7
 
 # used in both models
@@ -32,7 +32,6 @@ kernel_size = 5
 export = False
 modelFile = "model.json"
 weightFile = "weights.h5"
-
 
 
 data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
@@ -58,8 +57,8 @@ train_seq = sequence.TimeseriesGenerator(x_train, y_train, length=time_steps, ba
 test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch_size=batch_size)
 
 
-model = ml.build_lstm(time_steps, vector_size, outputs, batch_size, lstm_output, stateful)
-# model = ml.build_clstm(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output)
+# model = ml.build_lstm(time_steps, vector_size, outputs, batch_size, lstm_output, stateful)
+model = ml.build_clstm(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output)
 
 model.compile(loss='categorical_crossentropy',
               optimizer='adam',

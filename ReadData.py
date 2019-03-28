@@ -1,5 +1,6 @@
 import readData_AWR1642 as radar
 import msvcrt
+import ManipuleraData as mainp
 
 # Configurate the serial port
 #CLIport, Dataport = radar.serialConfig(radar.configFileName)
@@ -35,6 +36,8 @@ while True:
                 elif key == b'c':
                     radar.removeLabel(frameData, label)
                     label = 'background'
+                elif key == b'g':
+                    label = 'goodBackground'
                 else:
                     j += 1
                     print(j)
@@ -46,20 +49,15 @@ while True:
             frameData.append(detObj)
             currentIndex += 1
 
-        #
-        # Sampling frequency of 30 Hz
-        # elapsed=time.time()-tic
-        # print("t: ",elapsed)
-
     # Stop the program and close everything if Ctrl + c is pressed
     except KeyboardInterrupt:
         radar.CLIport.write(('sensorStop\n').encode())
         radar.CLIport.close()
         radar.Dataport.close()
-        # print(frameData)
         filename = input("What's the file name? ([Namn]+[Gest]+[nummer i serie])")
-        # frameDataToFile(frameData,filename)
         radar.listOfDictToFile(frameData, filename)
-        # win.close()
+        #create processed path
+        path="ProcessedData\\{}.csv".format(filename)
+        mainp.framedata_to_file(frameData, path)
         break
 

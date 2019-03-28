@@ -32,32 +32,33 @@ def dString_to_farray(indata, label='0'):
                 s = ''
         return ilist
 
+
 def shuffle_gestures(frameList):
     shuffled = []
     backgrounds = []
     gestures = []
     group = []
     label = 'background'
-    i = 0
     for frame in frameList:
         if frame[len(frame) - 1] == label:
             group.append(frame)
         else:
-            if label == 'background':
-                if i % 2 == 0:
-                    backgrounds.append(group)
-                i += 1
-            else:
-                gestures.append(group)
-
+            if label != 'background':
+                if label == 'goodBackground':
+                    backgrounds.extend(group)
+                else:
+                    gestures.append(group)
             label = frame[len(frame) - 1]
             group = [frame]
 
-
     while len(backgrounds) != 0 and len(gestures) != 0:
-        i = random.randint(0, len(backgrounds)-1)
-        shuffled.extend(backgrounds[i])
-        del backgrounds[i]
+        if len(backgrounds) < 40:
+            shuffled.extend(backgrounds)
+        else:
+            randLength = random.randint(20, 40)
+            i = random.randint(0, len(backgrounds)-1 - randLength)
+            shuffled.extend(backgrounds[i:i + randLength])
+            del backgrounds[i:i + randLength]
 
         i = random.randint(0, len(gestures) - 1)
         shuffled.extend(gestures[i])
