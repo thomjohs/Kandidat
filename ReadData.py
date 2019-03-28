@@ -57,7 +57,7 @@ while True:
         radar.CLIport.close()
         radar.Dataport.close()
         # print(frameData)
-        filename = input("What's the file name?")
+        filename = input("What's the file name? ([Namn]+[Gest]+[nummer i serie])")
         # frameDataToFile(frameData,filename)
         radar.listOfDictToFile(frameData, filename)
         # win.close()

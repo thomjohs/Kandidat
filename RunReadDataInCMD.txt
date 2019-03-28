@@ -1,0 +1,6 @@
+Öppna mappen med ReadData.py i sig (heter kandidat)
+Klicka på taben med sökvägen (klicka till höger om kandidat i taben)
+kopiera sökvägen
+Skriv i terminalen: cd [sökväg]
+skriv i terminalen: python ReadData.py
+*kör programmet*
