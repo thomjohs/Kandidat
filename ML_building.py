@@ -1,8 +1,10 @@
 import supp
+import tensorflow as tf
 import ML_functions as ml
 from keras.preprocessing import sequence
 import matplotlib.pyplot as plt
 import numpy as np
+from sklearn.metrics import classification_report
 
 
 vector_size = 52
@@ -19,7 +21,7 @@ input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
 outputs = 4
 
 # training hyperparameters
-epochs = 10
+epochs = 2
 time_steps = 5
 batch_size = 40
 training_ratio = 0.7
@@ -56,8 +58,6 @@ for frame in data:
         gestFrames += 1
 
 
-
-
 x_train, x_test, y_train, y_test = ml.split_data(list(map(supp.label_to_int, data)), vector_size, outputs, training_ratio)
 
 train_seq = sequence.TimeseriesGenerator(x_train, y_train, length=time_steps, batch_size=batch_size)
@@ -77,6 +77,21 @@ history = model.fit_generator(train_seq, epochs=epochs,
 score, acc = model.evaluate_generator(test_seq)
 print('Test score:', score)
 print('Test accuracy:', acc)
+
+'''
+preds = list(model.predict_generator(test_seq))[:1000]
+predVer = list(y_test)[:1000]
+print(type(preds))
+print(preds[0])
+for i in range(len(preds)):
+    pred = preds[i]
+    preds[i] = tf.one_hot(tf.nn.top_k(pred).indices, tf.shape(pred)[0])
+print(type(preds))
+print(preds[0])
+print(type(y_test))
+print(predVer[0])
+print(classification_report(y_test[:len(preds)], preds))
+'''
 
 plt.plot(history.history['loss'])
 plt.plot(history.history['val_loss'])
