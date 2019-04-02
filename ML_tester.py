@@ -7,6 +7,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import classification_report
 
+# GPU Tester
+from tensorflow.python.client import device_lib
+print(device_lib.list_local_devices())
+
+
+
 vector_size = 52
 
 input_file = "ArenSwipeNext1"
@@ -21,7 +27,7 @@ input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
 outputs = 4
 
 # training hyperparameters
-epochs = 500
+epochs = 1
 time_steps = 5
 batch_size = 5
 training_ratio = 0.7
@@ -33,7 +39,7 @@ stateful = False
 # only used in combined model
 num_filters = 64
 kernel_size = 5
-repeats = 2
+repeats = 1
 
 # for saving the model and weights
 export = False
