@@ -2,7 +2,7 @@ import supp
 import tensorflow as tf
 import ML_functions as ml
 from keras.preprocessing import sequence
-from keras import callbacks
+from keras.callbacks import LambdaCallback
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import classification_report
@@ -21,7 +21,7 @@ input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
 outputs = 4
 
 # training hyperparameters
-epochs = 2
+epochs = 500
 time_steps = 5
 batch_size = 5
 training_ratio = 0.7
@@ -63,7 +63,6 @@ x_train, x_test, y_train, y_test = ml.split_data(list(map(supp.label_to_int, dat
 train_seq = sequence.TimeseriesGenerator(x_train, y_train, length=time_steps, batch_size=batch_size)
 test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch_size=batch_size)
 
-
 for i in range(repeats):
     # model = ml.build_lstm(time_steps, vector_size, outputs, batch_size, lstm_output, stateful)
     model = ml.build_clstm(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output)
@@ -72,9 +71,10 @@ for i in range(repeats):
                   optimizer='adam',
                   metrics=['accuracy'])
 
-    history = model.fit_generator(train_seq, epochs=epochs,
-                                  validation_data=test_seq,
-                                  callbacks=callbacks.Callback)
+    history = model.fit_generator(train_seq,
+                                  callbacks=[LambdaCallback(on_epoch_begin=lambda epoch, logs: print('Repeats', i+1, '/', repeats))],
+                                  epochs=epochs,
+                                  validation_data=test_seq)
 
     score, acc = model.evaluate_generator(test_seq)
     print('Test score:', score)
