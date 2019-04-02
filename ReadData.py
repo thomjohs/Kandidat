@@ -3,10 +3,10 @@ import msvcrt
 import ManipuleraData as mainp
 
 # Configurate the serial port
-#CLIport, Dataport = radar.serialConfig(radar.configFileName)
+# CLIport, Dataport = radar.serialConfig(radar.configFileName)
 
 # Get the configuration parameters from the configuration file
-#configParameters = radar.parseConfigFile(radar.configFileName)
+# configParameters = radar.parseConfigFile(radar.configFileName)
 
 # Main loop
 label = 'background'

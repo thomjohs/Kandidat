@@ -1,4 +1,4 @@
-import readData_AWR1642 as radar
+#import readData_AWR1642 as radar
 from keras.models import model_from_json
 import supp
 import ML_functions as ml
@@ -6,21 +6,40 @@ import numpy as np
 from keras.preprocessing import sequence
 import ManipuleraData as manip
 import msvcrt
+from tkinter import *
 
 input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
                "ArenButton1", "ArenSlideUp1", "ArenSwipeNext1"]
 data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
 data = data[:len(data)//100 * 100]
 
-
 # ML variables set to the same as current model
-
 batch_size = 5
+time_step = 20
 
 
 # Model loading data
 modelFile = "model.json"
 weightFile = "weights.h5"
+
+
+# Prediction values
+predictions = []
+predLen = 10
+confNumber = 5
+
+
+def confidentGuess(predictions, confNumber):
+    counts = {}
+    for pred in predictions:
+        if pred in counts:
+            counts[pred] += 1
+        else:
+            counts[pred] = 1
+
+    for key, val in counts.items():
+        if val >= confNumber:
+            return key
 
 
 def loadModel(jsonFile, weightFile):
@@ -32,6 +51,13 @@ def loadModel(jsonFile, weightFile):
     return load_model
 
 
+# init gui
+root = Tk()
+root.minsize(50,100)
+templabel = Label(root, text='Hey')
+templabel.pack()
+root.update()
+
 # Main loop
 mute = False
 detObj = {}
@@ -40,14 +66,12 @@ frameData = []
 frameKeys = []
 currentIndex = 0
 j = 0
-lastFrames = []
-lastLabels = []
-
 
 model = loadModel(modelFile, weightFile)
 model.compile(loss='categorical_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
+
 
 
 # print(f' Data = {test}\n Label = {test_label}')
@@ -79,12 +103,13 @@ for i in range(1):
     test_label = test_label[10:]
 '''
 
-
+i = 0
 while True:
     try:
         # Update the data and check if the data is okay
-        dataOk, detObj = radar.update(detObj)
 
+        # dataOk, detObj = radar.update(detObj)
+        dataOk = True
         if dataOk:
             if msvcrt.kbhit():
                 key = msvcrt.getch()
@@ -92,30 +117,38 @@ while True:
                     mute = not(mute)
 
 
-            detObj = manip.toStandardVector(detObj)
+            detObj = data[i]
+            i += 1
+            # detObj = manip.toStandardVector(detObj)
             # Store the current frame into frameData
-            frameData.append(detObj)
-            frameKeys.append(key)
+            frameData.append(detObj[:51])
+            frameKeys.append(detObj[51])
             currentIndex += 1
 
-            if len(frameData) == 10:
-                lastFrames.extend(frameData)
-                lastLabels.extend(frameKeys)
-                frameData = []
-                frameKeys = []
+            # lastFrames.extend(frameData)
+            # lastLabels.extend(frameKeys)
+            #    frameData = []
+            #    frameKeys = []
 
-                if len(lastFrames) == 20:
-                    print(lastFrames)
-                    predict_seq = sequence.TimeseriesGenerator(lastFrames, lastLabels, length=10, batch_size=batch_size)
-                    predict = model.predict_generator(predict_seq, verbose=1)
-                    lastFrames = lastFrames[10:]
-                    lastLabels = lastLabels [10:]
+            if len(frameData) == time_step + 1:
+                predict_seq = sequence.TimeseriesGenerator(frameData, frameKeys, length=time_step, batch_size=1)
+                predict = model.predict_generator(predict_seq, verbose=1)
+                frameData = frameData[1:]
+                frameKeys = frameKeys[1:]
 
-                    i = 0
-                    if not(mute):
-                        for pred in predict:
-                            print(f'Prediction: {supp.int_to_label(np.where(pred == np.amax(pred))[0])}, Confidence: {np.amax(pred)}, Actual: {lastLabels[i]}')
-                            i += 1
+                i = 0
+                if not(mute):
+                    for pred in predict:
+                        #print(f'Prediction: {supp.int_to_label(np.where(pred == np.amax(pred))[0])}, Confidence: {np.amax(pred)}, Actual: {lastLabels[i]}')
+                        predictions.append(supp.int_to_label(np.where(pred == np.amax(pred))[0]))
+                        while len(predictions) > predLen:
+                            predictions = predictions[1:]
+                        i += 1
+                guess = (confidentGuess(predictions, confNumber))
+                templabel.config(text=guess)
+                root.update()
+
+
 
 
     # Stop the program and close everything if Ctrl + c is pressed
@@ -126,3 +159,5 @@ while True:
         # print(frameData)
         # win.close()
         break
+
+

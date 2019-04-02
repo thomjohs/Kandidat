@@ -21,21 +21,21 @@ input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
 outputs = 4
 
 # training hyperparameters
-epochs = 2
-time_steps = 5
+epochs = 20
+time_steps = 20
 batch_size = 40
 training_ratio = 0.7
 
 # used in both models
 lstm_output = 20
-stateful = False
+stateful = True
 
 # only used in combined model
 num_filters = 64
 kernel_size = 5
 
 # for saving the model and weights
-export = False
+export = True
 modelFile = "model.json"
 weightFile = "weights.h5"
 
