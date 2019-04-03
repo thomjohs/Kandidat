@@ -19,6 +19,7 @@ input_file = "ArenSwipeNext1"
 input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
                "ArenButton1", "ArenSlideUp1", "ArenSwipeNext1",
                "ArenButton2", "ArenSlideUp2", "ArenSwipeNext2",
+               "ArenButton3", "ArenSlideUp3", "ArenSwipeNext3"
                "AndreasButton1", "AndreasSlideUp1", "AndreasSwipeNext1",
                "AndreasButton2", "AndreasSlideUp2", "AndreasSwipeNext2",
                "GoodBackground1", "GoodBackground2"]
@@ -27,7 +28,7 @@ input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
 outputs = 4
 
 # training hyperparameters
-epochs = 1
+epochs = 20
 time_steps = 5
 batch_size = 5
 training_ratio = 0.7
