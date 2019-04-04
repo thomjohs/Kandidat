@@ -38,7 +38,7 @@ training_ratio = 0.7
 
 # used in both models
 lstm_output = 20
-stateful = False
+stateful = True
 
 # only used in combined model
 num_filters = 64
