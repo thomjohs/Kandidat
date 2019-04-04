@@ -7,6 +7,7 @@ from keras.callbacks import LambdaCallback
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import classification_report
+import csv
 
 # GPU Tester
 from tensorflow.python.client import device_lib
@@ -31,9 +32,9 @@ input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
 outputs = 4
 
 # training hyperparameters
-epochs=300
+epochs=3
 time_steps = 5
-batch_size = 5
+batch_size = 400
 training_ratio = 0.7
 
 # used in both models
@@ -53,6 +54,9 @@ weightFile = "weights.h5"
 # saves plot
 plot = False
 plotFile = f'Plots\\ts{time_steps}bs{batch_size}lstmOut{lstm_output}st{stateful}.pdf'
+
+# saves Result
+resultFile = "results.csv"
 
 data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
 data = data[:len(data) // 1000 * 1000]
@@ -79,8 +83,8 @@ seqtest=[]
 
 for i in range(repeats):
     # model = ml.build_lstm(time_steps, vector_size, outputs, batch_size, lstm_output, stateful)
-    # model = ml.build_clstm(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output)
-    model = ml.build_crrr(time_steps, vector_size, outputs, num_filters, batch_size, kernel_size, lstm_output, stateful)
+    model = ml.build_clstm(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output)
+    # model = ml.build_crrr(time_steps, vector_size, outputs, num_filters, batch_size, kernel_size, lstm_output, stateful)
 
     model.compile(loss='categorical_crossentropy',
                   optimizer='adam',
@@ -137,10 +141,16 @@ for i in range(repeats):
             file.write(json_model)
         model.save_weights("Model\\" + weightFile)
 
+with open(resultFile, 'w') as file:
+    writer = csv.writer(file)
+    for row in seqtest:
+        writer.writerow(row)
 
 for j in range(repeats):
     [score, acc] = seqtest.pop(j-1)
     print('Test score:', score, 'Test acc:', acc)
+
+
 
 #pyplot.plot(history['train'], color='blue')
 #pyplot.plot(history['test'], color='orange')
