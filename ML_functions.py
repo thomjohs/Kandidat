@@ -56,7 +56,7 @@ def build_clstm(time_steps, vector_size, outputs, num_filters, kernel_size, lstm
     return model
 
 
-def build_crrr(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output, stateful):
+def build_crrr(time_steps, vector_size, outputs, num_filters, batch_size, kernel_size, lstm_output, stateful):
     model = Sequential()
     model.add(Conv1D(num_filters, kernel_size, input_shape=(time_steps, vector_size - 1), activation='relu'))
     model.add(LSTM(lstm_output,

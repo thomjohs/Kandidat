@@ -1,6 +1,7 @@
 import supp
 import tensorflow as tf
 import ML_functions as ml
+import array as arr
 from keras.preprocessing import sequence
 from keras.callbacks import LambdaCallback
 import matplotlib.pyplot as plt
@@ -9,9 +10,8 @@ from sklearn.metrics import classification_report
 
 # GPU Tester
 from tensorflow.python.client import device_lib
+
 print(device_lib.list_local_devices())
-
-
 
 vector_size = 52
 
@@ -28,9 +28,9 @@ input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
 outputs = 4
 
 # training hyperparameters
-epochs = 500
+epochs=2
 time_steps = 5
-batch_size = 10
+batch_size = 400
 training_ratio = 0.7
 
 # used in both models
@@ -40,7 +40,7 @@ stateful = False
 # only used in combined model
 num_filters = 64
 kernel_size = 5
-repeats = 1
+repeats = 2
 
 # for saving the model and weights
 export = True
@@ -70,23 +70,26 @@ x_train, x_test, y_train, y_test = ml.split_data(list(map(supp.label_to_int, dat
 train_seq = sequence.TimeseriesGenerator(x_train, y_train, length=time_steps, batch_size=batch_size)
 test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch_size=batch_size)
 
+#[]
+
+seqtest=[]
+
 for i in range(repeats):
     # model = ml.build_lstm(time_steps, vector_size, outputs, batch_size, lstm_output, stateful)
-    model = ml.build_clstm(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output)
-    #model = ml.build_crrr(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output, stateful)
+    # model = ml.build_clstm(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output)
+    model = ml.build_crrr(time_steps, vector_size, outputs, num_filters, batch_size, kernel_size, lstm_output, stateful)
 
     model.compile(loss='categorical_crossentropy',
                   optimizer='adam',
                   metrics=['accuracy'])
 
     history = model.fit_generator(train_seq,
-                                  callbacks=[LambdaCallback(on_epoch_begin=lambda epoch, logs: print('Repeats', i+1, '/', repeats))],
+                                  callbacks=[LambdaCallback(
+                                      on_epoch_begin=lambda epoch, logs: print('Repeats', i + 1, '/', repeats))],
                                   epochs=epochs,
                                   validation_data=test_seq)
 
-    score, acc = model.evaluate_generator(test_seq)
-    print('Test score:', score)
-    print('Test accuracy:', acc)
+    seqtest.append(model.evaluate_generator(test_seq))
 
     '''
 	preds = list(model.predict_generator(test_seq))[:1000]
@@ -103,23 +106,23 @@ for i in range(repeats):
 	print(classification_report(y_test[:len(preds)], preds))
 	'''
 
-    plt.plot(history.history['loss'])
-    plt.plot(history.history['val_loss'])
-    plt.title('model loss')
-    plt.ylabel('loss')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'test'], loc='upper left')
-    plt.show()
-
-    plt.plot(history.history['acc'])
-    plt.plot(history.history['val_acc'])
-    plt.title('model accuracy')
-    plt.ylabel('accuracy')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'test'], loc='upper left')
-    if plot:
-        plt.savefig(plotFile, bbox_inches='tight')
-    plt.show()
+    # plt.plot(history.history['loss'])
+    # plt.plot(history.history['val_loss'])
+    # plt.title('model loss')
+    # plt.ylabel('loss')
+    # plt.xlabel('epoch')
+    # plt.legend(['train', 'test'], loc='upper left')
+    # plt.show()
+    #
+    # plt.plot(history.history['acc'])
+    # plt.plot(history.history['val_acc'])
+    # plt.title('model accuracy')
+    # plt.ylabel('accuracy')
+    # plt.xlabel('epoch')
+    # plt.legend(['train', 'test'], loc='upper left')
+    # if plot:
+    #     plt.savefig(plotFile, bbox_inches='tight')
+    # plt.show()
 
     print(f'Gestures: {gestFrames}')
     print(f'Backgrounds: {backFrames}')
@@ -130,3 +133,12 @@ for i in range(repeats):
         with open("Model\\" + modelFile, 'w') as file:
             file.write(json_model)
         model.save_weights("Model\\" + weightFile)
+
+
+for j in range(repeats):
+    [score, acc] = seqtest.pop(j-1)
+    print('Test score:', score, 'Test acc:', acc)
+
+#pyplot.plot(history['train'], color='blue')
+#pyplot.plot(history['test'], color='orange')
+#print('%d) TrainRMSE=%f, TestRMSE=%f' % (i, history['train'].iloc[-1], history['test'].iloc[-1]))
