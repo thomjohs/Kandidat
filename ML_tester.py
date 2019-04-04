@@ -22,15 +22,18 @@ input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
                "ArenButton3", "ArenSlideUp3", "ArenSwipeNext3",
                "AndreasButton1", "AndreasSlideUp1", "AndreasSwipeNext1",
                "AndreasButton2", "AndreasSlideUp2", "AndreasSwipeNext2",
+               "AndreasButton3", "AndreasSlideUp3", "AndreasSwipeNext3",
+               "AndreasButton4", "AndreasSlideUp4", "AndreasSwipeNext4",
+               "AndreasButton5", "AndreasSlideUp5", "AndreasSwipeNext5",
                "GoodBackground1", "GoodBackground2"]
 
 # Number of categories
 outputs = 4
 
 # training hyperparameters
-epochs=2
+epochs=300
 time_steps = 5
-batch_size = 400
+batch_size = 5
 training_ratio = 0.7
 
 # used in both models
@@ -40,7 +43,7 @@ stateful = False
 # only used in combined model
 num_filters = 64
 kernel_size = 5
-repeats = 2
+repeats = 5
 
 # for saving the model and weights
 export = True

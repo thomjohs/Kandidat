@@ -16,6 +16,9 @@ input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
                "ArenButton3", "ArenSlideUp3", "ArenSwipeNext3",
                "AndreasButton1", "AndreasSlideUp1", "AndreasSwipeNext1",
                "AndreasButton2", "AndreasSlideUp2", "AndreasSwipeNext2",
+               "AndreasButton3", "AndreasSlideUp3", "AndreasSwipeNext3",
+               "AndreasButton4", "AndreasSlideUp4", "AndreasSwipeNext4",
+               "AndreasButton5", "AndreasSlideUp5", "AndreasSwipeNext5",
                "GoodBackground1", "GoodBackground2"]
 
 # Number of categories
