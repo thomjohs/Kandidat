@@ -2,6 +2,7 @@ import supp
 import tensorflow as tf
 import ML_functions as ml
 import array as arr
+import datetime
 from keras.preprocessing import sequence
 from keras.callbacks import LambdaCallback
 import matplotlib.pyplot as plt
@@ -15,7 +16,7 @@ from tensorflow.python.client import device_lib
 print(device_lib.list_local_devices())
 
 vector_size = 52
-
+starttime = datetime.datetime.now()
 input_file = "ArenSwipeNext1"
 input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
                "ArenButton1", "ArenSlideUp1", "ArenSwipeNext1",
@@ -32,9 +33,9 @@ input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
 outputs = 4
 
 # training hyperparameters
-epochs=3
+epochs=300
 time_steps = 5
-batch_size = 400
+batch_size = 5
 training_ratio = 0.7
 
 # used in both models
@@ -56,7 +57,7 @@ plot = False
 plotFile = f'Plots\\ts{time_steps}bs{batch_size}lstmOut{lstm_output}st{stateful}.pdf'
 
 # saves Result
-resultFile = "results.csv"
+resultFile = "resultsArencrrr.csv"
 
 data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
 data = data[:len(data) // 1000 * 1000]
@@ -150,6 +151,8 @@ for j in range(repeats):
     [score, acc] = seqtest.pop(j-1)
     print('Test score:', score, 'Test acc:', acc)
 
+print('Starttime:', starttime)
+print('Endtime:', datetime.datetime.now())
 
 
 #pyplot.plot(history['train'], color='blue')
