@@ -19,7 +19,7 @@ input_file = "ArenSwipeNext1"
 input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
                "ArenButton1", "ArenSlideUp1", "ArenSwipeNext1",
                "ArenButton2", "ArenSlideUp2", "ArenSwipeNext2",
-               "ArenButton3", "ArenSlideUp3", "ArenSwipeNext3"
+               "ArenButton3", "ArenSlideUp3", "ArenSwipeNext3",
                "AndreasButton1", "AndreasSlideUp1", "AndreasSwipeNext1",
                "AndreasButton2", "AndreasSlideUp2", "AndreasSwipeNext2",
                "GoodBackground1", "GoodBackground2"]
@@ -28,9 +28,9 @@ input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
 outputs = 4
 
 # training hyperparameters
-epochs = 20
+epochs = 500
 time_steps = 5
-batch_size = 5
+batch_size = 10
 training_ratio = 0.7
 
 # used in both models
@@ -43,7 +43,7 @@ kernel_size = 5
 repeats = 1
 
 # for saving the model and weights
-export = False
+export = True
 modelFile = "model.json"
 weightFile = "weights.h5"
 
@@ -73,6 +73,7 @@ test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch
 for i in range(repeats):
     # model = ml.build_lstm(time_steps, vector_size, outputs, batch_size, lstm_output, stateful)
     model = ml.build_clstm(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output)
+    #model = ml.build_crrr(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output, stateful)
 
     model.compile(loss='categorical_crossentropy',
                   optimizer='adam',
