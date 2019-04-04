@@ -4,7 +4,7 @@ import ML_functions as ml
 from keras.preprocessing import sequence
 import matplotlib.pyplot as plt
 import numpy as np
-from sklearn.metrics import classification_report
+
 
 
 vector_size = 52
@@ -13,7 +13,7 @@ input_file = "ArenSwipeNext1"
 input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
                "ArenButton1", "ArenSlideUp1", "ArenSwipeNext1",
                "ArenButton2", "ArenSlideUp2", "ArenSwipeNext2",
-               "ArenButton3", "ArenSlideUp3", "ArenSwipeNext3"
+               "ArenButton3", "ArenSlideUp3", "ArenSwipeNext3",
                "AndreasButton1", "AndreasSlideUp1", "AndreasSwipeNext1",
                "AndreasButton2", "AndreasSlideUp2", "AndreasSwipeNext2",
                "GoodBackground1", "GoodBackground2"]
@@ -22,13 +22,13 @@ input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
 outputs = 4
 
 # training hyperparameters
-epochs = 20
+epochs = 200
 time_steps = 20
 batch_size = 40
 training_ratio = 0.7
 
 # used in both models
-lstm_output = 20
+lstm_output = 5
 stateful = True
 
 # only used in combined model
@@ -36,7 +36,7 @@ num_filters = 64
 kernel_size = 5
 
 # for saving the model and weights
-export = True
+export = False
 modelFile = "model.json"
 weightFile = "weights.h5"
 
@@ -79,20 +79,6 @@ score, acc = model.evaluate_generator(test_seq)
 print('Test score:', score)
 print('Test accuracy:', acc)
 
-'''
-preds = list(model.predict_generator(test_seq))[:1000]
-predVer = list(y_test)[:1000]
-print(type(preds))
-print(preds[0])
-for i in range(len(preds)):
-    pred = preds[i]
-    preds[i] = tf.one_hot(tf.nn.top_k(pred).indices, tf.shape(pred)[0])
-print(type(preds))
-print(preds[0])
-print(type(y_test))
-print(predVer[0])
-print(classification_report(y_test[:len(preds)], preds))
-'''
 
 plt.plot(history.history['loss'])
 plt.plot(history.history['val_loss'])

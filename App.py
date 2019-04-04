@@ -7,6 +7,7 @@ from keras.preprocessing import sequence
 import ManipuleraData as manip
 import msvcrt
 from tkinter import *
+from pynput.keyboard import KeyCode, Controller
 
 testData = False
 input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
@@ -16,18 +17,18 @@ data = data[:len(data)//100 * 100]
 
 # ML variables set to the same as current model
 batch_size = 5
-time_step = 20
+time_step = 5
 
 
 # Model loading data
-modelFile = "model.json"
-weightFile = "weights.h5"
+modelFile = "Test_1_model.json"
+weightFile = "Test_1_weights.h5"
 
 
 # Prediction values
 predictions = []
 predLen = 10
-confNumber = 6
+confNumber = 5
 
 
 def confidentGuess(predictions, confNumber):
@@ -60,6 +61,14 @@ templabel.pack()
 root.update()
 update = '-'
 
+# init control
+keyboard = Controller()
+VK_volume_up = KeyCode.from_vk(0xAF)
+VK_next = KeyCode.from_vk(0xB0)
+Vk_play_pause = KeyCode.from_vk(0xB3)
+volume = 0
+
+
 # Main loop
 mute = False
 detObj = {}
@@ -67,45 +76,17 @@ key = '0'
 frameData = []
 frameKeys = []
 currentIndex = 0
-j = 0
+i = 0
 
 model = loadModel(modelFile, weightFile)
 model.compile(loss='categorical_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
 
+swiped = False
+button = False
+slide = False
 
-
-# print(f' Data = {test}\n Label = {test_label}')
-# print(model.predict(np.array(test).reshape(1, 10)))
-
-'''
-test = []
-test_label = []
-for j in range(10):
-    test.append(data[40 + j][:51])
-    test_label.append(40 + j)
-
-for i in range(1):
-    for j in range(10):
-        test.append(data[40 + i*10 + j + 10][:51])
-        test_label.append(40 + i*10 + j + 10)
-
-    print(test)
-    print(test_label)
-    predict_seq = test_seq = sequence.TimeseriesGenerator(test, test_label, length=10, batch_size=10, start_index=0)
-    predict = model.predict_generator(predict_seq, verbose=1)
-
-    i = 0
-    for pred in predict:
-        print(f'Prediction: {supp.int_to_label(np.where(pred == np.amax(pred))[0])}, Confidence: {np.amax(pred)}, Actual: {test_label[i]}')
-        i += 1
-
-    test = test[10:]
-    test_label = test_label[10:]
-'''
-
-i = 0
 while True:
     try:
         # Update the data and check if the data is okay
@@ -147,24 +128,44 @@ while True:
                 frameKeys = frameKeys[1:]
 
                 i = 0
-                if not(mute):
+                if not mute:
                     for pred in predict:
-                        #print(f'Prediction: {supp.int_to_label(np.where(pred == np.amax(pred))[0])}, Confidence: {np.amax(pred)}, Actual: {lastLabels[i]}')
+                        # print(f'Prediction: {supp.int_to_label(np.where(pred == np.amax(pred))[0])},
+                        #                       Confidence: {np.amax(pred)}, Actual: {lastLabels[i]}')
                         predictions.append(supp.int_to_label(np.where(pred == np.amax(pred))[0]))
                         while len(predictions) > predLen:
                             predictions = predictions[1:]
                         i += 1
 
-                if update == '-':
-                    update = '|'
-                else:
-                    update = '-'
-                guess = f'{confidentGuess(predictions, confNumber)}  {update}'
-                templabel.config(text=guess)
-                root.update()
+                    if update == '-':
+                        update = '|'
+                    else:
+                        update = '-'
+                    guess = confidentGuess(predictions, confNumber)
+                    templabel.config(text=f'{guess} {update}')
+                    root.update()
 
+                    if guess == 'swipeNext' and not swiped:
+                        swiped = True
+                        print("skip")
+                        keyboard.press(VK_next)
+                        keyboard.release(VK_next)
+                    elif guess != 'swipeNext':
+                        swiped = False
 
+                    if guess == 'button' and not button:
+                        button = True
+                        print('click')
+                        keyboard.press(Vk_play_pause)
+                        keyboard.release(Vk_play_pause)
+                    elif guess != 'button':
+                        button = False
 
+                    if guess == 'slideUp':
+                        if volume < 10:
+                            keyboard.press(VK_volume_up)
+                            keyboard.release(VK_volume_up)
+                            volume += 1
 
     # Stop the program and close everything if Ctrl + c is pressed
     except KeyboardInterrupt:
