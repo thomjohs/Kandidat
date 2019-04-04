@@ -1,4 +1,4 @@
-#import readData_AWR1642 as radar
+import readData_AWR1642 as radar
 from keras.models import model_from_json
 import supp
 import ML_functions as ml
@@ -8,6 +8,7 @@ import ManipuleraData as manip
 import msvcrt
 from tkinter import *
 
+testData = False
 input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
                "ArenButton1", "ArenSlideUp1", "ArenSwipeNext1"]
 data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
@@ -26,7 +27,7 @@ weightFile = "weights.h5"
 # Prediction values
 predictions = []
 predLen = 10
-confNumber = 5
+confNumber = 6
 
 
 def confidentGuess(predictions, confNumber):
@@ -53,10 +54,11 @@ def loadModel(jsonFile, weightFile):
 
 # init gui
 root = Tk()
-root.minsize(50,100)
+root.minsize(50, 100)
 templabel = Label(root, text='Hey')
 templabel.pack()
 root.update()
+update = '-'
 
 # Main loop
 mute = False
@@ -108,22 +110,30 @@ while True:
     try:
         # Update the data and check if the data is okay
 
-        # dataOk, detObj = radar.update(detObj)
-        dataOk = True
+        if testData:
+            dataOk = True
+            detObj = data[i]
+            i += 1
+        else:
+            dataOk, detObj = radar.update(detObj)
+            if dataOk:
+                detObj = manip.toStandardVector(detObj)
+
         if dataOk:
             if msvcrt.kbhit():
                 key = msvcrt.getch()
                 if key == b'm':
-                    mute = not(mute)
+                    mute = not mute
 
-
-            detObj = data[i]
-            i += 1
-            # detObj = manip.toStandardVector(detObj)
             # Store the current frame into frameData
-            frameData.append(detObj[:51])
-            frameKeys.append(detObj[51])
-            currentIndex += 1
+            if testData:
+                frameData.append(detObj[:51])
+                frameKeys.append(detObj[51])
+                currentIndex += 1
+            else:
+                frameData.append(detObj)
+                frameKeys.append(key)
+                currentIndex += 1
 
             # lastFrames.extend(frameData)
             # lastLabels.extend(frameKeys)
@@ -144,7 +154,12 @@ while True:
                         while len(predictions) > predLen:
                             predictions = predictions[1:]
                         i += 1
-                guess = (confidentGuess(predictions, confNumber))
+
+                if update == '-':
+                    update = '|'
+                else:
+                    update = '-'
+                guess = f'{confidentGuess(predictions, confNumber)}  {update}'
                 templabel.config(text=guess)
                 root.update()
 
