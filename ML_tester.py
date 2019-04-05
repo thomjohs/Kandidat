@@ -32,13 +32,13 @@ input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
 outputs = 4
 
 # training hyperparameters
-epochs=3
-time_steps = 5
-batch_size = 400
+epochs = 300
+time_steps = 10
+batch_size = 100
 training_ratio = 0.7
 
 # used in both models
-lstm_output = 20
+lstm_output = 10
 stateful = True
 
 # only used in combined model
@@ -59,8 +59,9 @@ plotFile = f'Plots\\ts{time_steps}bs{batch_size}lstmOut{lstm_output}st{stateful}
 resultFile = "results.csv"
 
 data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
-data = data[:len(data) // 1000 * 1000]
 
+
+'''
 gestFrames = 0
 backFrames = 0
 for frame in data:
@@ -70,9 +71,18 @@ for frame in data:
         backFrames += 1
     else:
         gestFrames += 1
+        '''
 
 x_train, x_test, y_train, y_test = ml.split_data(list(map(supp.label_to_int, data)), vector_size, outputs,
                                                  training_ratio)
+
+x_train = x_train[:len(x_train) // 1000 * 1000 + time_steps]
+x_test = x_test[:len(x_test) // 1000 * 1000 + time_steps]
+y_train = y_train[:len(y_train) // 1000 * 1000 + time_steps]
+y_test = y_test[:len(y_test) // 1000 * 1000 + time_steps]
+
+print(f'{len(x_train)}, {len(x_test)}, {len(y_train)}, {len(y_test)}')
+
 
 train_seq = sequence.TimeseriesGenerator(x_train, y_train, length=time_steps, batch_size=batch_size)
 test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch_size=batch_size)
@@ -82,8 +92,8 @@ test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch
 seqtest=[]
 
 for i in range(repeats):
-    # model = ml.build_lstm(time_steps, vector_size, outputs, batch_size, lstm_output, stateful)
-    model = ml.build_clstm(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output)
+    model = ml.build_lstm(time_steps, vector_size, outputs, batch_size, lstm_output, stateful)
+    # model = ml.build_clstm(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output)
     # model = ml.build_crrr(time_steps, vector_size, outputs, num_filters, batch_size, kernel_size, lstm_output, stateful)
 
     model.compile(loss='categorical_crossentropy',
