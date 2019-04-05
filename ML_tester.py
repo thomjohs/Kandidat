@@ -64,7 +64,7 @@ resultFile = "resultsArencrrr.csv"
 data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
 
 
-'''
+
 gestFrames = 0
 backFrames = 0
 for frame in data:
@@ -74,7 +74,7 @@ for frame in data:
         backFrames += 1
     else:
         gestFrames += 1
-        '''
+        
 
 x_train, x_test, y_train, y_test = ml.split_data(list(map(supp.label_to_int, data)), vector_size, outputs,
                                                  training_ratio)
