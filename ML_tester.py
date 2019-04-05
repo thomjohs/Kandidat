@@ -2,6 +2,7 @@ import supp
 import tensorflow as tf
 import ML_functions as ml
 import array as arr
+import datetime
 from keras.preprocessing import sequence
 from keras.callbacks import LambdaCallback
 import matplotlib.pyplot as plt
@@ -15,7 +16,7 @@ from tensorflow.python.client import device_lib
 print(device_lib.list_local_devices())
 
 vector_size = 52
-
+starttime = datetime.datetime.now()
 input_file = "ArenSwipeNext1"
 input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
                "ArenButton1", "ArenSlideUp1", "ArenSwipeNext1",
@@ -32,9 +33,11 @@ input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
 outputs = 4
 
 # training hyperparameters
+
 epochs = 300
 time_steps = 10
 batch_size = 100
+
 training_ratio = 0.7
 
 # used in both models
@@ -56,7 +59,7 @@ plot = False
 plotFile = f'Plots\\ts{time_steps}bs{batch_size}lstmOut{lstm_output}st{stateful}.pdf'
 
 # saves Result
-resultFile = "results.csv"
+resultFile = "resultsArencrrr.csv"
 
 data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
 
@@ -87,14 +90,15 @@ print(f'{len(x_train)}, {len(x_test)}, {len(y_train)}, {len(y_test)}')
 train_seq = sequence.TimeseriesGenerator(x_train, y_train, length=time_steps, batch_size=batch_size)
 test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch_size=batch_size)
 
-#[]
 
 seqtest=[]
 
 for i in range(repeats):
+
     model = ml.build_lstm(time_steps, vector_size, outputs, batch_size, lstm_output, stateful)
     # model = ml.build_clstm(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output)
     # model = ml.build_crrr(time_steps, vector_size, outputs, num_filters, batch_size, kernel_size, lstm_output, stateful)
+
 
     model.compile(loss='categorical_crossentropy',
                   optimizer='adam',
@@ -156,11 +160,7 @@ with open(resultFile, 'w') as file:
     for row in seqtest:
         writer.writerow(row)
 
-for j in range(repeats):
-    [score, acc] = seqtest.pop(j-1)
-    print('Test score:', score, 'Test acc:', acc)
-
-
+ml.sum_print(starttime, repeats, seqtest)
 
 #pyplot.plot(history['train'], color='blue')
 #pyplot.plot(history['test'], color='orange')

@@ -1,4 +1,5 @@
 import tensorflow as tf
+import datetime
 from keras.preprocessing import sequence
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation
@@ -10,6 +11,22 @@ import csv
 import random
 import matplotlib.pyplot as plt
 import supp
+
+
+def sum_print(start_time, repeats, seqtest):
+    print('')
+    print('Results:')
+    for j in range(repeats):
+        [score, acc] = seqtest.pop(0)
+        print('Test score:', round(score, 3), 'Test acc:', round(acc, 3))
+
+    print('')
+    print('Time points:')
+    endtime = datetime.datetime.now()
+    dur = endtime - start_time
+    print('Starttime:', start_time)
+    print('Endtime:', endtime)
+    print('Duration:', dur)
 
 
 def load_data_multiple(input_files):
@@ -56,20 +73,13 @@ def build_clstm(time_steps, vector_size, outputs, num_filters, kernel_size, lstm
     return model
 
 
-def build_crrr(time_steps, vector_size, outputs, num_filters, batch_size, kernel_size, lstm_output, stateful):
+def build_crrr(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output):
     model = Sequential()
     model.add(Conv1D(num_filters, kernel_size, input_shape=(time_steps, vector_size - 1), activation='relu'))
-    model.add(LSTM(lstm_output,
-                   return_sequences=True,
-                   stateful=stateful,
-                   input_shape=(time_steps, vector_size - 1),
-                   batch_size=batch_size))
+    model.add(LSTM(lstm_output, return_sequences=True))
+    model.add(LSTM(lstm_output, return_sequences=True))
     model.add(Dropout(0.1))
-    model.add(LSTM(lstm_output,
-                   return_sequences=True,
-                   stateful=stateful))
-    model.add(LSTM(lstm_output,
-                   stateful=stateful))
+    model.add(LSTM(lstm_output))
     model.add(Dense(outputs, activation='softmax'))
     return model
 
