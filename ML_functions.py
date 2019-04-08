@@ -73,13 +73,22 @@ def build_clstm(time_steps, vector_size, outputs, num_filters, kernel_size, lstm
     return model
 
 
-def build_crrr(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output):
+def build_crrr(time_steps, vector_size, outputs, num_filters, batch_size, kernel_size, lstm_output, stateful):
     model = Sequential()
-    model.add(Conv1D(num_filters, kernel_size, input_shape=(time_steps, vector_size - 1), activation='relu'))
-    model.add(LSTM(lstm_output, return_sequences=True))
-    model.add(LSTM(lstm_output, return_sequences=True))
+    model.add(Conv1D(num_filters, kernel_size, batch_input_shape=(batch_size, time_steps, vector_size - 1), activation='relu'))
+    model.add(LSTM(lstm_output,
+                   return_sequences=True,
+                   stateful=stateful,
+                   input_shape=(time_steps, vector_size - 1)))#, batch_size=batch_size))
     model.add(Dropout(0.1))
-    model.add(LSTM(lstm_output))
+    model.add(LSTM(lstm_output,
+                   return_sequences=True,
+                   stateful=stateful))
+    model.add(LSTM(lstm_output,
+                   return_sequences=True,
+                   stateful=stateful))
+    model.add(LSTM(lstm_output,
+                   stateful=stateful))
     model.add(Dense(outputs, activation='softmax'))
     return model
 
