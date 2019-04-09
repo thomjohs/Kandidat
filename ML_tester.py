@@ -27,10 +27,18 @@ input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
                "AndreasButton3", "AndreasSlideUp3", "AndreasSwipeNext3",
                "AndreasButton4", "AndreasSlideUp4", "AndreasSwipeNext4",
                "AndreasButton5", "AndreasSlideUp5", "AndreasSwipeNext5",
-               "GoodBackground1", "GoodBackground2"]
+               "GoodBackground1", "GoodBackground2","AlexButton1", "AlexFlop1",
+               "AlexSlideDown1", "AlexSlideUp1", "AlexSwipeNext1", "AlexSwipePrev1","JuliaButton1", "JuliaFlop1","JuliaSlideDown1", 
+               "JuliaSlideUp1", "JuliaSwipeNext1", "JuliaSwipePrev1",
+               "LinusButton1", "LinusFlop1","LinusSlideDown1", 
+               "LinusSlideUp1", "LinusSwipeNext1", "LinusSwipePrev1",
+               "MartinButton1", "MartinFlop1","MartinSlideDown1", 
+               "MartinSlideUp1", "MartinSwipeNext1", "MartinSwipePrev1",
+               "MatildaButton1", "MatildaFlop1","MatildaSlideDown1", 
+               "MatildaSlideUp1", "MatildaSwipeNext1", "MatildaSwipePrev1"]
 
 # Number of categories
-outputs = 4
+outputs = 7
 
 # training hyperparameters
 
