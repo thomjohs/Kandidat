@@ -39,26 +39,45 @@ def framedata_to_file(frameData, out_path):
     frames_to_file(dataList, out_path)
 
 
+def translate_data(data):
+    frameList = data[:]
+    for i in range(2):
+        for frame in data:
+            if frame:
+                frameList.append(trans_x(frame, i))
+    transFrame = frameList
+    print(transFrame[200000:200010])
+    for i in range(2):
+        for frame in transFrame:
+            if frame:
+                frameList.append(trans_y(frame, i))
+    return frameList
+
 def trans_x(standardVector, dx):
+
     global standardLen
     for i in range(10):
 
-        x = standardVector[standardLen*4+i+1]+dx
-        y = standardVector[standardLen*5+i+1]
-        r = standardVector[i + 1] + math.sqrt(x^2 + y^2)
-        standardVector[standardLen * 4 + i + 1] = x
-        standardVector[i + 1] = r
+        x = float(standardVector[standardLen*3+i+1])+dx
+        y = float(standardVector[standardLen*4+i+1])
+        r = math.sqrt(x ** 2 + y ** 2)
+        standardVector[standardLen * 3 + i + 1] = str(x)
+        standardVector[i + 1] = str(r)
+
+    return standardVector
 
 
 def trans_y(standardVector, dy):
     global standardLen
     for i in range(10):
 
-        x = standardVector[standardLen*4+i+1]
-        y = standardVector[standardLen*5+i+1]+dy
-        r = standardVector[i + 1] + math.sqrt(x^2 + y^2)
-        standardVector[standardLen * 4 + i + 1] = x
-        standardVector[i + 1] = r
+        x = float(standardVector[standardLen*3+i+1])
+        y = float(standardVector[standardLen*4+i+1])+dy
+        r = math.sqrt(x ** 2 + y ** 2)
+        standardVector[standardLen * 4 + i + 1] = str(y)
+        standardVector[i + 1] = str(r)
+
+    return standardVector
 
 
 def frames_to_file(frames, out_path):

@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import classification_report
 import csv
+import ManipuleraData as mp
 
 # GPU Tester
 from tensorflow.python.client import device_lib
@@ -71,7 +72,16 @@ plotFile = f'Plots\\ts{time_steps}bs{batch_size}lstmOut{lstm_output}st{stateful}
 # saves Result
 resultFile = "resultsArencrrr4.csv"
 
-data = supp.shuffle_gestures(ml.load_folder(input_folder))
+
+data = ml.load_folder(input_folder)
+i = 0
+for frame in data:
+    if frame is None:
+        print(i)
+    i+=1
+
+
+data = supp.shuffle_gestures(mp.translate_data(data))
 
 
 

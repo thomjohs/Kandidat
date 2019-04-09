@@ -50,10 +50,10 @@ def load_data(input_file):
     frameList = []
     with open("ProcessedData\\" + input_file) as inp:
         reader = csv.reader(inp, delimiter=',')
-        for row in reader:
-            frame = row
+        for frame in reader:
             if len(frame) != 0:
-                frameList.append(frame)
+                if frame is not None:
+                    frameList.append(frame)
     return frameList
 
 
