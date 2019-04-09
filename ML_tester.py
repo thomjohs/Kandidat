@@ -35,13 +35,13 @@ outputs = 4
 # training hyperparameters
 
 epochs = 300
-time_steps = 10
+time_steps = 20
 batch_size = 100
 
 training_ratio = 0.7
 
 # used in both models
-lstm_output = 10
+lstm_output = 40
 stateful = True
 
 # only used in combined model
@@ -51,15 +51,15 @@ repeats = 5
 
 # for saving the model and weights
 export = True
-modelFile = "model.json"
-weightFile = "weights.h5"
+modelFile = "Arenmodel4.json"
+weightFile = "Arenweights4.h5"
 
 # saves plot
 plot = False
 plotFile = f'Plots\\ts{time_steps}bs{batch_size}lstmOut{lstm_output}st{stateful}.pdf'
 
 # saves Result
-resultFile = "resultsArencrrr.csv"
+resultFile = "resultsArencrrr4.csv"
 
 data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
 
@@ -95,9 +95,9 @@ seqtest=[]
 
 for i in range(repeats):
 
-    model = ml.build_lstm(time_steps, vector_size, outputs, batch_size, lstm_output, stateful)
+    # model = ml.build_lstm(time_steps, vector_size, outputs, batch_size, lstm_output, stateful)
     # model = ml.build_clstm(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output)
-    # model = ml.build_crrr(time_steps, vector_size, outputs, num_filters, batch_size, kernel_size, lstm_output, stateful)
+    model = ml.build_crrr(time_steps, vector_size, outputs, num_filters, batch_size, kernel_size, lstm_output, stateful)
 
 
     model.compile(loss='categorical_crossentropy',
