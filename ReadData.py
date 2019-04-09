@@ -22,25 +22,35 @@ while True:
             if msvcrt.kbhit():
                 key = msvcrt.getch()
                 if key == b'1':
+                    j += 1
+                    print(j)
                     label = 'slideUp'
-                # elif key == b'2':
-                #    label = 'slideDown'
+                elif key == b'2':
+                    j += 1
+                    print(j)
+                    label = 'slideDown'
                 elif key == b'3':
+                    j += 1
+                    print(j)
                     label = 'button'
                 elif key == b'4':
+                    j += 1
+                    print(j)
                     label = 'swipeNext'
-                # elif key == b'5':
-                #    label = 'swipePrev'
-                # elif key == b'6':
-                #    label = 'flop'
+                elif key == b'5':
+                    j += 1
+                    print(j)
+                    label = 'swipePrev'
+                elif key == b'6':
+                    j += 1
+                    print(j)
+                    label = 'flop'
                 elif key == b'c':
                     radar.removeLabel(frameData, label)
                     label = 'background'
                 elif key == b'g':
                     label = 'goodBackground'
                 else:
-                    j += 1
-                    print(j)
                     label = 'background'
                 print(f'Current label: {label}')
             detObj['Label'] = label
