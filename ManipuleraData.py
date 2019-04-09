@@ -1,6 +1,7 @@
 import csv
 import numpy as np
 import supp
+import math
 
 #dataObj={}
 #frameData=[]
@@ -29,12 +30,36 @@ def file_to_frames(csv_file):
             dataList.append(standardVec)
         return dataList
 
-def framedata_to_file(frameData,out_path):
+
+def framedata_to_file(frameData, out_path):
     dataList = []
     for frame in frameData:
         standardVector = toStandardVector(frame)
         dataList.append(standardVector)
-    frames_to_file(dataList,out_path)
+    frames_to_file(dataList, out_path)
+
+
+def trans_x(standardVector, dx):
+    global standardLen
+    for i in range(10):
+
+        x = standardVector[standardLen*4+i+1]+dx
+        y = standardVector[standardLen*5+i+1]
+        r = standardVector[i + 1] + math.sqrt(x^2 + y^2)
+        standardVector[standardLen * 4 + i + 1] = x
+        standardVector[i + 1] = r
+
+
+def trans_y(standardVector, dy):
+    global standardLen
+    for i in range(10):
+
+        x = standardVector[standardLen*4+i+1]
+        y = standardVector[standardLen*5+i+1]+dy
+        r = standardVector[i + 1] + math.sqrt(x^2 + y^2)
+        standardVector[standardLen * 4 + i + 1] = x
+        standardVector[i + 1] = r
+
 
 def frames_to_file(frames, out_path):
     with open(out_path, 'w', newline='') as out:
