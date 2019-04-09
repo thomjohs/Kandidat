@@ -34,14 +34,14 @@ outputs = 4
 
 # training hyperparameters
 
-epochs = 300
+epochs = 2
 time_steps = 20
-batch_size = 100
+batch_size = 1000
 
 training_ratio = 0.7
 
 # used in both models
-lstm_output = 40
+lstm_output = 20
 stateful = True
 
 # only used in combined model
@@ -51,15 +51,15 @@ repeats = 5
 
 # for saving the model and weights
 export = True
-modelFile = "Arenmodel4.json"
-weightFile = "Arenweights4.h5"
+modelFile = "Arenmodel5.json"
+weightFile = "Arenweights5.h5"
 
 # saves plot
 plot = False
 plotFile = f'Plots\\ts{time_steps}bs{batch_size}lstmOut{lstm_output}st{stateful}.pdf'
 
 # saves Result
-resultFile = "resultsArencrrr4.csv"
+resultFile = "resultsArencrrr5.csv"
 
 data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
 
@@ -92,6 +92,8 @@ test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch
 
 
 seqtest=[]
+pltloss=plt
+pltacc=plt
 
 for i in range(repeats):
 
@@ -126,24 +128,24 @@ for i in range(repeats):
 	print(predVer[0])
 	print(classification_report(y_test[:len(preds)], preds))
 	'''
+    plt.subplot(2, 1, 1)
+    plt.plot(history.history['loss'], color='blue')
+    plt.plot(history.history['val_loss'], color='orange')
+    plt.title('model loss')
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
 
-    # plt.plot(history.history['loss'])
-    # plt.plot(history.history['val_loss'])
-    # plt.title('model loss')
-    # plt.ylabel('loss')
-    # plt.xlabel('epoch')
-    # plt.legend(['train', 'test'], loc='upper left')
-    # plt.show()
-    #
-    # plt.plot(history.history['acc'])
-    # plt.plot(history.history['val_acc'])
-    # plt.title('model accuracy')
-    # plt.ylabel('accuracy')
-    # plt.xlabel('epoch')
-    # plt.legend(['train', 'test'], loc='upper left')
-    # if plot:
-    #     plt.savefig(plotFile, bbox_inches='tight')
-    # plt.show()
+    plt.subplot(2, 1, 2)
+    plt.plot(history.history['acc'], color='blue')
+    plt.plot(history.history['val_acc'], color='orange')
+    plt.title('model accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+    if plot:
+        plt.savefig(plotFile, bbox_inches='tight')
+
 
     print(f'Gestures: {gestFrames}')
     print(f'Backgrounds: {backFrames}')
@@ -155,6 +157,7 @@ for i in range(repeats):
             file.write(json_model)
         model.save_weights("Model\\" + weightFile)
 
+plt.show()
 with open(resultFile, 'w') as file:
     writer = csv.writer(file)
     for row in seqtest:
