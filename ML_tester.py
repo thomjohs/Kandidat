@@ -18,6 +18,7 @@ print(device_lib.list_local_devices())
 vector_size = 52
 starttime = datetime.datetime.now()
 input_file = "ArenSwipeNext1"
+input_folder = "ProcessedData"
 input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
                "ArenButton1", "ArenSlideUp1", "ArenSwipeNext1",
                "ArenButton2", "ArenSlideUp2", "ArenSwipeNext2",
@@ -27,21 +28,22 @@ input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
                "AndreasButton3", "AndreasSlideUp3", "AndreasSwipeNext3",
                "AndreasButton4", "AndreasSlideUp4", "AndreasSwipeNext4",
                "AndreasButton5", "AndreasSlideUp5", "AndreasSwipeNext5",
-               "GoodBackground1", "GoodBackground2","AlexButton1", "AlexFlop1",
-               "AlexSlideDown1", "AlexSlideUp1", "AlexSwipeNext1", "AlexSwipePrev1","JuliaButton1", "JuliaFlop1","JuliaSlideDown1", 
+               "GoodBackground1", "GoodBackground2", "AlexButton1", "AlexFlop1",
+               "AlexSlideDown1", "AlexSlideUp1", "AlexSwipeNext1", "AlexSwipePrev1",
+               "JuliaButton1", "JuliaFlop1", "JuliaSlideDown1",
                "JuliaSlideUp1", "JuliaSwipeNext1", "JuliaSwipePrev1",
-               "LinusButton1", "LinusFlop1","LinusSlideDown1", 
+               "LinusButton1", "LinusFlop1", "LinusSlideDown1",
                "LinusSlideUp1", "LinusSwipeNext1", "LinusSwipePrev1",
-               "MartinButton1", "MartinFlop1","MartinSlideDown1", 
+               "MartinButton1", "MartinFlop1", "MartinSlideDown1",
                "MartinSlideUp1", "MartinSwipeNext1", "MartinSwipePrev1",
-               "MatildaButton1", "MatildaFlop1","MatildaSlideDown1", 
+               "MatildaButton1", "MatildaFlop1", "MatildaSlideDown1",
                "MatildaSlideUp1", "MatildaSwipeNext1", "MatildaSwipePrev1"]
 
 # Number of categories
 outputs = 7
+repeats = 1
 
 # training hyperparameters
-
 epochs = 300
 time_steps = 20
 batch_size = 100
@@ -49,13 +51,13 @@ batch_size = 100
 training_ratio = 0.7
 
 # used in both models
-lstm_output = 40
+lstm_output = 15
 stateful = True
 
 # only used in combined model
 num_filters = 64
 kernel_size = 5
-repeats = 5
+
 
 # for saving the model and weights
 export = True
@@ -69,7 +71,7 @@ plotFile = f'Plots\\ts{time_steps}bs{batch_size}lstmOut{lstm_output}st{stateful}
 # saves Result
 resultFile = "resultsArencrrr4.csv"
 
-data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
+data = supp.shuffle_gestures(ml.load_folder(input_folder))
 
 
 
@@ -99,14 +101,13 @@ train_seq = sequence.TimeseriesGenerator(x_train, y_train, length=time_steps, ba
 test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch_size=batch_size)
 
 
-seqtest=[]
+seqtest = []
 
 for i in range(repeats):
 
     # model = ml.build_lstm(time_steps, vector_size, outputs, batch_size, lstm_output, stateful)
     # model = ml.build_clstm(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output)
     model = ml.build_crrr(time_steps, vector_size, outputs, num_filters, batch_size, kernel_size, lstm_output, stateful)
-
 
     model.compile(loss='categorical_crossentropy',
                   optimizer='adam',
