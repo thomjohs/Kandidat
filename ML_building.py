@@ -4,8 +4,7 @@ import ML_functions as ml
 from keras.preprocessing import sequence
 import matplotlib.pyplot as plt
 import numpy as np
-
-
+import os
 
 vector_size = 52
 
@@ -20,6 +19,8 @@ input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
                "AndreasButton4", "AndreasSlideUp4", "AndreasSwipeNext4",
                "AndreasButton5", "AndreasSlideUp5", "AndreasSwipeNext5",
                "GoodBackground1", "GoodBackground2"]
+
+input_folder = "ProcessedData"
 
 # Number of categories
 outputs = 4
@@ -47,7 +48,7 @@ weightFile = "weights.h5"
 plot = False
 plotFile = f'Plots\\ts{time_steps}bs{batch_size}lstmOut{lstm_output}st{stateful}.pdf'
 
-data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
+data = supp.shuffle_gestures(ml.load_folder(input_folder))
 data = data[:len(data)//1000 * 1000]
 
 
@@ -56,7 +57,7 @@ backFrames = 0
 for frame in data:
     if len(frame) != 52:
         print(frame[51])
-    if frame[len(frame) -1] == 'goodBackground':
+    if frame[len(frame) - 1] == 'goodBackground':
         backFrames += 1
     else:
         gestFrames += 1
