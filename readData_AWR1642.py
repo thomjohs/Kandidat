@@ -28,8 +28,8 @@ def serialConfig(configFileName):
     #Dataport = serial.Serial('/dev/ttyACM1', 921600)
     
     # Windows
-    CLIport = serial.Serial('COM5', 115200)
-    Dataport = serial.Serial('COM6', 921600)
+    CLIport = serial.Serial('COM3', 115200)
+    Dataport = serial.Serial('COM4', 921600)
 
     # Read the configuration file and send it to the board
     config = [line.rstrip('\r\n') for line in open(configFileName)]
