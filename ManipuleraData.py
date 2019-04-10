@@ -1,7 +1,6 @@
 import csv
 import numpy as np
 import supp
-import math
 
 #dataObj={}
 #frameData=[]
@@ -30,8 +29,7 @@ def file_to_frames(csv_file):
             dataList.append(standardVec)
         return dataList
 
-
-def framedata_to_file(frameData, out_path):
+def framedata_to_file(frameData,out_path):
     dataList = []
     for frame in frameData:
         standardVector = toStandardVector(frame)
@@ -104,6 +102,7 @@ def trans_y(standardVector, dy):
 
     return standardVector
 
+    frames_to_file(dataList,out_path)
 
 def frames_to_file(frames, out_path):
     with open(out_path, 'w', newline='') as out:

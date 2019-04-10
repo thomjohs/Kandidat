@@ -9,7 +9,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import classification_report
 import csv
-import ManipuleraData as mp
 
 # GPU Tester
 from tensorflow.python.client import device_lib
@@ -19,7 +18,6 @@ print(device_lib.list_local_devices())
 vector_size = 52
 starttime = datetime.datetime.now()
 input_file = "ArenSwipeNext1"
-input_folder = "ProcessedData"
 input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
                "ArenButton1", "ArenSlideUp1", "ArenSwipeNext1",
                "ArenButton2", "ArenSlideUp2", "ArenSwipeNext2",
@@ -29,59 +27,64 @@ input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
                "AndreasButton3", "AndreasSlideUp3", "AndreasSwipeNext3",
                "AndreasButton4", "AndreasSlideUp4", "AndreasSwipeNext4",
                "AndreasButton5", "AndreasSlideUp5", "AndreasSwipeNext5",
-               "GoodBackground1", "GoodBackground2", "AlexButton1", "AlexFlop1",
-               "AlexSlideDown1", "AlexSlideUp1", "AlexSwipeNext1", "AlexSwipePrev1",
-               "JuliaButton1", "JuliaFlop1", "JuliaSlideDown1",
+<<<<<<< HEAD
+               "GoodBackground1", "GoodBackground2"]
+
+# Number of categories
+outputs = 4
+
+# training hyperparameters
+
+epochs = 2
+=======
+               "GoodBackground1", "GoodBackground2","AlexButton1", "AlexFlop1",
+               "AlexSlideDown1", "AlexSlideUp1", "AlexSwipeNext1", "AlexSwipePrev1","JuliaButton1", "JuliaFlop1","JuliaSlideDown1", 
                "JuliaSlideUp1", "JuliaSwipeNext1", "JuliaSwipePrev1",
-               "LinusButton1", "LinusFlop1", "LinusSlideDown1",
+               "LinusButton1", "LinusFlop1","LinusSlideDown1", 
                "LinusSlideUp1", "LinusSwipeNext1", "LinusSwipePrev1",
-               "MartinButton1", "MartinFlop1", "MartinSlideDown1",
+               "MartinButton1", "MartinFlop1","MartinSlideDown1", 
                "MartinSlideUp1", "MartinSwipeNext1", "MartinSwipePrev1",
-               "MatildaButton1", "MatildaFlop1", "MatildaSlideDown1",
+               "MatildaButton1", "MatildaFlop1","MatildaSlideDown1", 
                "MatildaSlideUp1", "MatildaSwipeNext1", "MatildaSwipePrev1"]
 
 # Number of categories
 outputs = 7
-repeats = 1
 
 # training hyperparameters
+
 epochs = 300
+>>>>>>> parent of 9fb5ee9... Merge branch 'master' of https://github.com/thomjohs/Kandidat
 time_steps = 20
-batch_size = 100
+batch_size = 1000
 
 training_ratio = 0.7
 
 # used in both models
-lstm_output = 15
+<<<<<<< HEAD
+lstm_output = 20
+=======
+lstm_output = 40
+>>>>>>> parent of 9fb5ee9... Merge branch 'master' of https://github.com/thomjohs/Kandidat
 stateful = True
 
 # only used in combined model
 num_filters = 64
 kernel_size = 5
-
+repeats = 5
 
 # for saving the model and weights
 export = True
-modelFile = "Arenmodel4.json"
-weightFile = "Arenweights4.h5"
+modelFile = "Arenmodel5.json"
+weightFile = "Arenweights5.h5"
 
 # saves plot
 plot = False
 plotFile = f'Plots\\ts{time_steps}bs{batch_size}lstmOut{lstm_output}st{stateful}.pdf'
 
 # saves Result
-resultFile = "resultsArencrrr4.csv"
+resultFile = "resultsArencrrr5.csv"
 
-
-data = ml.load_folder(input_folder)
-i = 0
-for frame in data:
-    if frame is None:
-        print(i)
-    i+=1
-
-
-data = supp.shuffle_gestures(mp.translate_data(data))
+data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
 
 
 
@@ -111,13 +114,19 @@ train_seq = sequence.TimeseriesGenerator(x_train, y_train, length=time_steps, ba
 test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch_size=batch_size)
 
 
-seqtest = []
+seqtest=[]
+<<<<<<< HEAD
+pltloss=plt
+pltacc=plt
+=======
+>>>>>>> parent of 9fb5ee9... Merge branch 'master' of https://github.com/thomjohs/Kandidat
 
 for i in range(repeats):
 
     # model = ml.build_lstm(time_steps, vector_size, outputs, batch_size, lstm_output, stateful)
     # model = ml.build_clstm(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output)
     model = ml.build_crrr(time_steps, vector_size, outputs, num_filters, batch_size, kernel_size, lstm_output, stateful)
+
 
     model.compile(loss='categorical_crossentropy',
                   optimizer='adam',
@@ -145,24 +154,24 @@ for i in range(repeats):
 	print(predVer[0])
 	print(classification_report(y_test[:len(preds)], preds))
 	'''
+    plt.subplot(2, 1, 1)
+    plt.plot(history.history['loss'], color='blue')
+    plt.plot(history.history['val_loss'], color='orange')
+    plt.title('model loss')
+    plt.ylabel('loss')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
 
-    # plt.plot(history.history['loss'])
-    # plt.plot(history.history['val_loss'])
-    # plt.title('model loss')
-    # plt.ylabel('loss')
-    # plt.xlabel('epoch')
-    # plt.legend(['train', 'test'], loc='upper left')
-    # plt.show()
-    #
-    # plt.plot(history.history['acc'])
-    # plt.plot(history.history['val_acc'])
-    # plt.title('model accuracy')
-    # plt.ylabel('accuracy')
-    # plt.xlabel('epoch')
-    # plt.legend(['train', 'test'], loc='upper left')
-    # if plot:
-    #     plt.savefig(plotFile, bbox_inches='tight')
-    # plt.show()
+    plt.subplot(2, 1, 2)
+    plt.plot(history.history['acc'], color='blue')
+    plt.plot(history.history['val_acc'], color='orange')
+    plt.title('model accuracy')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'test'], loc='upper left')
+    if plot:
+        plt.savefig(plotFile, bbox_inches='tight')
+
 
     print(f'Gestures: {gestFrames}')
     print(f'Backgrounds: {backFrames}')
@@ -174,6 +183,7 @@ for i in range(repeats):
             file.write(json_model)
         model.save_weights("Model\\" + weightFile)
 
+plt.show()
 with open(resultFile, 'w') as file:
     writer = csv.writer(file)
     for row in seqtest:

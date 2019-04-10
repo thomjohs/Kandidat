@@ -2,7 +2,7 @@ import tensorflow as tf
 import datetime
 from keras.preprocessing import sequence
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation
+from keras.layers import Dense, Dropout, Activation, BatchNormalization
 from keras.layers import Embedding
 from keras import utils
 from keras.layers import LSTM, Conv1D
@@ -11,12 +11,11 @@ import csv
 import random
 import matplotlib.pyplot as plt
 import supp
-import os
 
 
 def sum_print(start_time, repeats, seqtest):
     print('')
-    print('Results:')
+    print('Validation Results:')
     for j in range(repeats):
         [score, acc] = seqtest.pop(0)
         print('Test score:', round(score, 3), 'Test acc:', round(acc, 3))
@@ -33,27 +32,18 @@ def sum_print(start_time, repeats, seqtest):
 def load_data_multiple(input_files):
     frameList = []
     for file in input_files:
-
         frameList.extend(load_data(file))
     return frameList
 
 
-def load_folder(input_folder):
-    for root, dirs, files in os.walk(input_folder):
-        if '.csv' in files:
-            files.remove('.csv')
-        print(files)
-        return load_data_multiple(files)
-
-
 def load_data(input_file):
     frameList = []
-    with open("ProcessedData\\" + input_file) as inp:
+    with open("ProcessedData\\" + input_file + ".csv") as inp:
         reader = csv.reader(inp, delimiter=',')
-        for frame in reader:
+        for row in reader:
+            frame = row
             if len(frame) != 0:
-                if frame is not None:
-                    frameList.append(frame)
+                frameList.append(frame)
     return frameList
 
 
@@ -86,6 +76,7 @@ def build_clstm(time_steps, vector_size, outputs, num_filters, kernel_size, lstm
 def build_crrr(time_steps, vector_size, outputs, num_filters, batch_size, kernel_size, lstm_output, stateful):
     model = Sequential()
     model.add(Conv1D(num_filters, kernel_size, batch_input_shape=(batch_size, time_steps, vector_size - 1), activation='relu'))
+    model.add(BatchNormalization(axis=1, scale=0))
     model.add(LSTM(lstm_output,
                    return_sequences=True,
                    stateful=stateful,
