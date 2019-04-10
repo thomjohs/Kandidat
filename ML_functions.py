@@ -1,11 +1,11 @@
 import tensorflow as tf
 import datetime
-from keras.preprocessing import sequence
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation, BatchNormalization
-from keras.layers import Embedding
-from keras import utils
-from keras.layers import LSTM, Conv1D
+from tensorflow.keras.preprocessing import sequence
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Dropout, Activation, BatchNormalization
+from tensorflow.keras.layers import Embedding
+from tensorflow.keras import utils
+from tensorflow.keras.layers import LSTM, Conv1D
 import numpy as np
 import csv
 import random

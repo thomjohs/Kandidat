@@ -39,70 +39,34 @@ def framedata_to_file(frameData,out_path):
 
 def translate_data(data,dx,dy):
     global standardLen
-    frameList = data[:]
-    frameMatrix = np.asarray(frameList)
-    numMatrix=frameMatrix[:,:0]
-    #rangeMatrix = frameMatrix[:,1:standardLen]
-    dopplerPeakMatrix = frameMatrix[:,1+standardLen*1:standardLen*3]
-    xMatrix = frameMatrix[:,1+standardLen*3:standardLen*4]
-    yMatrix = frameMatrix[:,1+standardLen*4:standardLen*5]
+    if (type(data)==list):
+        frameList = data[:]
+        frameMatrix = np.zeros((len(frameList),52))
+        i=0
+        for frame in frameList:
+            frameMatrix[i]=np.asarray(frame)
+            i+=1
+    elif ((type(data)==np.ndarray)):
+        frameMatrix=data[:]
+    numMatrix=frameMatrix[:,:1]
+    dopplerPeakMatrix = frameMatrix[:,1+standardLen*1:standardLen*3+1]
+    xMatrix = frameMatrix[:,1+standardLen*3:standardLen*4+1]
+    yMatrix = frameMatrix[:,1+standardLen*4:standardLen*5+1]
     labelMatrix=frameMatrix[:,standardLen*5+1:]
-    print(type(xMatrix))
-    dxMatrix=xMatrix>0
-    
+
+    dxMatrix=dx*(xMatrix>0)
     dyMatrix=dy*(yMatrix>0)
 
-    xMatrix_trans = xMatrix + dx
-    yMatrix_trans = yMatrix + dy
+    xMatrix_trans = xMatrix + dxMatrix
+    yMatrix_trans = yMatrix + dyMatrix
 
     dx_sqr = (xMatrix_trans) ** 2
     dy_sqr = (yMatrix_trans) ** 2
 
-    trans_xy_rangeMatrix=math.sqrt(dx_sqr + dy_sqr)
+    trans_xy_rangeMatrix=np.sqrt(dx_sqr + dy_sqr)
 
-    newFrameList=np.hstack([numMatrix,trans_xy_rangeMatrix,dopplerPeakMatrix,dxMatrix,dyMatrix,labelMatrix])
-
-    #lableMatrix = frameMatrix[:,1+standardLen*4,standardLen*5]
-
-    for i in range(2):
-        for frame in data:
-            if frame:
-                frameList.append(trans_x(frame, i))
-    transFrame = frameList
-    print(transFrame[200000:200010])
-    for i in range(2):
-        for frame in transFrame:
-            if frame:
-                frameList.append(trans_y(frame, i))
-    return frameList
-
-def trans_x(standardVector, dx):
-
-    global standardLen
-    for i in range(10):
-
-        x = float(standardVector[standardLen*3+i+1])+dx
-        y = float(standardVector[standardLen*4+i+1])
-        r = math.sqrt(x ** 2 + y ** 2)
-        standardVector[standardLen * 3 + i + 1] = str(x)
-        standardVector[i + 1] = str(r)
-
-    return standardVector
-
-
-def trans_y(standardVector, dy):
-    global standardLen
-    for i in range(10):
-
-        x = float(standardVector[standardLen*3+i+1])
-        y = float(standardVector[standardLen*4+i+1])+dy
-        r = math.sqrt(x ** 2 + y ** 2)
-        standardVector[standardLen * 4 + i + 1] = str(y)
-        standardVector[i + 1] = str(r)
-
-    return standardVector
-
-    frames_to_file(dataList,out_path)
+    newFrameList=np.hstack([numMatrix,trans_xy_rangeMatrix,dopplerPeakMatrix,xMatrix_trans,yMatrix_trans,labelMatrix])
+    return newFrameList.tolist()
 
 def frames_to_file(frames, out_path):
     with open(out_path, 'w', newline='') as out:
@@ -276,8 +240,12 @@ def main():
 
 # main()
 # Synthesize data
-
+#test=[[1,2,2,2,2,2,2,2,2,2,2,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,1,1,1,1,0,0,0,0,0,0,2.5,2.5,2.5,2.5,0,0,0,0,0,0,100],[1,2,2,2,2,2,2,2,2,2,2,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,0,0,0,2.5,2.5,2.5,2.5,2.5,2.5,2.5,0,0,0,100],[1,2,2,2,2,2,2,2,2,2,2,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,1,0,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,0,100],[1,2,2,2,2,2,2,2,2,2,2,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,0,0,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,0,0,100]]
+test=np.ones((4,52))
+print(type(test))
 # Translate
+translate_data(test,2,1.5)
+print(translate_data(test,2,1.5))
 
 # Mirror some gestures
 
