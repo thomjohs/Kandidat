@@ -27,16 +27,6 @@ input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
                "AndreasButton3", "AndreasSlideUp3", "AndreasSwipeNext3",
                "AndreasButton4", "AndreasSlideUp4", "AndreasSwipeNext4",
                "AndreasButton5", "AndreasSlideUp5", "AndreasSwipeNext5",
-<<<<<<< HEAD
-               "GoodBackground1", "GoodBackground2"]
-
-# Number of categories
-outputs = 4
-
-# training hyperparameters
-
-epochs = 2
-=======
                "GoodBackground1", "GoodBackground2","AlexButton1", "AlexFlop1",
                "AlexSlideDown1", "AlexSlideUp1", "AlexSwipeNext1", "AlexSwipePrev1","JuliaButton1", "JuliaFlop1","JuliaSlideDown1", 
                "JuliaSlideUp1", "JuliaSwipeNext1", "JuliaSwipePrev1",
@@ -53,18 +43,14 @@ outputs = 7
 # training hyperparameters
 
 epochs = 300
->>>>>>> parent of 9fb5ee9... Merge branch 'master' of https://github.com/thomjohs/Kandidat
 time_steps = 20
 batch_size = 1000
 
 training_ratio = 0.7
 
 # used in both models
-<<<<<<< HEAD
+
 lstm_output = 20
-=======
-lstm_output = 40
->>>>>>> parent of 9fb5ee9... Merge branch 'master' of https://github.com/thomjohs/Kandidat
 stateful = True
 
 # only used in combined model
@@ -115,11 +101,10 @@ test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch
 
 
 seqtest=[]
-<<<<<<< HEAD
+
 pltloss=plt
 pltacc=plt
-=======
->>>>>>> parent of 9fb5ee9... Merge branch 'master' of https://github.com/thomjohs/Kandidat
+
 
 for i in range(repeats):
 
