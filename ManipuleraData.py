@@ -39,8 +39,33 @@ def framedata_to_file(frameData, out_path):
     frames_to_file(dataList, out_path)
 
 
-def translate_data(data):
+def translate_data(data,dx,dy):
+    global standardLen
     frameList = data[:]
+    frameMatrix = np.asarray(frameList)
+    numMatrix=frameMatrix[:,:0]
+    #rangeMatrix = frameMatrix[:,1:standardLen]
+    dopplerPeakMatrix = frameMatrix[:,1+standardLen*1:standardLen*3]
+    xMatrix = frameMatrix[:,1+standardLen*3:standardLen*4]
+    yMatrix = frameMatrix[:,1+standardLen*4:standardLen*5]
+    labelMatrix=frameMatrix[:,standardLen*5+1:]
+    print(type(xMatrix))
+    dxMatrix=xMatrix>0
+    
+    dyMatrix=dy*(yMatrix>0)
+
+    xMatrix_trans = xMatrix + dx
+    yMatrix_trans = yMatrix + dy
+
+    dx_sqr = (xMatrix_trans) ** 2
+    dy_sqr = (yMatrix_trans) ** 2
+
+    trans_xy_rangeMatrix=math.sqrt(dx_sqr + dy_sqr)
+
+    newFrameList=np.hstack([numMatrix,trans_xy_rangeMatrix,dopplerPeakMatrix,dxMatrix,dyMatrix,labelMatrix])
+
+    #lableMatrix = frameMatrix[:,1+standardLen*4,standardLen*5]
+
     for i in range(2):
         for frame in data:
             if frame:
