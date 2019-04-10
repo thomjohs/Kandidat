@@ -11,7 +11,6 @@ import csv
 import random
 import matplotlib.pyplot as plt
 import supp
-import os
 
 
 def sum_print(start_time, repeats, seqtest):
@@ -33,27 +32,18 @@ def sum_print(start_time, repeats, seqtest):
 def load_data_multiple(input_files):
     frameList = []
     for file in input_files:
-
         frameList.extend(load_data(file))
     return frameList
 
 
-def load_folder(input_folder):
-    for root, dirs, files in os.walk(input_folder):
-        if '.csv' in files:
-            files.remove('.csv')
-        print(files)
-        return load_data_multiple(files)
-
-
 def load_data(input_file):
     frameList = []
-    with open("ProcessedData\\" + input_file) as inp:
+    with open("ProcessedData\\" + input_file + ".csv") as inp:
         reader = csv.reader(inp, delimiter=',')
-        for frame in reader:
+        for row in reader:
+            frame = row
             if len(frame) != 0:
-                if frame is not None:
-                    frameList.append(frame)
+                frameList.append(frame)
     return frameList
 
 
