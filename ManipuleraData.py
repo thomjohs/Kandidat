@@ -18,9 +18,9 @@ def file_to_frames(csv_file):
         reader = csv.DictReader(csvfile)
         for row in reader:
             data = {}
-            data['numObj'] = int(row['numObj'])
-            data['rangeIdx'] = supp.dString_to_iarray(row, 'rangeIdx')
-            data['dopplerIdx'] = supp.dString_to_iarray(row, 'dopplerIdx')
+            data['numObj'] = float(row['numObj'])
+            data['rangeIdx'] = supp.dString_to_farray(row, 'rangeIdx')
+            data['dopplerIdx'] = supp.dString_to_farray(row, 'dopplerIdx')
             data['peakVal'] = supp.dString_to_iarray(row, 'peakVal')
             data['x'] = supp.dString_to_farray(row, 'x')
             data['y'] = supp.dString_to_farray(row, 'y')
@@ -102,7 +102,6 @@ def trans_y(standardVector, dy):
 
     return standardVector
 
-    frames_to_file(dataList,out_path)
 
 def frames_to_file(frames, out_path):
     with open(out_path, 'w', newline='') as out:

@@ -44,23 +44,25 @@ def load_data(input_file):
             frame = row
             if len(frame) != 0:
                 frameList.append(frame)
-    return frameList
-
-
-def split_data(frameList, vector_size, outputs, training_ratio):
-    x = np.empty((len(frameList), vector_size - 1), dtype=np.float32)
-    y = np.empty((len(frameList), 1), dtype=np.float32)
+    data = np.empty((len(frameList), len(frameList[0])), dtype=np.float32)
     i = 0
     for frame in frameList:
-        x[i] = np.array(frame[:vector_size - 1])
-        y[i] = frame[vector_size - 1]
+        data[i] = np.array(supp.label_to_int(frame))
         i += 1
+    return data
+
+
+def split_data(data, vector_size, outputs, training_ratio):
+    training_n = int(len(data) * training_ratio)
+    split = np.split(data, [vector_size - 1, vector_size], axis=1)
+    x = split[0]
+    y = split[1]
     y = utils.to_categorical(y, outputs, dtype=np.float32)
-    x_train = x[:int(len(frameList) * training_ratio)]
-    x_test = x[int(len(frameList) * training_ratio):len(frameList)]
-    y_train = y[:int(len(frameList) * training_ratio)]
-    y_test = y[int(len(frameList) * training_ratio):len(frameList)]
-    return x_train, x_test, y_train, y_test
+
+    x_split = np.split(x, [training_n, len(data)])
+    y_split = np.split(y, [training_n, len(data)])
+
+    return x_split[0], x_split[1], y_split[0], y_split[1]
 
 
 def build_clstm(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output):
