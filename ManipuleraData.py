@@ -18,9 +18,9 @@ def file_to_frames(csv_file):
         reader = csv.DictReader(csvfile)
         for row in reader:
             data = {}
-            data['numObj'] = int(row['numObj'])
-            data['rangeIdx'] = supp.dString_to_iarray(row, 'rangeIdx')
-            data['dopplerIdx'] = supp.dString_to_iarray(row, 'dopplerIdx')
+            data['numObj'] = float(row['numObj'])
+            data['rangeIdx'] = supp.dString_to_farray(row, 'rangeIdx')
+            data['dopplerIdx'] = supp.dString_to_farray(row, 'dopplerIdx')
             data['peakVal'] = supp.dString_to_iarray(row, 'peakVal')
             data['x'] = supp.dString_to_farray(row, 'x')
             data['y'] = supp.dString_to_farray(row, 'y')
@@ -241,11 +241,11 @@ def main():
 # main()
 # Synthesize data
 #test=[[1,2,2,2,2,2,2,2,2,2,2,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,1,1,1,1,0,0,0,0,0,0,2.5,2.5,2.5,2.5,0,0,0,0,0,0,100],[1,2,2,2,2,2,2,2,2,2,2,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,0,0,0,2.5,2.5,2.5,2.5,2.5,2.5,2.5,0,0,0,100],[1,2,2,2,2,2,2,2,2,2,2,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,1,0,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,0,100],[1,2,2,2,2,2,2,2,2,2,2,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,0,0,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,0,0,100]]
-test=np.ones((4,52))
-print(type(test))
+#test=np.ones((4,52))
+#print(type(test))
 # Translate
-translate_data(test,2,1.5)
-print(translate_data(test,2,1.5))
+#translate_data(test,2,1.5)
+#print(translate_data(test,2,1.5))
 
 # Mirror some gestures
 

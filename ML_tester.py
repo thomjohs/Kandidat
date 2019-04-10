@@ -82,9 +82,9 @@ for frame in data:
         backFrames += 1
     else:
         gestFrames += 1
-        
 
-x_train, x_test, y_train, y_test = ml.split_data(list(map(supp.label_to_int, data)), vector_size, outputs,
+
+x_train, x_test, y_train, y_test = ml.split_data(data, vector_size, outputs,
                                                  training_ratio)
 
 x_train = x_train[:len(x_train) // 1000 * 1000 + time_steps]
@@ -94,14 +94,16 @@ y_test = y_test[:len(y_test) // 1000 * 1000 + time_steps]
 
 print(f'{len(x_train)}, {len(x_test)}, {len(y_train)}, {len(y_test)}')
 
-
+print(x_train[0])
 train_seq = sequence.TimeseriesGenerator(x_train, y_train, length=time_steps, batch_size=batch_size)
 test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch_size=batch_size)
+print(train_seq[0])
 
+seqtest = []
 
-seqtest=[]
-pltloss=plt
-pltacc=plt
+pltloss = plt
+pltacc = plt
+
 
 for i in range(repeats):
 

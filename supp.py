@@ -81,12 +81,18 @@ def label_to_int(frame):
     last = len(frame)-1
     if frame[last] == 'slideUp':
         frame[last] = 0
-    elif frame[last] == 'button':
+    elif frame[last] == 'slideDown':
         frame[last] = 1
-    elif frame[last] == 'swipeNext':
+    elif frame[last] == 'button':
         frame[last] = 2
-    else:
+    elif frame[last] == 'swipeNext':
         frame[last] = 3
+    elif frame[last] == 'swipePrev':
+        frame[last] = 4
+    elif frame[last] == 'flop':
+        frame[last] = 5
+    else:
+        frame[last] = 6
     return frame
 
 
@@ -94,9 +100,15 @@ def int_to_label(i):
     if i == 0:
         return 'slideUp'
     elif i == 1:
-        return 'button'
+        return 'slideDown'
     elif i == 2:
+        return 'button'
+    elif i == 3:
         return 'swipeNext'
+    elif i == 4:
+        return 'swipePrev'
+    elif i == 5:
+        return 'flop'
     else:
         return 'background'
 
