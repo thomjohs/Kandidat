@@ -1,7 +1,8 @@
 import csv
 import numpy as np
 import supp
-
+import ML_functions as ml
+import random
 #dataObj={}
 #frameData=[]
 standardLen=10
@@ -123,10 +124,6 @@ def toStandardVector(dataObj):
         standardVector[currentIndex]=dataObj['Label']
     return standardVector
 
-
-
-
-
 def mergeSort(alist):
     #print("Splitting ",alist)
     if len(alist)>1:
@@ -192,7 +189,7 @@ def binaryIndexSearch(asortedlist, i):
 def sortOthersAndCutOf(dataObj,mappedIndexes):
     global standardLen
     global cutOfIndex
-    numObj=dataObj['numObj']
+    numObj=int(dataObj['numObj'])
     dopplerIdx = [0] * numObj
     peakVal = [0] * numObj
     x = [0] * numObj
@@ -230,6 +227,29 @@ def sortOthersAndCutOf(dataObj,mappedIndexes):
     dataObj['x']=dataObj['x'][:numRemaningObj]
     dataObj['y']=dataObj['y'][:numRemaningObj]
 
+def translateFile(in_file, out_file):
+    data=ml.load_data(in_file)
+    dx=random.random()
+    dy=random.random()
+    data_trans=translate_data(data,dx,dy)
+    print(data_trans)
+    data_trans_str=[]
+    for frame in data_trans:
+        frame_str=[str(i) for i in frame]
+        data_trans_str.append(frame_str)
+    print(data_trans_str)
+    frames_to_file(data_trans_str, out_file)
+
+def translateFiles(in_files, out_files):
+    i=0
+    for file in in_files:
+        translateFile(file,out_files[i])
+        i+=1
+def processFile(in_file, out_file):
+    data=file_to_frames(in_file)
+    frames_to_file(data, out_file)
+    
+
 
 # Main for testing
 # dataObj={'numObj':5,'rangeIdx':[1,12,41,6,2],'dopplerIdx':[1,2,3,4,5],'peakVal':[1,2,3,4,5],'x':[1,2,3,4,5],'y':[1,2,3,4,5],}
@@ -243,9 +263,15 @@ def main():
 #test=[[1,2,2,2,2,2,2,2,2,2,2,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,1,1,1,1,0,0,0,0,0,0,2.5,2.5,2.5,2.5,0,0,0,0,0,0,100],[1,2,2,2,2,2,2,2,2,2,2,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,0,0,0,2.5,2.5,2.5,2.5,2.5,2.5,2.5,0,0,0,100],[1,2,2,2,2,2,2,2,2,2,2,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,1,0,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,0,100],[1,2,2,2,2,2,2,2,2,2,2,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,0,0,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,0,0,100]]
 #test=np.ones((4,52))
 #print(type(test))
+in_file='PreprocessedData\\JohanButton1.csv'   
+out_file='ProcessedData\\JohanButton1.csv'
+processFile(in_file,out_file)
 # Translate
-#translate_data(test,2,1.5)
+#in_file='JohanButton1'   
+#out_file=f'TranslatedData\\JohanButton1.csv'
+#translateFile(in_file,out_file)
 #print(translate_data(test,2,1.5))
+
 
 # Mirror some gestures
 
