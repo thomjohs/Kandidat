@@ -61,15 +61,15 @@ repeats = 1
 
 # for saving the model and weights
 export = True
-modelFile = "Arenmodel5.json"
-weightFile = "Arenweights5.h5"
+modelFile = "model.json"
+weightFile = "weights.h5"
 
 # saves plot
 plot = False
 plotFile = f'Plots\\ts{time_steps}bs{batch_size}lstmOut{lstm_output}st{stateful}.pdf'
 
 # saves Result
-resultFile = "resultsArencrrr5.csv"
+resultFile = "results.csv"
 
 data = supp.shuffle_gestures(ml.load_folder(input_folder))
 
