@@ -14,7 +14,6 @@ out_file = 'ProcessedData\\ArenSlideUp2.csv'
 
 def file_to_frames(csv_file):
     with open(csv_file) as csvfile:
-
         dataList = []
         reader = csv.DictReader(csvfile)
         for row in reader:
@@ -83,6 +82,12 @@ def toStandardVector(dataObj):
     mergeSort(rangeIdx)
     # mappes where the range idexes lands after sorting
     mappedIndexes = compareIndex(dataObj['rangeIdx'], rangeIdx)
+    
+    dataObj['rangeIdx'] = rangeIdx
+    dataObj['Idx'] = rangeIdx
+    dataObj['rangeIdx'] = rangeIdx
+    dataObj['rangeIdx'] = rangeIdx
+    dataObj['rangeIdx'] = rangeIdx
     dataObj['rangeIdx'] = rangeIdx
     # output is at most standardLen but can be shorter
     sortOthersAndCutOf(dataObj, mappedIndexes)
@@ -158,19 +163,37 @@ def mergeSort(alist):
     #print("Merging ",alist)
 
 def compareIndex(alist,alist_sorted):
-    mappedIndexes=[]
+    mappedIndexes = {}
+    mappedIndexesList=[]
+    #for i in alist_sorted:
+    #    if not mappedIndex.getKey(i) is None:
+    #        mappedIndexes[i]=[]
     for i in alist:
-        index = binaryIndexSearch(alist_sorted, i)
-
-        # If the object is to far away, returns the negativ index minus 1
-        #if i>cutOfIndex:
-        #    mappedIndexes.append(-index-1)
-        # Maps the change of index when sorted
-        #else:
-        #   mappedIndexes.append(index)
-        mappedIndexes.append(index)
+        indexes=mappedIndexes.get(i)
+        if indexes is None:
+            #index=int(binaryIndexSearch(alist_sorted, i))
+            for j in range(len(alist_sorted)):
+                if i==alist_sorted[j]:
+                    mappedIndexes[i]=[j]
+                    mappedIndexesList.append(j)
+                    break
+                #else:
+                    #print("inte med")
+            
+        else:
+            index=indexes[len(indexes)-1]+1
+            
+            if i==alist_sorted[index]:
+                indexes.append(index)
+                mappedIndexesList.append(index)
+            else:
+                print("Fel")
+                print(indexes)
+                print(index)
+                print(alist_sorted)
         
-    return mappedIndexes
+        
+    return mappedIndexesList
 
 def binaryIndexSearch(asortedlist, i):
     first=0
