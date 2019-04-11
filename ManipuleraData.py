@@ -3,6 +3,7 @@ import numpy as np
 import supp
 import ML_functions as ml
 import random
+import os
 #dataObj={}
 #frameData=[]
 standardLen=10
@@ -27,6 +28,8 @@ def file_to_frames(csv_file):
             data['Label'] = row['Label']
             standardVec=toStandardVector(data)
             dataList.append(standardVec)
+            
+        #print(dataList[0][1:11])
         return dataList
 
 def framedata_to_file(frameData,out_path):
@@ -82,13 +85,6 @@ def toStandardVector(dataObj):
     mergeSort(rangeIdx)
     # mappes where the range idexes lands after sorting
     mappedIndexes = compareIndex(dataObj['rangeIdx'], rangeIdx)
-    
-    dataObj['rangeIdx'] = rangeIdx
-    dataObj['Idx'] = rangeIdx
-    dataObj['rangeIdx'] = rangeIdx
-    dataObj['rangeIdx'] = rangeIdx
-    dataObj['rangeIdx'] = rangeIdx
-    dataObj['rangeIdx'] = rangeIdx
     # output is at most standardLen but can be shorter
     sortOthersAndCutOf(dataObj, mappedIndexes)
 
@@ -105,6 +101,7 @@ def toStandardVector(dataObj):
     standardVector[currentIndex]=numObj
     currentIndex+=1
     for r in dataObj['rangeIdx']:
+        #print(r)
         standardVector[currentIndex]=r
         currentIndex+=1
     currentIndex+=skip
@@ -127,6 +124,7 @@ def toStandardVector(dataObj):
     if 'Label' in dataObj.keys():
         currentIndex += skip
         standardVector[currentIndex]=dataObj['Label']
+    #print(standardVector[1:11])
     return standardVector
 
 def mergeSort(alist):
@@ -255,22 +253,41 @@ def translateFile(in_file, out_file):
     dx=random.random()
     dy=random.random()
     data_trans=translate_data(data,dx,dy)
-    print(data_trans)
     data_trans_str=[]
     for frame in data_trans:
         frame_str=[str(i) for i in frame]
         data_trans_str.append(frame_str)
-    print(data_trans_str)
     frames_to_file(data_trans_str, out_file)
 
 def translateFiles(in_files, out_files):
-    i=0
-    for file in in_files:
-        translateFile(file,out_files[i])
-        i+=1
+    for i in range(len(in_files)):
+        print(f'ProcessedData\\{in_files[i]}')
+        print(f'TranslatedData\\{out_files[i]}')
+        translateFile(in_files[i],f'TranslatedData\\{out_files[i]}')
+        
+def translateFolder(input_folder,output_folder):
+    for root, dirs, files in os.walk(input_folder):
+        if '.csv' in files:
+            files.remove('.csv')
+        print(files)
+        translateFiles(files,files)
 def processFile(in_file, out_file):
     data=file_to_frames(in_file)
+    #print(data[0][1:11])
     frames_to_file(data, out_file)
+
+def processFiles(in_files, out_files):
+    for i in range(len(in_files)):
+        print(f'PreprocessedData\\{in_files[i]}')
+        print(f'ProcessedData\\{out_files[i]}')
+        processFile(f'PreprocessedData\\{in_files[i]}',f'ProcessedData\\{out_files[i]}')
+def processFiles_folder(input_folder,output_folder):
+    for root, dirs, files in os.walk(input_folder):
+        if '.csv' in files:
+            files.remove('.csv')
+        print(files)
+        processFiles(files,files)
+
     
 
 
@@ -286,9 +303,10 @@ def main():
 #test=[[1,2,2,2,2,2,2,2,2,2,2,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,1,1,1,1,0,0,0,0,0,0,2.5,2.5,2.5,2.5,0,0,0,0,0,0,100],[1,2,2,2,2,2,2,2,2,2,2,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,0,0,0,2.5,2.5,2.5,2.5,2.5,2.5,2.5,0,0,0,100],[1,2,2,2,2,2,2,2,2,2,2,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,1,0,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,0,100],[1,2,2,2,2,2,2,2,2,2,2,6,6,6,6,6,6,6,6,6,6,7,7,7,7,7,7,7,7,7,7,1,1,1,1,1,1,1,1,0,0,2.5,2.5,2.5,2.5,2.5,2.5,2.5,2.5,0,0,100]]
 #test=np.ones((4,52))
 #print(type(test))
-in_file='PreprocessedData\\JohanButton1.csv'   
-out_file='ProcessedData\\JohanButton1.csv'
-processFile(in_file,out_file)
+#in_file='PreprocessedData\\JohanButton1.csv'   
+#out_file='ProcessedData\\JohanButton1.csv'
+#processFiles_folder('PreprocessedData','ProcessedData')
+#translateFolder('ProcessedData','TranslatedData')
 # Translate
 #in_file='JohanButton1'   
 #out_file=f'TranslatedData\\JohanButton1.csv'
