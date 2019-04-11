@@ -38,6 +38,7 @@ input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
                "MatildaButton1", "MatildaFlop1", "MatildaSlideDown1",
                "MatildaSlideUp1", "MatildaSwipeNext1", "MatildaSwipePrev1"]
 input_folder = "ProcessedData"
+art_folder = "TranslatedData"
 
 # Number of categories
 outputs = 7
@@ -72,6 +73,9 @@ plotFile = f'Plots\\ts{time_steps}bs{batch_size}lstmOut{lstm_output}st{stateful}
 resultFile = "results.csv"
 
 data = supp.shuffle_gestures(ml.load_folder(input_folder))
+art_data = supp.shuffle_gestures(np.concatenate(ml.load_folder(art_folder), ml.load_data("GoodBackground1")))
+
+
 
 gestFrames = 0
 backFrames = 0
@@ -86,6 +90,11 @@ for frame in data:
 
 x_train, x_test, y_train, y_test = ml.split_data(data, vector_size, outputs,
                                                  training_ratio)
+
+art_x, _, art_y, _ = ml.split_data(art_data, vector_size, outputs, 1)
+
+x_train = np.concatenate(x_train, art_x)
+y_train = np.concatenate(y_train, art_y)
 
 x_train = x_train[:len(x_train) // 1000 * 1000 + time_steps]
 x_test = x_test[:len(x_test) // 1000 * 1000 + time_steps]
