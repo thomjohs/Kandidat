@@ -57,11 +57,8 @@ def translate_data(data, dx, dy):
     yMatrix = frameMatrix[:,1+standardLen*4:standardLen*5+1]
     labelMatrix=frameMatrix[:,standardLen*5+1:]
 
-    dxMatrix=dx*(xMatrix>0)
-    dyMatrix=dy*(yMatrix>0)
-
-    xMatrix_trans = xMatrix + dxMatrix
-    yMatrix_trans = yMatrix + dyMatrix
+    xMatrix_trans = dx*xMatrix
+    yMatrix_trans = dy*yMatrix
 
     dx_sqr = (xMatrix_trans) ** 2
     dy_sqr = (yMatrix_trans) ** 2
@@ -250,8 +247,10 @@ def sortOthersAndCutOf(dataObj,mappedIndexes):
 
 def translateFile(in_file, out_file):
     data=ml.load_data(in_file)
-    dx=random.random()
-    dy=random.random()
+    dx=random.random()*1.5+0.5
+    dy=random.random()*1.5+0.5
+    if dx>2 or dx<0.5 or dy>2 or dy<0.5 :
+        print(f'dx: {dx} dy: {dy}')
     data_trans=translate_data(data,dx,dy)
     data_trans_str=[]
     for frame in data_trans:
@@ -306,7 +305,7 @@ def main():
 #in_file='PreprocessedData\\JohanButton1.csv'   
 #out_file='ProcessedData\\JohanButton1.csv'
 #processFiles_folder('PreprocessedData','ProcessedData')
-#translateFolder('ProcessedData','TranslatedData')
+translateFolder('ProcessedData','TranslatedData')
 # Translate
 #in_file='JohanButton1'   
 #out_file=f'TranslatedData\\JohanButton1.csv'
