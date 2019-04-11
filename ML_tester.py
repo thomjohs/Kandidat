@@ -45,20 +45,20 @@ outputs = 7
 
 # training hyperparameters
 
-epochs = 10
-time_steps = 5
+epochs = 200
+time_steps = 20
 batch_size = 500
 
 training_ratio = 0.7
 
 # used in both models
-lstm_output = 5
+lstm_output = 20
 stateful = True
 
 # only used in combined model
 num_filters = 64
 kernel_size = 5
-repeats = 1
+repeats = 5
 
 # for saving the model and weights
 export = True
