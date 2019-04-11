@@ -34,19 +34,19 @@ def load_folder(input_folder):
         if '.csv' in files:
             files.remove('.csv')
         print(files)
-        return load_data_multiple(files)
+        return load_data_multiple(files, input_folder + "\\")
 
 
-def load_data_multiple(input_files):
+def load_data_multiple(input_files, folder="ProcessedData\\"):
     frameList = []
     for file in input_files:
-        frameList.extend(load_data(file))
+        frameList.extend(load_data(file, folder))
     return frameList
 
 
-def load_data(input_file):
+def load_data(input_file, folder="ProcessedData\\"):
     frameList = []
-    with open("ProcessedData\\" + input_file) as inp:
+    with open(folder + input_file) as inp:
         reader = csv.reader(inp, delimiter=',')
         for row in reader:
             frame = row

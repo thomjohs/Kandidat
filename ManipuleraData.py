@@ -305,7 +305,7 @@ def main():
 #in_file='PreprocessedData\\JohanButton1.csv'   
 #out_file='ProcessedData\\JohanButton1.csv'
 #processFiles_folder('PreprocessedData','ProcessedData')
-translateFolder('ProcessedData','TranslatedData')
+# translateFolder('ProcessedData','TranslatedData')
 # Translate
 #in_file='JohanButton1'   
 #out_file=f'TranslatedData\\JohanButton1.csv'

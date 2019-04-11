@@ -74,8 +74,11 @@ resultFile = "results.csv"
 
 data = supp.shuffle_gestures(ml.load_folder(input_folder))
 
+art_data = ml.load_folder(art_folder)
+art_background =  ml.load_data("GoodBackground1.csv")
+
 art_data = supp.shuffle_gestures(np.concatenate
-                                 ([ml.load_folder(art_folder), ml.load_data("GoodBackground1.csv")], axis=0))
+                                 ([art_data, art_background], axis=0))
 
 
 

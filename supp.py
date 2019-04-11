@@ -79,19 +79,19 @@ def shuffle_gestures(frameList):
 
 def label_to_int(frame):
     last = len(frame)-1
-    if frame[last] == 'slideUp':
+    if frame[last] == 'slideUp' or frame[last] == '0.0':
         frame[last] = 0
-    elif frame[last] == 'slideDown':
+    elif frame[last] == 'slideDown' or frame[last] == '1.0':
         frame[last] = 1
-    elif frame[last] == 'button':
+    elif frame[last] == 'button' or frame[last] == '2.0':
         frame[last] = 2
-    elif frame[last] == 'swipeNext':
+    elif frame[last] == 'swipeNext' or frame[last] == '3.0':
         frame[last] = 3
-    elif frame[last] == 'swipePrev':
+    elif frame[last] == 'swipePrev' or frame[last] == '4.0':
         frame[last] = 4
-    elif frame[last] == 'flop':
+    elif frame[last] == 'flop' or frame[last] == '5.0':
         frame[last] = 5
-    elif frame[last] == 'goodBackground':
+    elif frame[last] == 'goodBackground' or frame[last] == '6.0':
         frame[last] = 6
     else:
         frame[last] = 7
