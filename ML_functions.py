@@ -60,6 +60,14 @@ def load_data(input_file):
         i += 1
     return data
 
+def count_gestures(data):
+    gest_count = [0, 0, 0, 0, 0, 0, 0]
+    for gesture in data:
+        for i in range(len(gesture)):
+            if gesture[i] == 1.0:
+                gest_count[i] += 1
+    return gest_count
+
 
 def split_data(data, vector_size, outputs, training_ratio):
     training_n = int(len(data) * training_ratio)

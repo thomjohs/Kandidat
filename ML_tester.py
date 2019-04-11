@@ -44,7 +44,7 @@ outputs = 7
 
 # training hyperparameters
 
-epochs = 3
+epochs = 10
 time_steps = 5
 batch_size = 500
 
@@ -91,6 +91,10 @@ x_train = x_train[:len(x_train) // 1000 * 1000 + time_steps]
 x_test = x_test[:len(x_test) // 1000 * 1000 + time_steps]
 y_train = y_train[:len(y_train) // 1000 * 1000 + time_steps]
 y_test = y_test[:len(y_test) // 1000 * 1000 + time_steps]
+
+
+print(ml.count_gestures(y_test))
+print(ml.count_gestures(y_train))
 
 print(f'{len(x_train)}, {len(x_test)}, {len(y_train)}, {len(y_test)}')
 
