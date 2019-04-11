@@ -38,9 +38,9 @@ def framedata_to_file(frameData,out_path):
     frames_to_file(dataList, out_path)
 
 
-def translate_data(data,dx,dy):
+def translate_data(data, dx, dy):
     global standardLen
-    if (type(data)==list):
+    if type(data) == list:
         frameList = data[:]
         frameMatrix = np.zeros((len(frameList),52))
         i=0

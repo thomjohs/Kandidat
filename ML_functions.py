@@ -1,17 +1,17 @@
 import tensorflow as tf
 import datetime
-from tensorflow.keras.preprocessing import sequence
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout, Activation, BatchNormalization
-from tensorflow.keras.layers import Embedding
-from tensorflow.keras import utils
-from tensorflow.keras.layers import LSTM, Conv1D
+from keras.preprocessing import sequence
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, Activation, BatchNormalization
+from keras.layers import Embedding
+from keras import utils
+from keras.layers import LSTM, Conv1D
 import numpy as np
 import csv
 import random
 import matplotlib.pyplot as plt
 import supp
-
+import os
 
 def sum_print(start_time, repeats, seqtest):
     print('')
@@ -29,6 +29,14 @@ def sum_print(start_time, repeats, seqtest):
     print('Duration:', dur)
 
 
+def load_folder(input_folder):
+    for root, dirs, files in os.walk(input_folder):
+        if '.csv' in files:
+            files.remove('.csv')
+        print(files)
+        return load_data_multiple(files)
+
+
 def load_data_multiple(input_files):
     frameList = []
     for file in input_files:
@@ -38,7 +46,7 @@ def load_data_multiple(input_files):
 
 def load_data(input_file):
     frameList = []
-    with open("ProcessedData\\" + input_file + ".csv") as inp:
+    with open("ProcessedData\\" + input_file) as inp:
         reader = csv.reader(inp, delimiter=',')
         for row in reader:
             frame = row
@@ -47,7 +55,8 @@ def load_data(input_file):
     data = np.empty((len(frameList), len(frameList[0])), dtype=np.float32)
     i = 0
     for frame in frameList:
-        data[i] = np.array(supp.label_to_int(frame))
+        frame_int = supp.label_to_int(frame)
+        data[i] = np.array(frame_int)
         i += 1
     return data
 

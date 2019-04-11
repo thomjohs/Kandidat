@@ -3,8 +3,8 @@ import tensorflow as tf
 import ML_functions as ml
 import array as arr
 import datetime
-from tensorflow.keras.preprocessing import sequence
-from tensorflow.keras.callbacks import LambdaCallback
+from keras.preprocessing import sequence
+from keras.callbacks import LambdaCallback
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import classification_report
@@ -28,35 +28,36 @@ input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
                "AndreasButton3", "AndreasSlideUp3", "AndreasSwipeNext3",
                "AndreasButton4", "AndreasSlideUp4", "AndreasSwipeNext4",
                "AndreasButton5", "AndreasSlideUp5", "AndreasSwipeNext5",
-               "GoodBackground1", "GoodBackground2","AlexButton1", "AlexFlop1",
+               "GoodBackground1", "GoodBackground2", "AlexButton1", "AlexFlop1",
                "AlexSlideDown1", "AlexSlideUp1", "AlexSwipeNext1", "AlexSwipePrev1","JuliaButton1", "JuliaFlop1","JuliaSlideDown1", 
                "JuliaSlideUp1", "JuliaSwipeNext1", "JuliaSwipePrev1",
-               "LinusButton1", "LinusFlop1","LinusSlideDown1", 
+               "LinusButton1", "LinusFlop1", "LinusSlideDown1",
                "LinusSlideUp1", "LinusSwipeNext1", "LinusSwipePrev1",
-               "MartinButton1", "MartinFlop1","MartinSlideDown1", 
+               "MartinButton1", "MartinFlop1", "MartinSlideDown1",
                "MartinSlideUp1", "MartinSwipeNext1", "MartinSwipePrev1",
-               "MatildaButton1", "MatildaFlop1","MatildaSlideDown1", 
+               "MatildaButton1", "MatildaFlop1", "MatildaSlideDown1",
                "MatildaSlideUp1", "MatildaSwipeNext1", "MatildaSwipePrev1"]
+input_folder = "ProcessedData"
 
 # Number of categories
 outputs = 7
 
 # training hyperparameters
 
-epochs = 300
-time_steps = 20
-batch_size = 1000
+epochs = 3
+time_steps = 5
+batch_size = 500
 
 training_ratio = 0.7
 
 # used in both models
-lstm_output = 20
+lstm_output = 5
 stateful = True
 
 # only used in combined model
 num_filters = 64
 kernel_size = 5
-repeats = 5
+repeats = 1
 
 # for saving the model and weights
 export = True
@@ -70,15 +71,14 @@ plotFile = f'Plots\\ts{time_steps}bs{batch_size}lstmOut{lstm_output}st{stateful}
 # saves Result
 resultFile = "resultsArencrrr5.csv"
 
-data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
-
+data = supp.shuffle_gestures(ml.load_folder(input_folder))
 
 gestFrames = 0
 backFrames = 0
 for frame in data:
     if len(frame) != 52:
         print(frame[51])
-    if frame[len(frame) - 1] == 'goodBackground':
+    if frame[len(frame) - 1] == 6:
         backFrames += 1
     else:
         gestFrames += 1
@@ -94,10 +94,10 @@ y_test = y_test[:len(y_test) // 1000 * 1000 + time_steps]
 
 print(f'{len(x_train)}, {len(x_test)}, {len(y_train)}, {len(y_test)}')
 
-print(x_train[0])
+
 train_seq = sequence.TimeseriesGenerator(x_train, y_train, length=time_steps, batch_size=batch_size)
 test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch_size=batch_size)
-print(train_seq[0])
+
 
 seqtest = []
 
@@ -107,10 +107,9 @@ pltacc = plt
 
 for i in range(repeats):
 
-    # model = ml.build_lstm(time_steps, vector_size, outputs, batch_size, lstm_output, stateful)
+    model = ml.build_lstm(time_steps, vector_size, outputs, batch_size, lstm_output, stateful)
     # model = ml.build_clstm(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output)
-    model = ml.build_crrr(time_steps, vector_size, outputs, num_filters, batch_size, kernel_size, lstm_output, stateful)
-
+    # model = ml.build_crrr(time_steps, vector_size, outputs, num_filters, batch_size, kernel_size, lstm_output, stateful)
 
     model.compile(loss='categorical_crossentropy',
                   optimizer='adam',
@@ -130,14 +129,15 @@ for i in range(repeats):
 	print(type(preds))
 	print(preds[0])
 	for i in range(len(preds)):
-		pred = preds[i]
-		preds[i] = tf.one_hot(tf.nn.top_k(pred).indices, tf.shape(pred)[0])
+	    pred = preds[i]
+	    preds[i] = tf.one_hot(tf.nn.top_k(pred).indices, tf.shape(pred)[0])
 	print(type(preds))
 	print(preds[0])
 	print(type(y_test))
 	print(predVer[0])
 	print(classification_report(y_test[:len(preds)], preds))
 	'''
+
     plt.subplot(2, 1, 1)
     plt.plot(history.history['loss'], color='blue')
     plt.plot(history.history['val_loss'], color='orange')
