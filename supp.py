@@ -38,27 +38,27 @@ def shuffle_gestures(frameList):
     backgrounds = []
     gestures = []
     group = []
-    label = 'background'
+    label = 7
     for frame in frameList:
         if frame[len(frame) - 1] == label:
             group.append(frame)
         else:
-            if label != 'background':
-                if label == 'goodBackground':
+            if label != 7:
+                if label == 6:
                     backgrounds.extend(group)
                 else:
                     gestures.append(group)
             label = frame[len(frame) - 1]
             group = [frame]
 
-    if label != 'background':
-        if label == 'goodBackground':
+    if label != 7:
+        if label == 6:
             backgrounds.extend(group)
         else:
             gestures.append(group)
 
     while len(backgrounds) != 0 and len(gestures) != 0:
-        if random.randint(0,2) == 1:
+        if random.randint(0, 2) == 1:
             if len(backgrounds) < 25:
                 shuffled.extend(backgrounds)
             else:
@@ -91,8 +91,10 @@ def label_to_int(frame):
         frame[last] = 4
     elif frame[last] == 'flop':
         frame[last] = 5
-    else:
+    elif frame[last] == 'goodBackground':
         frame[last] = 6
+    else:
+        frame[last] = 7
     return frame
 
 
