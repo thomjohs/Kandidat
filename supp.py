@@ -77,6 +77,35 @@ def shuffle_gestures(frameList):
     return shuffled
 
 
+def count_gesture_length(data):
+    class counter:
+        current_gesture_length = 0
+        n_gestures = 0
+        sum_frames = 0
+        max = 0
+        min = 0
+
+    counters = [counter(), counter(), counter(), counter(), counter(), counter(), counter()]
+
+    prev = 0
+    for frame in data:
+        gesture = int(frame(len(frame) - 1))
+        counters[gesture].current_gesture_length += 1
+
+        if gesture != prev:
+            counters[prev].sum_frames += counters[prev].current_gesture_length
+            counters[prev].n_gestures += 1
+            if counters[prev].current_gesture_length > counters[prev].max:
+                counters[prev].max = counters[prev].current_gesture_length
+            if counters[prev].current_gesture_length < counters[prev].min:
+                counters[prev].min = counters[prev].current_gesture_length
+            counters[prev].current_gesture_length = 0
+
+        prev = gesture
+
+    return counters
+
+
 def label_to_int(frame):
     last = len(frame)-1
     if frame[last] == 'slideUp' or frame[last] == '0.0':

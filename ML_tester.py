@@ -82,15 +82,7 @@ art_data = supp.shuffle_gestures(np.concatenate
 
 
 
-gestFrames = 0
-backFrames = 0
-for frame in data:
-    if len(frame) != 52:
-        print(frame[51])
-    if frame[len(frame) - 1] == 6:
-        backFrames += 1
-    else:
-        gestFrames += 1
+
 
 
 x_train, x_test, y_train, y_test = ml.split_data(data, vector_size, outputs,
@@ -174,10 +166,6 @@ for i in range(repeats):
     if plot:
         plt.savefig(plotFile, bbox_inches='tight')
 
-
-    print(f'Gestures: {gestFrames}')
-    print(f'Backgrounds: {backFrames}')
-    print(f'Percentage of gestures: {gestFrames / (gestFrames + backFrames)}')
 
     if export:
         json_model = model.to_json()

@@ -27,8 +27,8 @@ weightFile = "Test_1_weights.h5"
 
 # Prediction values
 predictions = []
-predLen = 10
-confNumber = 5
+predLen = 7
+confNumber = 4
 
 
 def confidentGuess(predictions, confNumber):

@@ -313,6 +313,7 @@ def main():
 #print(translate_data(test,2,1.5))
 
 
+
 # Mirror some gestures
 
 # Random noise
