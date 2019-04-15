@@ -13,6 +13,20 @@ import matplotlib.pyplot as plt
 import supp
 import os
 
+
+def cm_to_percentage(cm):
+    cm = cm.astype(dtype=np.float32)
+    for i, frame in enumerate(cm):
+        sum = 0
+        for value in frame:
+            sum += value
+        for j, value in enumerate(frame):
+            perc = float(value / sum) * 100
+            cm[i][j] = perc
+        cm[i] = np.around(frame, decimals=1)
+    return cm
+
+
 def sum_print(start_time, repeats, seqtest):
     print('')
     print('Validation Results:')

@@ -10,6 +10,7 @@ import numpy as np
 from sklearn.metrics import classification_report
 import csv
 import ManipuleraData as mani
+from sklearn.metrics import confusion_matrix
 
 # GPU Tester
 from tensorflow.python.client import device_lib
@@ -45,20 +46,20 @@ outputs = 7
 
 # training hyperparameters
 
-epochs = 200
-time_steps = 20
+epochs = 20
+time_steps = 5
 batch_size = 500
 
 training_ratio = 0.7
 
 # used in both models
-lstm_output = 20
+lstm_output = 5
 stateful = True
 
 # only used in combined model
 num_filters = 64
 kernel_size = 5
-repeats = 5
+repeats = 1
 
 # for saving the model and weights
 export = True
@@ -74,10 +75,8 @@ resultFile = "results.csv"
 
 data = supp.shuffle_gestures(ml.load_folder(input_folder))
 
-
-
 art_data = ml.load_folder(art_folder)
-art_background =  ml.load_data("GoodBackground1.csv")
+art_background = ml.load_data("GoodBackground1.csv")
 
 art_data = supp.shuffle_gestures(np.concatenate
                                  ([art_data, art_background], axis=0))
@@ -135,20 +134,14 @@ for i in range(repeats):
 
     seqtest.append(model.evaluate_generator(test_seq))
 
-    '''
-	preds = list(model.predict_generator(test_seq))[:1000]
-	predVer = list(y_test)[:1000]
-	print(type(preds))
-	print(preds[0])
-	for i in range(len(preds)):
-	    pred = preds[i]
-	    preds[i] = tf.one_hot(tf.nn.top_k(pred).indices, tf.shape(pred)[0])
-	print(type(preds))
-	print(preds[0])
-	print(type(y_test))
-	print(predVer[0])
-	print(classification_report(y_test[:len(preds)], preds))
-	'''
+    predictions = model.predict_generator(train_seq)
+    predictions = np.argmax(predictions, axis=1)
+    cm = confusion_matrix(np.argmax(y_train[:len(y_train) // 1000 * 1000], axis=1), predictions)
+    print(cm)
+
+    cm = ml.cm_to_percentage(cm)
+    print(cm)
+
 
     plt.subplot(2, 1, 1)
     plt.plot(history.history['loss'], color='blue')
