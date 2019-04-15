@@ -83,16 +83,22 @@ def count_gesture_length(data):
         n_gestures = 0
         sum_frames = 0
         max = 0
-        min = 0
+        min = float('inf')
 
-    counters = [counter(), counter(), counter(), counter(), counter(), counter(), counter()]
+        def __repr__(self):
+            if self.n_gestures != 0:
+                return f'(number of gestures:{self.n_gestures}, max: {self.max}, min: {self.min}, avg: {self.sum_frames//self.n_gestures})'
+            else:
+                return f'(number of gestures:{self.n_gestures}, max: {self.max}, min: {self.min}, avg: {0})'
+
+    counters = [counter(), counter(), counter(), counter(), counter(), counter(), counter(), counter()]
 
     prev = 0
-    for frame in data:
-        gesture = int(frame(len(frame) - 1))
+    for i, frame in enumerate(data):
+        gesture = int(frame[len(frame) - 1])
         counters[gesture].current_gesture_length += 1
 
-        if gesture != prev:
+        if gesture != prev and i != 0:
             counters[prev].sum_frames += counters[prev].current_gesture_length
             counters[prev].n_gestures += 1
             if counters[prev].current_gesture_length > counters[prev].max:
@@ -100,6 +106,15 @@ def count_gesture_length(data):
             if counters[prev].current_gesture_length < counters[prev].min:
                 counters[prev].min = counters[prev].current_gesture_length
             counters[prev].current_gesture_length = 0
+
+        if i == len(data) - 1:
+            counters[gesture].sum_frames += counters[gesture].current_gesture_length
+            counters[gesture].n_gestures += 1
+            if counters[gesture].current_gesture_length > counters[gesture].max:
+                counters[gesture].max = counters[gesture].current_gesture_length
+            if counters[gesture].current_gesture_length < counters[gesture].min:
+                counters[gesture].min = counters[gesture].current_gesture_length
+            counters[gesture].current_gesture_length = 0
 
         prev = gesture
 

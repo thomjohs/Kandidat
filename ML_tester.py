@@ -74,6 +74,8 @@ resultFile = "results.csv"
 
 data = supp.shuffle_gestures(ml.load_folder(input_folder))
 
+
+
 art_data = ml.load_folder(art_folder)
 art_background =  ml.load_data("GoodBackground1.csv")
 
