@@ -69,7 +69,7 @@ def load_data(input_file, folder="ProcessedData\\"):
     data = np.empty((len(frameList), len(frameList[0])), dtype=np.float32)
     i = 0
     for frame in frameList:
-        frame_int = supp.label_to_int(frame)
+        frame_int = supp.label_to_int_test(frame)
         data[i] = np.array(frame_int)
         i += 1
     return data

@@ -112,10 +112,6 @@ data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
 #                                ([art_data, art_background], axis=0))
 
 
-
-
-
-
 x_train, x_test, y_train, y_test = ml.split_data(data, vector_size, outputs,
                                                  training_ratio)
 

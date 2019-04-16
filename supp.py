@@ -142,6 +142,19 @@ def label_to_int(frame):
     return frame
 
 
+def label_to_int_test(frame):
+    last = len(frame)-1
+    if frame[last] == 'button' or frame[last] == '0.0':
+        frame[last] = 0
+    elif frame[last] == 'swipeNext' or frame[last] == '1.0':
+        frame[last] = 1
+    elif frame[last] == 'goodBackground' or frame[last] == '2.0':
+        frame[last] = 2
+    else:
+        frame[last] = 7
+    return frame
+
+
 def int_to_label(i):
     if i == 0:
         return 'slideUp'
