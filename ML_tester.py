@@ -67,7 +67,7 @@ outputs = 3
 epochs = 300
 time_steps = 10
 batch_size = 50
-learning_rate = 0.001
+learning_rate = 0.0005
 decay = 0
 
 training_ratio = 0.7
@@ -80,7 +80,7 @@ stateful = True
 num_filters = 64
 kernel_size = 5
 
-repeats = 1
+repeats = 5
 
 # for saving the model and weights
 export = True
@@ -99,6 +99,7 @@ runopt = optprop
 # saves plot
 plot = True
 plotFile = f'Plots\\ts{time_steps}bs{batch_size}lstmout{lstm_output}st{stateful}lr{learning_rate}.svg'
+plotFile2 = f'Plots\\ts{time_steps}bs{batch_size}lstmout{lstm_output}st{stateful}lr{learning_rate}.emf'
 
 # saves Result
 resultFile = "results.csv"
@@ -165,7 +166,7 @@ for i in range(repeats):
 
     cm = ml.cm_to_percentage(cm)
     print(cm)
-    with open("ConfusionMatrix_dropout.csv", 'w', newline='') as cm_file:
+    with open(f'ConfusionMatrix_out{outputs}rmsprop.csv', 'w', newline='') as cm_file:
         writer = csv.writer(cm_file)
         for row in cm:
             writer.writerow(row)
@@ -188,7 +189,8 @@ for i in range(repeats):
 
     if plot:
         plt.tight_layout()
-        plt.savefig(plotFile, format='svg')
+        plt.savefig(plotFile)
+        plt.savefig(plotFile2)
 
 
     if export:
