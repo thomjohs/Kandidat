@@ -5,6 +5,7 @@ import array as arr
 import datetime
 from keras.preprocessing import sequence
 from keras.callbacks import LambdaCallback
+from keras import optimizers
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import classification_report
@@ -53,8 +54,8 @@ input_flop = ["AlexFlop1", "JuliaFlop1", "LinusFlop1",
 input_background = ["GoodBackground1", "GoodBackground2"]
 
 
-input_files = input_button + input_swipenext + input_swipeprev + \
-              input_slideup + input_slidedown + input_flop + input_background
+input_files = input_button + input_swipenext #+ input_swipeprev + \
+              #input_slideup + input_slidedown + input_flop + input_background
 
 input_folder = "ProcessedData"
 art_folder = "TranslatedData"
@@ -64,9 +65,9 @@ outputs = 7
 
 # training hyperparameters
 
-epochs = 2
-time_steps = 5
-batch_size = 500
+epochs = 300
+time_steps = 10
+batch_size = 50
 
 training_ratio = 0.7
 
@@ -77,7 +78,7 @@ stateful = True
 # only used in combined model
 num_filters = 64
 kernel_size = 5
-repeats = 1
+repeats = 5
 
 # for saving the model and weights
 export = True
@@ -127,11 +128,12 @@ print(f'{len(x_train)}, {len(x_test)}, {len(y_train)}, {len(y_test)}')
 train_seq = sequence.TimeseriesGenerator(x_train, y_train, length=time_steps, batch_size=batch_size)
 test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch_size=batch_size)
 
+#adam standard: (lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
+optadam = optimizers.adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
+#rmsprop standard: (lr=0.001, rho=0.9, epsilon=None, decay=0.0)
+otpprop = optimizers.rmsprop(lr=0.001, rho=0.9, epsilon=None, decay=0.0)
 
 seqtest = []
-
-pltloss = plt
-pltacc = plt
 
 
 for i in range(repeats):
@@ -141,7 +143,7 @@ for i in range(repeats):
     # model = ml.build_crrr(time_steps, vector_size, outputs, num_filters, batch_size, kernel_size, lstm_output, stateful)
 
     model.compile(loss='categorical_crossentropy',
-                  optimizer='adam',
+                  optimizer=optadam,
                   metrics=['accuracy'])
 
     history = model.fit_generator(train_seq,
