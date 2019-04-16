@@ -46,14 +46,14 @@ outputs = 7
 
 # training hyperparameters
 
-epochs = 20
-time_steps = 5
+epochs = 200
+time_steps = 20
 batch_size = 500
 
 training_ratio = 0.7
 
 # used in both models
-lstm_output = 5
+lstm_output = 20
 stateful = True
 
 # only used in combined model
@@ -75,11 +75,11 @@ resultFile = "results.csv"
 
 data = supp.shuffle_gestures(ml.load_folder(input_folder))
 
-art_data = ml.load_folder(art_folder)
-art_background = ml.load_data("GoodBackground1.csv")
+# art_data = ml.load_folder(art_folder)
+# art_background = ml.load_data("GoodBackground1.csv")
 
-art_data = supp.shuffle_gestures(np.concatenate
-                                 ([art_data, art_background], axis=0))
+# art_data = supp.shuffle_gestures(np.concatenate
+#                                ([art_data, art_background], axis=0))
 
 
 
@@ -89,10 +89,10 @@ art_data = supp.shuffle_gestures(np.concatenate
 x_train, x_test, y_train, y_test = ml.split_data(data, vector_size, outputs,
                                                  training_ratio)
 
-art_x, _, art_y, _ = ml.split_data(art_data, vector_size, outputs, 1)
+# art_x, _, art_y, _ = ml.split_data(art_data, vector_size, outputs, 1)
 
-x_train = np.concatenate([x_train, art_x], axis=0)
-y_train = np.concatenate([y_train, art_y], axis=0)
+# x_train = np.concatenate([x_train, art_x], axis=0)
+# y_train = np.concatenate([y_train, art_y], axis=0)
 
 x_train = x_train[:len(x_train) // 1000 * 1000 + time_steps]
 x_test = x_test[:len(x_test) // 1000 * 1000 + time_steps]
@@ -141,7 +141,10 @@ for i in range(repeats):
 
     cm = ml.cm_to_percentage(cm)
     print(cm)
-
+    with open("ConfusionMatrix_dropout.csv", 'w', newline='') as cm_file:
+        writer = csv.writer(cm_file)
+        for row in cm:
+            writer.writerow(row)
 
     plt.subplot(2, 1, 1)
     plt.plot(history.history['loss'], color='blue')
