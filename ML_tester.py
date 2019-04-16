@@ -5,6 +5,7 @@ import array as arr
 import datetime
 from keras.preprocessing import sequence
 from keras.callbacks import LambdaCallback
+from keras import optimizers
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import classification_report
@@ -20,24 +21,42 @@ print(device_lib.list_local_devices())
 vector_size = 52
 starttime = datetime.datetime.now()
 input_file = "ArenSwipeNext1"
-input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
-               "ArenButton1", "ArenSlideUp1", "ArenSwipeNext1",
-               "ArenButton2", "ArenSlideUp2", "ArenSwipeNext2",
-               "ArenButton3", "ArenSlideUp3", "ArenSwipeNext3",
-               "AndreasButton1", "AndreasSlideUp1", "AndreasSwipeNext1",
-               "AndreasButton2", "AndreasSlideUp2", "AndreasSwipeNext2",
-               "AndreasButton3", "AndreasSlideUp3", "AndreasSwipeNext3",
-               "AndreasButton4", "AndreasSlideUp4", "AndreasSwipeNext4",
-               "AndreasButton5", "AndreasSlideUp5", "AndreasSwipeNext5",
-               "GoodBackground1", "GoodBackground2", "AlexButton1", "AlexFlop1",
-               "AlexSlideDown1", "AlexSlideUp1", "AlexSwipeNext1", "AlexSwipePrev1","JuliaButton1", "JuliaFlop1","JuliaSlideDown1", 
-               "JuliaSlideUp1", "JuliaSwipeNext1", "JuliaSwipePrev1",
-               "LinusButton1", "LinusFlop1", "LinusSlideDown1",
-               "LinusSlideUp1", "LinusSwipeNext1", "LinusSwipePrev1",
-               "MartinButton1", "MartinFlop1", "MartinSlideDown1",
-               "MartinSlideUp1", "MartinSwipeNext1", "MartinSwipePrev1",
-               "MatildaButton1", "MatildaFlop1", "MatildaSlideDown1",
-               "MatildaSlideUp1", "MatildaSwipeNext1", "MatildaSwipePrev1"]
+
+
+
+input_button = ["JohanButton1", "ArenButton1", "ArenButton2",
+                "ArenButton3", "AndreasButton1", "AndreasButton2",
+                "AndreasButton3", "AndreasButton4", "AndreasButton5",
+                "AlexButton1", "JuliaButton1", "LinusButton1",
+                "MartinButton1", "MatildaButton1"]
+
+input_swipenext = ["JohanSwipeNext1", "ArenSwipeNext1", "ArenSwipeNext2",
+                   "ArenSwipeNext3", "AndreasSwipeNext1","AndreasSwipeNext2",
+                   "AndreasSwipeNext3", "AndreasSwipeNext4", "AndreasSwipeNext5",
+                   "AlexSwipeNext1", "JuliaSwipeNext1", "LinusSwipeNext1",
+                   "MartinSwipeNext1", "MatildaSwipeNext1"]
+
+input_swipeprev = ["AlexSwipePrev1", "JuliaSwipePrev1", "LinusSwipePrev1",
+                   "MartinSwipePrev1", "MatildaSwipePrev1"]
+
+input_slideup = [ "JohanSlideUp1", "ArenSlideUp1", "ArenSlideUp2",
+                  "ArenSlideUp3", "AndreasSlideUp1", "AndreasSlideUp2",
+                  "AndreasSlideUp3", "AndreasSlideUp4", "AndreasSlideUp5",
+                  "AlexSlideUp1", "JuliaSlideUp1",  "LinusSlideUp1",
+                  "MartinSlideUp1", "MatildaSlideUp1"]
+
+input_slidedown = ["AlexSlideDown1", "JuliaSlideDown1", "LinusSlideDown1",
+                   "MartinSlideDown1", "MatildaSlideDown1"]
+
+input_flop = ["AlexFlop1", "JuliaFlop1", "LinusFlop1",
+              "MartinFlop1", "MatildaFlop1"]
+
+input_background = ["GoodBackground1", "GoodBackground2"]
+
+
+input_files = input_button + input_swipenext #+ input_swipeprev + \
+              #input_slideup + input_slidedown + input_flop + input_background
+
 input_folder = "ProcessedData"
 art_folder = "TranslatedData"
 
@@ -59,7 +78,7 @@ stateful = True
 # only used in combined model
 num_filters = 64
 kernel_size = 5
-repeats = 1
+repeats = 5
 
 # for saving the model and weights
 export = True
@@ -109,11 +128,12 @@ print(f'{len(x_train)}, {len(x_test)}, {len(y_train)}, {len(y_test)}')
 train_seq = sequence.TimeseriesGenerator(x_train, y_train, length=time_steps, batch_size=batch_size)
 test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch_size=batch_size)
 
+#adam standard: (lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
+optadam = optimizers.adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
+#rmsprop standard: (lr=0.001, rho=0.9, epsilon=None, decay=0.0)
+optprop = optimizers.rmsprop(lr=0.001, rho=0.9, epsilon=None, decay=0.0)
 
 seqtest = []
-
-pltloss = plt
-pltacc = plt
 
 
 for i in range(repeats):
@@ -123,7 +143,7 @@ for i in range(repeats):
     # model = ml.build_crrr(time_steps, vector_size, outputs, num_filters, batch_size, kernel_size, lstm_output, stateful)
 
     model.compile(loss='categorical_crossentropy',
-                  optimizer='adam',
+                  optimizer=optprop,
                   metrics=['accuracy'])
 
     history = model.fit_generator(train_seq,
