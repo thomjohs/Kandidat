@@ -99,7 +99,7 @@ runopt = optprop
 # saves plot
 plot = True
 plotFile = f'Plots\\ts{time_steps}bs{batch_size}lstmout{lstm_output}st{stateful}lr{learning_rate}.svg'
-plotFile2 = f'Plots\\ts{time_steps}bs{batch_size}lstmout{lstm_output}st{stateful}lr{learning_rate}.emf'
+plotFile2 = f'Plots\\ts{time_steps}bs{batch_size}lstmout{lstm_output}st{stateful}lr{learning_rate}.png'
 
 # saves Result
 resultFile = "results.csv"
