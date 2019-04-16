@@ -23,62 +23,63 @@ starttime = datetime.datetime.now()
 input_file = "ArenSwipeNext1"
 
 
-input_button = ["JohanButton1", "ArenButton1", "ArenButton2",
-                "ArenButton3", "AndreasButton1", "AndreasButton2",
-                "AndreasButton3", "AndreasButton4", "AndreasButton5",
-                "AlexButton1", "JuliaButton1", "LinusButton1",
-                "MartinButton1", "MatildaButton1"]
+input_button = ["JohanButton1.csv", "ArenButton1.csv", "ArenButton2.csv",
+                "ArenButton3.csv", "AndreasButton1.csv", "AndreasButton2.csv",
+                "AndreasButton3.csv", "AndreasButton4.csv", "AndreasButton5.csv",
+                "AlexButton1.csv", "JuliaButton1.csv", "LinusButton1.csv",
+                "MartinButton1.csv", "MatildaButton1.csv"]
 
-input_swipenext = ["JohanSwipeNext1", "ArenSwipeNext1", "ArenSwipeNext2",
-                   "ArenSwipeNext3", "AndreasSwipeNext1","AndreasSwipeNext2",
-                   "AndreasSwipeNext3", "AndreasSwipeNext4", "AndreasSwipeNext5",
-                   "AlexSwipeNext1", "JuliaSwipeNext1", "LinusSwipeNext1",
-                   "MartinSwipeNext1", "MatildaSwipeNext1"]
+input_swipenext = ["JohanSwipeNext1.csv", "ArenSwipeNext1.csv", "ArenSwipeNext2.csv",
+                   "ArenSwipeNext3.csv", "AndreasSwipeNext1.csv", "AndreasSwipeNext2.csv",
+                   "AndreasSwipeNext3.csv", "AndreasSwipeNext4.csv", "AndreasSwipeNext5.csv",
+                   "AlexSwipeNext1.csv", "JuliaSwipeNext1.csv", "LinusSwipeNext1.csv",
+                   "MartinSwipeNext1.csv", "MatildaSwipeNext1.csv"]
 
-input_swipeprev = ["AlexSwipePrev1", "JuliaSwipePrev1", "LinusSwipePrev1",
-                   "MartinSwipePrev1", "MatildaSwipePrev1"]
+input_swipeprev = ["AlexSwipePrev1.csv", "JuliaSwipePrev1.csv", "LinusSwipePrev1.csv",
+                   "MartinSwipePrev1.csv", "MatildaSwipePrev1.csv"]
 
-input_slideup = [ "JohanSlideUp1", "ArenSlideUp1", "ArenSlideUp2",
-                  "ArenSlideUp3", "AndreasSlideUp1", "AndreasSlideUp2",
-                  "AndreasSlideUp3", "AndreasSlideUp4", "AndreasSlideUp5",
-                  "AlexSlideUp1", "JuliaSlideUp1",  "LinusSlideUp1",
-                  "MartinSlideUp1", "MatildaSlideUp1"]
+input_slideup = [ "JohanSlideUp1.csv", "ArenSlideUp1.csv", "ArenSlideUp2.csv",
+                  "ArenSlideUp3.csv", "AndreasSlideUp1.csv", "AndreasSlideUp2.csv",
+                  "AndreasSlideUp3.csv", "AndreasSlideUp4.csv", "AndreasSlideUp5.csv",
+                  "AlexSlideUp1.csv", "JuliaSlideUp1.csv",  "LinusSlideUp1.csv",
+                  "MartinSlideUp1.csv", "MatildaSlideUp1.csv"]
 
-input_slidedown = ["AlexSlideDown1", "JuliaSlideDown1", "LinusSlideDown1",
-                   "MartinSlideDown1", "MatildaSlideDown1"]
+input_slidedown = ["AlexSlideDown1.csv", "JuliaSlideDown1.csv", "LinusSlideDown1.csv",
+                   "MartinSlideDown1.csv", "MatildaSlideDown1.csv"]
 
-input_flop = ["AlexFlop1", "JuliaFlop1", "LinusFlop1",
-              "MartinFlop1", "MatildaFlop1"]
+input_flop = ["AlexFlop1.csv", "JuliaFlop1.csv", "LinusFlop1.csv",
+              "MartinFlop1.csv", "MatildaFlop1.csv"]
 
-input_background = ["GoodBackground1", "GoodBackground2"]
+input_background = ["GoodBackground1.csv", "GoodBackground2.csv"]
 
 
-input_files = input_button + input_swipenext #+ input_swipeprev + \
-              #input_slideup + input_slidedown + input_flop + input_background
+input_files = input_button + input_swipenext + input_background#+ input_swipeprev + \
+              #input_slideup + input_slidedown + input_flop
 
 input_folder = "ProcessedData"
 art_folder = "TranslatedData"
 
 # Number of categories
-outputs = 7
+outputs = 3
 
 # training hyperparameters
 
-epochs = 2
+epochs = 300
 time_steps = 10
-batch_size = 500
+batch_size = 50
 learning_rate = 0.001
 decay = 0
 
 training_ratio = 0.7
 
 # used in both models
-lstm_output = 10
+lstm_output = 20
 stateful = True
 
 # only used in combined model
 num_filters = 64
 kernel_size = 5
+
 repeats = 1
 
 # for saving the model and weights
@@ -86,10 +87,11 @@ export = True
 modelFile = f'ts{time_steps}bs{batch_size}lstmout{lstm_output}st{stateful}lr{learning_rate}.json'
 weightFile = f'ts{time_steps}bs{batch_size}lstmout{lstm_output}st{stateful}lr{learning_rate}.h5'
 
-#optimizers
-#adam standard: (lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
+# optimizers
+# adam standard: (lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
 optadam = optimizers.adam(lr=learning_rate, beta_1=0.9, beta_2=0.999, epsilon=None, decay=decay, amsgrad=False)
-#rmsprop standard: (lr=0.001, rho=0.9, epsilon=None, decay=0.0)
+
+# rmsprop standard: (lr=0.001, rho=0.9, epsilon=None, decay=0.0)
 optprop = optimizers.rmsprop(lr=learning_rate, rho=0.9, epsilon=None, decay=decay)
 
 runopt = optprop
