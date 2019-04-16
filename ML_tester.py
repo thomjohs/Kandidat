@@ -131,7 +131,7 @@ test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch
 #adam standard: (lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
 optadam = optimizers.adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
 #rmsprop standard: (lr=0.001, rho=0.9, epsilon=None, decay=0.0)
-otpprop = optimizers.rmsprop(lr=0.001, rho=0.9, epsilon=None, decay=0.0)
+optprop = optimizers.rmsprop(lr=0.001, rho=0.9, epsilon=None, decay=0.0)
 
 seqtest = []
 
@@ -143,7 +143,7 @@ for i in range(repeats):
     # model = ml.build_crrr(time_steps, vector_size, outputs, num_filters, batch_size, kernel_size, lstm_output, stateful)
 
     model.compile(loss='categorical_crossentropy',
-                  optimizer=optadam,
+                  optimizer=optprop,
                   metrics=['accuracy'])
 
     history = model.fit_generator(train_seq,
