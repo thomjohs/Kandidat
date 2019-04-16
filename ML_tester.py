@@ -68,6 +68,8 @@ outputs = 7
 epochs = 300
 time_steps = 10
 batch_size = 50
+learning_rate = 0.001
+decay = 0
 
 training_ratio = 0.7
 
@@ -85,9 +87,17 @@ export = True
 modelFile = "model.json"
 weightFile = "weights.h5"
 
+#optimizers
+#adam standard: (lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
+optadam = optimizers.adam(lr=learning_rate, beta_1=0.9, beta_2=0.999, epsilon=None, decay=decay, amsgrad=False)
+#rmsprop standard: (lr=0.001, rho=0.9, epsilon=None, decay=0.0)
+optprop = optimizers.rmsprop(lr=learning_rate, rho=0.9, epsilon=None, decay=decay)
+
+runopt = optprop
+
 # saves plot
 plot = False
-plotFile = f'Plots\\ts{time_steps}bs{batch_size}lstmOut{lstm_output}st{stateful}.pdf'
+plotFile = f'Plots\\ts{time_steps}bs{batch_size}lstmOut{lstm_output}st{stateful}lr{learning_rate}decay{decay}.pdf'
 
 # saves Result
 resultFile = "results.csv"
@@ -128,10 +138,7 @@ print(f'{len(x_train)}, {len(x_test)}, {len(y_train)}, {len(y_test)}')
 train_seq = sequence.TimeseriesGenerator(x_train, y_train, length=time_steps, batch_size=batch_size)
 test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch_size=batch_size)
 
-#adam standard: (lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
-optadam = optimizers.adam(lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
-#rmsprop standard: (lr=0.001, rho=0.9, epsilon=None, decay=0.0)
-optprop = optimizers.rmsprop(lr=0.001, rho=0.9, epsilon=None, decay=0.0)
+
 
 seqtest = []
 
@@ -143,7 +150,7 @@ for i in range(repeats):
     # model = ml.build_crrr(time_steps, vector_size, outputs, num_filters, batch_size, kernel_size, lstm_output, stateful)
 
     model.compile(loss='categorical_crossentropy',
-                  optimizer=optprop,
+                  optimizer=runopt,
                   metrics=['accuracy'])
 
     history = model.fit_generator(train_seq,
