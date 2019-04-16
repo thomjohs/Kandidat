@@ -23,7 +23,6 @@ starttime = datetime.datetime.now()
 input_file = "ArenSwipeNext1"
 
 
-
 input_button = ["JohanButton1", "ArenButton1", "ArenButton2",
                 "ArenButton3", "AndreasButton1", "AndreasButton2",
                 "AndreasButton3", "AndreasButton4", "AndreasButton5",
@@ -102,7 +101,7 @@ plotFile = f'Plots\\ts{time_steps}bs{batch_size}lstmout{lstm_output}st{stateful}
 # saves Result
 resultFile = "results.csv"
 
-data = supp.shuffle_gestures(ml.load_folder(input_folder))
+data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
 
 # art_data = ml.load_folder(art_folder)
 # art_background = ml.load_data("GoodBackground1.csv")
