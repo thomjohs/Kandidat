@@ -44,7 +44,7 @@ def shuffle_gestures(frameList):
             group.append(frame)
         else:
             if label != 7:
-                if label == 6:
+                if label == 2:
                     backgrounds.extend(group)
                 else:
                     gestures.append(group)
@@ -52,13 +52,13 @@ def shuffle_gestures(frameList):
             group = [frame]
 
     if label != 7:
-        if label == 6:
+        if label == 2:
             backgrounds.extend(group)
         else:
             gestures.append(group)
 
     while len(backgrounds) != 0 and len(gestures) != 0:
-        if random.randint(0, 4) == 1:
+        if random.randint(0, 3) == 1:
             if len(backgrounds) < 25:
                 shuffled.extend(backgrounds)
             else:
