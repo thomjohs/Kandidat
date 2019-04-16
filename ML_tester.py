@@ -65,29 +65,27 @@ outputs = 7
 
 # training hyperparameters
 
-
-epochs = 300
+epochs = 2
 time_steps = 10
-batch_size = 50
+batch_size = 500
 learning_rate = 0.001
 decay = 0
-
 
 training_ratio = 0.7
 
 # used in both models
-lstm_output = 20
+lstm_output = 10
 stateful = True
 
 # only used in combined model
 num_filters = 64
 kernel_size = 5
-repeats = 5
+repeats = 1
 
 # for saving the model and weights
 export = True
-modelFile = "model.json"
-weightFile = "weights.h5"
+modelFile = f'ts{time_steps}bs{batch_size}lstmout{lstm_output}st{stateful}lr{learning_rate}.json'
+weightFile = f'ts{time_steps}bs{batch_size}lstmout{lstm_output}st{stateful}lr{learning_rate}.h5'
 
 #optimizers
 #adam standard: (lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
@@ -98,8 +96,8 @@ optprop = optimizers.rmsprop(lr=learning_rate, rho=0.9, epsilon=None, decay=deca
 runopt = optprop
 
 # saves plot
-plot = False
-plotFile = f'Plots\\ts{time_steps}bs{batch_size}lstmOut{lstm_output}st{stateful}lr{learning_rate}decay{decay}.pdf'
+plot = True
+plotFile = f'Plots\\ts{time_steps}bs{batch_size}lstmout{lstm_output}st{stateful}lr{learning_rate}.svg'
 
 # saves Result
 resultFile = "results.csv"
@@ -190,8 +188,10 @@ for i in range(repeats):
     plt.ylabel('accuracy')
     plt.xlabel('epoch')
     plt.legend(['train', 'test'], loc='upper left')
+
     if plot:
-        plt.savefig(plotFile, bbox_inches='tight')
+        plt.tight_layout()
+        plt.savefig(plotFile, format='svg')
 
 
     if export:
