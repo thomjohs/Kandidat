@@ -27,9 +27,13 @@ weightFile = "Test_1_weights.h5"
 
 # Prediction values
 predictions = []
-predLen = 7
-confNumber = 4
+predLen = 8
+confNumber = 5
 
+# Guesses
+guesses = []
+guessLen = 9
+confNumberGuess = 2
 
 def confidentGuess(predictions, confNumber):
     counts = {}
@@ -142,26 +146,34 @@ while True:
                     else:
                         update = '-'
                     guess = confidentGuess(predictions, confNumber)
-                    templabel.config(text=f'{guess} {update}')
-                    root.update()
 
-                    if guess == 'swipeNext' and not swiped:
+                    guesses.append(guess)
+                    while len(guesses) > guessLen:
+                        guesses = guesses[1:]
+                    finalGuess = confidentGuess(guesses, confNumberGuess)
+                    if finalGuess != 'goodBackground':
+                        guesses = []
+
+                    templabel.config(text=f'{finalGuess} {update}')
+                        root.update()
+
+                    if finalGuess == 'swipeNext' and not swiped:
                         swiped = True
                         print("skip")
                         keyboard.press(VK_next)
                         keyboard.release(VK_next)
-                    elif guess != 'swipeNext':
+                    elif finalGuess != 'swipeNext':
                         swiped = False
 
-                    if guess == 'button' and not button:
+                    if finalGuess == 'button' and not button:
                         button = True
                         print('click')
                         keyboard.press(Vk_play_pause)
                         keyboard.release(Vk_play_pause)
-                    elif guess != 'button':
+                    elif finalGuess != 'button':
                         button = False
 
-                    if guess == 'slideUp':
+                    if finalGuess == 'slideUp':
                         if volume < 10:
                             keyboard.press(VK_volume_up)
                             keyboard.release(VK_volume_up)

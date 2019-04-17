@@ -25,8 +25,8 @@ input_file = "ArenSwipeNext1"
 
 input_button = ["JohanButton1.csv", "ArenButton1.csv", "ArenButton2.csv",
                 "ArenButton3.csv", "AndreasButton1.csv", "AndreasButton2.csv",
-                "AndreasButton3.csv", "AndreasButton4.csv", "AndreasButton5.csv",
-                "AlexButton1.csv", "JuliaButton1.csv", "LinusButton1.csv",
+                "AndreasButton3.csv", "AndreasButton4.csv", "AndreasButton5.csv", "AlexButton5.csv",
+                "JuliaButton1.csv", "LinusButton1.csv",
                 "MartinButton1.csv", "MatildaButton1.csv"]
 
 input_swipenext = ["JohanSwipeNext1.csv", "ArenSwipeNext1.csv", "ArenSwipeNext2.csv",
@@ -53,8 +53,8 @@ input_flop = ["AlexFlop1.csv", "JuliaFlop1.csv", "LinusFlop1.csv",
 input_background = ["GoodBackground1.csv", "GoodBackground2.csv"]
 
 
-input_files = input_button + input_swipenext + input_background#+ input_swipeprev + \
-              #input_slideup + input_slidedown + input_flop
+input_files = input_button + input_swipenext + input_background  # + input_swipeprev + \
+              # input_slideup + input_slidedown + input_flop
 
 input_folder = "ProcessedData"
 art_folder = "TranslatedData"
@@ -64,11 +64,11 @@ outputs = 3
 
 # training hyperparameters
 
-epochs = 300
+epochs = 500
 time_steps = 10
 batch_size = 50
-learning_rate = 0.0005
-decay = 0
+learning_rate = 0.001/4
+decay = 5/(10**6)
 
 training_ratio = 0.7
 
