@@ -53,8 +53,8 @@ input_flop = ["AlexFlop1.csv", "JuliaFlop1.csv", "LinusFlop1.csv",
 input_background = ["GoodBackground1.csv", "GoodBackground2.csv"]
 
 
-input_files = input_button + input_swipenext + input_background#+ input_swipeprev + \
-              #input_slideup + input_slidedown + input_flop
+input_files = input_button + input_swipenext + input_background  # + input_swipeprev + \
+              # input_slideup + input_slidedown + input_flop
 
 input_folder = "ProcessedData"
 art_folder = "TranslatedData"
@@ -73,7 +73,7 @@ decay = 0
 training_ratio = 0.7
 
 # used in both models
-lstm_output = 20
+lstm_output = 40
 stateful = True
 
 # only used in combined model
