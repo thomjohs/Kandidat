@@ -64,16 +64,16 @@ outputs = 3
 
 # training hyperparameters
 
-epochs = 300
+epochs = 500
 time_steps = 10
 batch_size = 50
-learning_rate = 0.0005
+learning_rate = 0.0001
 decay = 0
 
 training_ratio = 0.7
 
 # used in both models
-lstm_output = 20
+lstm_output = 10
 stateful = True
 
 # only used in combined model

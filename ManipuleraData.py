@@ -287,7 +287,56 @@ def processFiles_folder(input_folder,output_folder):
         print(files)
         processFiles(files,files)
 
-    
+def processFiles_folder2(input_folder,output_folder):
+    global standardLen
+    data=ml.load_folder(input_folder)
+    data_array=np.asarray(data)
+    numMatrix=data_array[:,:1]
+    rangeMatrix = data_array[:,1:standardLen*1+1]
+    dopplerMatrix = data_array[:,1+standardLen*1:standardLen*2+1]
+    peakMatrix = data_array[:,1+standardLen*2:standardLen*3+1]
+    xMatrix = data_array[:,1+standardLen*3:standardLen*4+1]
+    yMatrix = data_array[:,1+standardLen*4:standardLen*5+1]
+    labelMatrix=data_array[:,standardLen*5+1:]
+
+    ########Calculate with zero padding###########
+    #Subtrackting all elemnts with the mean and normalizing
+    #numMatrix_norm=zero_mean_normalized(numMatrix)
+    #rangeMatrix_norm=zero_mean_normalized(rangeMatrix)
+    #dopplerMatrix_norm=zero_mean(dopplerMatrix)
+    #peakMatrix_norm=zero_mean_normalized(peakMatrix)
+    #xMatrix_norm=zero_mean_normalized(xMatrix)
+    #yMatrix_norm=zero_mean_normalized(yMatrix)
+
+    ########Calculate without zero padding###########
+    #To know what to subtract the mean from
+    boolarr=np.zeros_like(rangeMatrix)
+    for i in range(len(data_array)):
+        n=int(numMatrix[i])
+        boolarr[i] = np.hstack((np.ones(n),np.zeros(standardLen-n)))
+    #Subtrackting non-padding variables with the mean and normalizing
+    numMatrix_norm=zero_mean_normalized(numMatrix)
+    elements = int(sum(numMatrix))
+    rangeMatrix_norm=zero_mean_normalized_without_padding(rangeMatrix, elements,boolarr)
+    dopplerMatrix_norm=zero_mean_normalized_without_padding(dopplerMatrix, elements,boolarr)
+    peakMatrix_norm=zero_mean_normalized_without_padding(peakMatrix, elements,boolarr)
+    xMatrix_norm=zero_mean_normalized_without_padding(xMatrix, elements,boolarr)
+    yMatrix_norm=zero_mean_normalized_without_padding(yMatrix, elements,boolarr)
+
+    data_new=np.hstack((numMatrix_norm, rangeMatrix_norm, dopplerMatrix_norm, peakMatrix_norm, xMatrix_norm, yMatrix_norm,labelMatrix))
+def zero_mean_normalized(arr):
+    elements=len(arr)*len(arr[0])
+    zero_mean=np.sum(arr)/elements
+    arr_zero_mean=np.subtract(arr,zero_mean)
+    max_of_arr_zero_mean=np.amax(np.absolute(arr_zero_mean))
+    arr_normilized=np.divide(arr_zero_mean,max_of_arr_zero_mean)
+    return arr_normilized
+def zero_mean_normalized_without_padding(arr,elements, boolarr):
+    zero_mean=np.sum(arr)/elements
+    arr_zero_mean=np.subtract(arr,np.multiply(boolarr,zero_mean))
+    max_of_arr_zero_mean=np.amax(np.absolute(arr_zero_mean))
+    arr_normilized=np.divide(arr_zero_mean,max_of_arr_zero_mean)
+    return arr_normilized
 
 
 # Main for testing
@@ -305,6 +354,7 @@ def main():
 #in_file='PreprocessedData\\JohanButton1.csv'   
 #out_file='ProcessedData\\JohanButton1.csv'
 #processFiles_folder('PreprocessedData','ProcessedData')
+#processFiles_folder2('ProcessedData','PostprocessedData')
 # translateFolder('ProcessedData','TranslatedData')
 # Translate
 #in_file='JohanButton1'   

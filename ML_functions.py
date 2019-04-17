@@ -73,6 +73,60 @@ def load_data(input_file, folder="ProcessedData\\"):
         data[i] = np.array(frame_int)
         i += 1
     return data
+def zero_mean_normalize_data(input_folder):
+    standardLen=10
+    data=load_folder(input_folder)
+    data_array=np.asarray(data)
+    numMatrix=data_array[:,:1]
+    rangeMatrix = data_array[:,1:standardLen*1+1]
+    dopplerMatrix = data_array[:,1+standardLen*1:standardLen*2+1]
+    peakMatrix = data_array[:,1+standardLen*2:standardLen*3+1]
+    xMatrix = data_array[:,1+standardLen*3:standardLen*4+1]
+    yMatrix = data_array[:,1+standardLen*4:standardLen*5+1]
+    labelMatrix=data_array[:,standardLen*5+1:]
+
+    ########Calculate with zero padding###########
+    #Subtrackting all elemnts with the mean and normalizing
+    #numMatrix_norm=zero_mean_normalized(numMatrix)
+    #rangeMatrix_norm=zero_mean_normalized(rangeMatrix)
+    #dopplerMatrix_norm=zero_mean(dopplerMatrix)
+    #peakMatrix_norm=zero_mean_normalized(peakMatrix)
+    #xMatrix_norm=zero_mean_normalized(xMatrix)
+    #yMatrix_norm=zero_mean_normalized(yMatrix)
+
+    ########Calculate without zero padding###########
+    #To know what to subtract the mean from
+    boolarr=np.zeros_like(rangeMatrix)
+    for i in range(len(data_array)):
+        n=int(numMatrix[i])
+        boolarr[i] = np.hstack((np.ones(n),np.zeros(standardLen-n)))
+    #Subtrackting non-padding variables with the mean and normalizing
+    numMatrix_norm, numMean, numMax=zero_mean_normalized(numMatrix)
+    elements = int(sum(numMatrix))
+    rangeMatrix_norm, rangeMean, rangeMax = zero_mean_normalized_without_padding(rangeMatrix, elements,boolarr)
+    dopplerMatrix_norm, dopplerMean, dopplerMax = zero_mean_normalized_without_padding(dopplerMatrix, elements,boolarr)
+    peakMatrix_norm, peakMean, peakMax = zero_mean_normalized_without_padding(peakMatrix, elements,boolarr)
+    xMatrix_norm, xMean, xMax = zero_mean_normalized_without_padding(xMatrix, elements,boolarr)
+    yMatrix_norm, yMean, yMax = zero_mean_normalized_without_padding(yMatrix, elements,boolarr)
+
+    data_new=np.hstack((numMatrix_norm, rangeMatrix_norm, dopplerMatrix_norm, peakMatrix_norm, xMatrix_norm, yMatrix_norm,labelMatrix))
+    means={'numObj': numMean, 'range': rangeMean, 'doppler': dopplerMean, 'peak': peakMean, 'x': xMean, 'y': yMean}
+    maxs={'numObj': numMax, 'range': rangeMax, 'doppler': dopplerMax, 'peak': peakMax, 'x': xMax, 'y': yMax}
+    return data_new, means, maxs
+    
+def zero_mean_normalized(arr):
+    elements=len(arr)*len(arr[0])
+    zero_mean=np.sum(arr)/elements
+    arr_zero_mean=np.subtract(arr,zero_mean)
+    max_of_arr_zero_mean=np.amax(np.absolute(arr_zero_mean))
+    arr_normilized=np.divide(arr_zero_mean,max_of_arr_zero_mean)
+    return arr_normilized, zero_mean, max_of_arr_zero_mean
+def zero_mean_normalized_without_padding(arr,elements, boolarr):
+    zero_mean=np.sum(arr)/elements
+    arr_zero_mean=np.subtract(arr,np.multiply(boolarr,zero_mean))
+    max_of_arr_zero_mean=np.amax(np.absolute(arr_zero_mean))
+    arr_normilized=np.divide(arr_zero_mean,max_of_arr_zero_mean)
+    return arr_normilized, zero_mean, max_of_arr_zero_mean
 
 def count_gestures(data):
     gest_count = [0, 0, 0, 0, 0, 0, 0]
