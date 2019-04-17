@@ -64,11 +64,11 @@ outputs = 3
 
 # training hyperparameters
 
-epochs = 500
+epochs = 300
 time_steps = 10
 batch_size = 50
-learning_rate = 0.001/4
-decay = 5/(10**6)
+learning_rate = 0.001/2
+decay = 0 #5/(10**6)
 
 training_ratio = 0.7
 
@@ -103,8 +103,8 @@ plotFile2 = f'Plots\\ts{time_steps}bs{batch_size}lstmout{lstm_output}st{stateful
 
 # saves Result
 resultFile = "results.csv"
-
-data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
+data_norm, means, maxs = ml.load_zero_mean_normalize_data_multiple_files(input_files)
+data = supp.shuffle_gestures(data_norm)
 
 # art_data = ml.load_folder(art_folder)
 # art_background = ml.load_data("GoodBackground1.csv")
