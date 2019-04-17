@@ -25,7 +25,7 @@ input_file = "ArenSwipeNext1"
 
 input_button = ["JohanButton1.csv", "ArenButton1.csv", "ArenButton2.csv",
                 "ArenButton3.csv", "AndreasButton1.csv", "AndreasButton2.csv",
-                "AndreasButton3.csv", "AndreasButton4.csv", "AndreasButton5.csv", "AlexButton5"
+                "AndreasButton3.csv", "AndreasButton4.csv", "AndreasButton5.csv", "AlexButton5.csv",
                 "JuliaButton1.csv", "LinusButton1.csv",
                 "MartinButton1.csv", "MatildaButton1.csv"]
 
