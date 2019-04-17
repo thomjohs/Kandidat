@@ -26,7 +26,7 @@ input_file = "ArenSwipeNext1"
 input_button = ["JohanButton1.csv", "ArenButton1.csv", "ArenButton2.csv",
                 "ArenButton3.csv", "AndreasButton1.csv", "AndreasButton2.csv",
                 "AndreasButton3.csv", "AndreasButton4.csv", "AndreasButton5.csv",
-                "AlexButton1.csv", "JuliaButton1.csv", "LinusButton1.csv",
+                "JuliaButton1.csv", "LinusButton1.csv",
                 "MartinButton1.csv", "MatildaButton1.csv"]
 
 input_swipenext = ["JohanSwipeNext1.csv", "ArenSwipeNext1.csv", "ArenSwipeNext2.csv",
@@ -67,13 +67,13 @@ outputs = 3
 epochs = 500
 time_steps = 10
 batch_size = 50
-learning_rate = 0.0001
-decay = 0
+learning_rate = 0.001/4
+decay = 5/(10**6)
 
 training_ratio = 0.7
 
 # used in both models
-lstm_output = 10
+lstm_output = 20
 stateful = True
 
 # only used in combined model
