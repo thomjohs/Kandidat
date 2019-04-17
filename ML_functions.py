@@ -73,9 +73,38 @@ def load_data(input_file, folder="ProcessedData\\"):
         data[i] = np.array(frame_int)
         i += 1
     return data
-def zero_mean_normalize_data(input_folder):
+
+def load_zero_mean_normalize_data_multiple_files(input_files, folder="ProcessedData\\"):
+    data = load_data_multiple(input_files, folder)
+    data_new, means, maxs = zero_mean_normalize_data(data)
+    return data_new, means, maxs
+
+def load_zero_mean_normalize_data_multiple_files_multiple_folders(input_files, folders=["ProcessedData\\"]):
+    n=len(folders)
+    data=load_data_multiple(input_files, folders[0])
+    if n>1:
+        for i in range(1,n):
+            data=np.vstack((data,load_data_multiple(input_files, folders[i])))
+    data_new, means, maxs = zero_mean_normalize_data(data)
+    return data_new, means, maxs
+
+def load_zero_mean_normalize_data_folder(input_folder):
+    data = load_folder(input_folder)
+    data_new, means, maxs = zero_mean_normalize_data(data)
+    return data_new, means, maxs
+
+def load_zero_mean_normalize_data_multiple_folders(input_folders):
+    n=len(input_folders)
+    data=load_folder(input_folders[0])
+    if n>1:
+        for i in range(1,n):
+            data=np.vstack((data,load_folder(input_folders[i])))
+    data_new, means, maxs = zero_mean_normalize_data(data)
+    return data_new, means, maxs
+
+
+def zero_mean_normalize_data(data):
     standardLen=10
-    data=load_folder(input_folder)
     data_array=np.asarray(data)
     numMatrix=data_array[:,:1]
     rangeMatrix = data_array[:,1:standardLen*1+1]
