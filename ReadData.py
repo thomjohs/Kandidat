@@ -67,9 +67,10 @@ while True:
         filename = input("What's the file name? ([Namn]+[Gest]+[nummer i serie])")
         radar.listOfDictToFile(frameData, filename)
         #create processed path
+        filename_process=f"{filename}.csv"
         path_process="ProcessedData\\{}.csv".format(filename)
         mainp.framedata_to_file(frameData, path_process)
         path_trans="TranslatedData\\{}.csv".format(filename)
-        mainp.translateFile(path_process, path_trans)
+        mainp.translateFile(filename_process, path_trans)
         break
 
