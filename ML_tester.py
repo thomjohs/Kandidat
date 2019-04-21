@@ -64,7 +64,7 @@ outputs = 3
 
 # training hyperparameters
 
-epochs = 1000
+epochs = 2000
 time_steps = 10
 batch_size = 10
 learning_rate = 0.00001
@@ -94,7 +94,7 @@ optadam = optimizers.adam(lr=learning_rate, beta_1=0.9, beta_2=0.999, epsilon=No
 # rmsprop standard: (lr=0.001, rho=0.9, epsilon=None, decay=0.0)
 optprop = optimizers.rmsprop(lr=learning_rate, rho=0.9, epsilon=None, decay=decay)
 
-runopt = optprop
+runopt = optadam
 
 # saves plot
 plot = True
