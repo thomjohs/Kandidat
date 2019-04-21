@@ -53,8 +53,8 @@ input_flop = ["AlexFlop1.csv", "JuliaFlop1.csv", "LinusFlop1.csv",
 input_background = ["GoodBackground1.csv", "GoodBackground2.csv"]
 
 
-input_files = input_button + input_swipenext + input_background  # + input_swipeprev + \
-              # input_slideup + input_slidedown + input_flop
+input_files = input_button + input_swipenext + input_background + input_swipeprev + \
+               input_slideup + input_slidedown + input_flop
 
 input_folder = "ProcessedData"
 art_folder = "TranslatedData"
@@ -64,23 +64,23 @@ outputs = 3
 
 # training hyperparameters
 
-epochs = 300
+epochs = 1000
 time_steps = 10
-batch_size = 50
-learning_rate = 0.001/2
-decay = 0 #5/(10**6)
+batch_size = 10
+learning_rate = 0.00001
+decay = 1/(10**6)
 
 training_ratio = 0.7
 
 # used in both models
-lstm_output = 20
+lstm_output = 10
 stateful = True
 
 # only used in combined model
 num_filters = 64
 kernel_size = 5
 
-repeats = 5
+repeats = 1
 
 # for saving the model and weights
 export = True
