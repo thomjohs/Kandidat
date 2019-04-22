@@ -12,6 +12,7 @@ import random
 import matplotlib.pyplot as plt
 import supp
 import os
+from keras.models import model_from_json
 
 
 def cm_to_percentage(cm):
@@ -86,6 +87,14 @@ def load_data(input_file, folder="ProcessedData\\"):
         data[i] = np.array(frame_int)
         i += 1
     return data
+
+def loadModel(jsonFile, weightFile):
+    file = open("Model\\" + jsonFile, 'r')
+    loadedModelFile = file.read()
+    file.close()
+    load_model = model_from_json(loadedModelFile)
+    load_model.load_weights("Model\\" + weightFile)
+    return load_model
 
 def load_zero_mean_normalize_data_multiple_files(input_files, folder="ProcessedData\\"):
     data = load_data_multiple(input_files, folder)
