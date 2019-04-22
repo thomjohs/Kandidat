@@ -65,6 +65,7 @@ outputs = 7
 # training hyperparameters
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 epochs = 300
 time_steps = 10
 batch_size = 10
@@ -74,6 +75,11 @@ decay = 1/(10**1)
 epochs = 2000
 time_steps = 10
 batch_size = 10
+=======
+epochs = 2000
+time_steps = 10
+batch_size = 10
+>>>>>>> parent of 870ab52... Merge branch 'master' of https://github.com/thomjohs/Kandidat
 learning_rate = 0.00001
 decay = 1/(10**6)
 >>>>>>> parent of 870ab52... Merge branch 'master' of https://github.com/thomjohs/Kandidat
@@ -169,7 +175,11 @@ for i in range(repeats):
     predictions = model.predict_generator(train_seq)
     predictions = np.argmax(predictions, axis=1)
 <<<<<<< HEAD
+<<<<<<< HEAD
     cm = confusion_matrix(np.argmax(y_train[:len(y_train) // 1000 * 1000+ time_steps], axis=1), predictions)
+=======
+    cm = confusion_matrix(np.argmax(y_train[:len(y_train) // 1000 * 1000], axis=1), predictions)
+>>>>>>> parent of 870ab52... Merge branch 'master' of https://github.com/thomjohs/Kandidat
 =======
     cm = confusion_matrix(np.argmax(y_train[:len(y_train) // 1000 * 1000], axis=1), predictions)
 >>>>>>> parent of 870ab52... Merge branch 'master' of https://github.com/thomjohs/Kandidat
