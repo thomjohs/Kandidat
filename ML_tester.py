@@ -49,11 +49,11 @@ outputs = 7
 
 # training hyperparameters
 
-epochs = 300
-time_steps = 20
+epochs = 10
+time_steps = 10
 batch_size = 10
-learning_rate = 0.001
-decay = 1/(10**5)
+learning_rate = 0.00025
+decay = 1/(10**6)
 
 training_ratio = 0.7
 
@@ -69,8 +69,13 @@ repeats = 1
 
 # for saving the model and weights
 export = True
-modelFile = f'ts{time_steps}bs{batch_size}lstmout{lstm_output}st{stateful}lr{learning_rate}.json'
-weightFile = f'ts{time_steps}bs{batch_size}lstmout{lstm_output}st{stateful}lr{learning_rate}.h5'
+modelSaveFile = f'ts{time_steps}bs{batch_size}lstmout{lstm_output}st{stateful}lr{learning_rate}.json'
+weightSaveFile = f'ts{time_steps}bs{batch_size}lstmout{lstm_output}st{stateful}lr{learning_rate}.h5'
+
+# Model loading data
+load = False
+modelFile = "ts10bs10lstmout20stTruelr0.00025.json"
+weightFile = "ts10bs10lstmout20stTruelr0.00025.h5"
 
 # optimizers
 # adam standard: (lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
@@ -129,9 +134,12 @@ seqtest = []
 
 for i in range(repeats):
 
-    model = ml.build_lstm(time_steps, vector_size, outputs, batch_size, lstm_output, stateful)
-    # model = ml.build_clstm(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output)
-    # model = ml.build_crrr(time_steps, vector_size, outputs, num_filters, batch_size, kernel_size, lstm_output, stateful)
+    if load:
+        model = ml.loadModel(modelFile, weightFile)
+    else:
+        model = ml.build_lstm(time_steps, vector_size, outputs, batch_size, lstm_output, stateful)
+        # model = ml.build_clstm(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output)
+        # model = ml.build_crrr(time_steps, vector_size, outputs, num_filters, batch_size, kernel_size, lstm_output, stateful)
 
     model.compile(loss='categorical_crossentropy',
                   optimizer=runopt,
@@ -145,10 +153,12 @@ for i in range(repeats):
 
     seqtest.append(model.evaluate_generator(test_seq))
 
-    predictions = model.predict_generator(train_seq)
+    predictions = model.predict_generator(test_seq)
     predictions = np.argmax(predictions, axis=1)
-    cm = confusion_matrix(np.argmax(y_train[:len(y_train) // 1000 * 1000], axis=1), predictions)
+    cm = confusion_matrix(np.argmax(y_test[time_steps:], axis=1), predictions)
     print(cm)
+    print()
+    print()
 
     cm = ml.cm_to_percentage(cm)
     print(cm)
@@ -180,9 +190,9 @@ for i in range(repeats):
 
     if export:
         json_model = model.to_json()
-        with open("Model\\" + modelFile, 'w') as file:
+        with open("Model\\" + modelSaveFile, 'w') as file:
             file.write(json_model)
-        model.save_weights("Model\\" + weightFile)
+        model.save_weights("Model\\" + weightSaveFile)
 
 plt.show()
 with open(resultFile, 'w') as file:
