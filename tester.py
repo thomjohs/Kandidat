@@ -48,7 +48,8 @@ model.compile(loss='categorical_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
 
-data = supp.shuffle_gestures(ml.load_folder("ProcessedData"))
+data, mean, max = ml.load_zero_mean_normalize_data_folder("ProcessedData")
+data = supp.shuffle_gestures(data)
 x_train, x_test, y_train, y_test = ml.split_data(data, vector_size, outputs,
                                                  training_ratio)
 
@@ -74,6 +75,7 @@ y_argmax = np.argmax(y_test[time_steps:], axis=1)
 plt.plot(predictions_argmax[:1000])
 plt.plot(y_argmax[:1000])
 plt.show()
+
 cm = confusion_matrix(y_argmax, predictions_argmax)
 print(cm)
 cm = cm.astype(dtype=np.float32)
