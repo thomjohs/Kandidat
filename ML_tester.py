@@ -64,16 +64,16 @@ outputs = 7
 
 # training hyperparameters
 
-epochs = 2000
+epochs = 150
 time_steps = 10
 batch_size = 10
-learning_rate = 0.00001
+learning_rate = 0.00025
 decay = 1/(10**6)
 
 training_ratio = 0.7
 
 # used in both models
-lstm_output = 10
+lstm_output = 20
 stateful = True
 
 # only used in combined model
@@ -160,12 +160,14 @@ for i in range(repeats):
 
     seqtest.append(model.evaluate_generator(test_seq))
 
-    predictions = model.predict_generator(train_seq)
+    predictions = model.predict_generator(test_seq)
     predictions = np.argmax(predictions, axis=1)
-    cm = confusion_matrix(np.argmax(y_train[:len(y_train) // 1000 * 1000], axis=1), predictions)
+    cm = confusion_matrix(np.argmax(y_test[time_steps:], axis=1), predictions)
     print(cm)
+    print()
+    print()
 
-    cm = ml.cm_to_percentage(cm)
+    cm = ml.cm_to_percentage_total(cm)
     print(cm)
     with open("ConfusionMatrix_dropout.csv", 'w', newline='') as cm_file:
         writer = csv.writer(cm_file)

@@ -5,6 +5,7 @@ import ML_functions as ml
 import numpy as np
 from keras.preprocessing import sequence
 from sklearn.metrics import confusion_matrix
+import matplotlib.pyplot as plt
 
 import ManipuleraData as manip
 import msvcrt
@@ -14,13 +15,13 @@ from pynput.keyboard import KeyCode, Controller
 
 
 # ML variables set to the same as current model
-batch_size = 500
+batch_size = 10
 
 
 
 # Model loading data
-modelFile = "model.json"
-weightFile = "weights.h5"
+modelFile = "ts10bs10lstmout20stTruelr0.00025.json"
+weightFile = "ts10bs10lstmout20stTruelr0.00025.h5"
 
 vector_size = 52
 outputs = 7
@@ -56,18 +57,23 @@ x_test = x_test[:len(x_test) // 1000 * 1000 + time_steps]
 y_train = y_train[:len(y_train) // 1000 * 1000 + time_steps]
 y_test = y_test[:len(y_test) // 1000 * 1000 + time_steps]
 
+print(ml.count_gestures(y_train))
+print(ml.count_gestures(y_test))
+
 train_seq = sequence.TimeseriesGenerator(x_train, y_train, length=time_steps, batch_size=batch_size, shuffle=0)
 test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch_size=batch_size, shuffle=0)
 
 
 predictions = model.predict_generator(test_seq)
-print(predictions[0])
 
 predictions_argmax = np.argmax(predictions, axis=1)
 # predictions = utils.to_categorical(predictions, outputs, dtype=np.float32)
 
-y_argmax = np.argmax(y_train[:len(y_test) // 1000 * 1000], axis=1)
+y_argmax = np.argmax(y_test[time_steps:], axis=1)
 
+plt.plot(predictions_argmax[:1000])
+plt.plot(y_argmax[:1000])
+plt.show()
 cm = confusion_matrix(y_argmax, predictions_argmax)
 print(cm)
 cm = cm.astype(dtype=np.float32)
