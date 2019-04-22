@@ -27,6 +27,19 @@ def cm_to_percentage(cm):
     return cm
 
 
+def cm_to_percentage_total(cm):
+    cm = cm.astype(dtype=np.float32)
+    sum = 0
+    for frame in cm:
+        for value in frame:
+            sum += value
+    for i, frame in enumerate(cm):
+        for j, value in enumerate(frame):
+            perc = float(value / sum) * 100
+            cm[i][j] = perc
+        cm[i] = np.around(frame, decimals=1)
+    return cm
+
 def sum_print(start_time, repeats, seqtest):
     print('')
     print('Validation Results:')

@@ -27,7 +27,7 @@ outputs = 7
 
 
 epochs = 20
-time_steps = 5
+time_steps = 10
 training_ratio = 0.7
 
 
@@ -60,22 +60,17 @@ train_seq = sequence.TimeseriesGenerator(x_train, y_train, length=time_steps, ba
 test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch_size=batch_size, shuffle=0)
 
 
-predictions = model.predict_generator(train_seq)
+predictions = model.predict_generator(test_seq)
 print(predictions[0])
 
-predictions = np.argmax(predictions, axis=1)
+predictions_argmax = np.argmax(predictions, axis=1)
 # predictions = utils.to_categorical(predictions, outputs, dtype=np.float32)
 
-cm = confusion_matrix(np.argmax(y_train[:len(y_train) // 1000 * 1000], axis=1), predictions)
+y_argmax = np.argmax(y_train[:len(y_test) // 1000 * 1000], axis=1)
+
+cm = confusion_matrix(y_argmax, predictions_argmax)
 print(cm)
 cm = cm.astype(dtype=np.float32)
 
-for i, frame in enumerate(cm):
-    sum = 0
-    for value in frame:
-        sum += value
-    for j, value in enumerate(frame):
-        perc = float(value / sum) * 100
-        cm[i][j] = perc
-    cm[i] = np.around(frame, decimals=1)
-print(cm)
+print(ml.cm_to_percentage(cm))
+print(ml.cm_to_percentage_total(cm))
