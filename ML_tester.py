@@ -64,12 +64,20 @@ outputs = 7
 
 # training hyperparameters
 
+<<<<<<< HEAD
 
 epochs = 300
 time_steps = 10
 batch_size = 10
 learning_rate = 0.001
 decay = 1/(10**1)
+=======
+epochs = 2000
+time_steps = 10
+batch_size = 10
+learning_rate = 0.00001
+decay = 1/(10**6)
+>>>>>>> parent of 870ab52... Merge branch 'master' of https://github.com/thomjohs/Kandidat
 
 training_ratio = 0.7
 
