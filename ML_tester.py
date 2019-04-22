@@ -23,17 +23,32 @@ starttime = datetime.datetime.now()
 input_file = "ArenSwipeNext1"
 
 
-input_button = ['AlexButton1.csv', 'AlexButton5.csv', 'AndreasButton1.csv', 'AndreasButton2.csv', 'AndreasButton3.csv', 'AndreasButton4.csv', 'AndreasButton5.csv', 'ArenButton1.csv', 'ArenButton2.csv', 'ArenButton3.csv', 'JohanButton1.csv', 'JohanButton2.csv', 'JuliaButton1.csv', 'LinusButton1.csv', 'MartinButton1.csv', 'MatildaButton1.csv']
+input_button = ["JohanButton1.csv", "ArenButton1.csv", "ArenButton2.csv",
+                "ArenButton3.csv", "AndreasButton1.csv", "AndreasButton2.csv",
+                "AndreasButton3.csv", "AndreasButton4.csv", "AndreasButton5.csv",
+                "AlexButton1.csv", "JuliaButton1.csv", "LinusButton1.csv",
+                "MartinButton1.csv", "MatildaButton1.csv"]
 
-input_swipenext = ['AlexSwipeNext1.csv', 'AlexSwipeNext5.csv', 'AndreasSwipeNext1.csv', 'AndreasSwipeNext2.csv', 'AndreasSwipeNext3.csv', 'AndreasSwipeNext4.csv', 'AndreasSwipeNext5.csv', 'ArenSwipeNext1.csv', 'ArenSwipeNext2.csv', 'ArenSwipeNext3.csv', 'JohanSwipeNext1.csv', 'JohanSwipeNext2.csv', 'JuliaSwipeNext1.csv', 'LinusSwipeNext.csv', 'LinusSwipeNext1.csv', 'MartinSwipeNext1.csv', 'MatildaSwipeNext1.csv']
+input_swipenext = ["JohanSwipeNext1.csv", "ArenSwipeNext1.csv", "ArenSwipeNext2.csv",
+                   "ArenSwipeNext3.csv", "AndreasSwipeNext1.csv", "AndreasSwipeNext2.csv",
+                   "AndreasSwipeNext3.csv", "AndreasSwipeNext4.csv", "AndreasSwipeNext5.csv",
+                   "AlexSwipeNext1.csv", "JuliaSwipeNext1.csv", "LinusSwipeNext1.csv",
+                   "MartinSwipeNext1.csv", "MatildaSwipeNext1.csv"]
 
-input_swipeprev = ['AlexSwipePrev1.csv', 'ArenSwipePrev1.csv', 'JohanSwipePrev1.csv', 'JohanSwipePrev2.csv', 'JuliaSwipePrev1.csv', 'LinusSwipePrev.csv', 'LinusSwipePrev1.csv', 'MartinSwipePrev1.csv', 'MatildaSwipePrev.csv', 'MatildaSwipePrev1.csv']
+input_swipeprev = ["AlexSwipePrev1.csv", "JuliaSwipePrev1.csv", "LinusSwipePrev1.csv",
+                   "MartinSwipePrev1.csv", "MatildaSwipePrev1.csv"]
 
-input_slideup = ['AlexSlideUp1.csv', 'AlexSlideUp5.csv', 'AndreaSlideUp1.csv', 'AndreasSlideUp1.csv', 'AndreasSlideUp2.csv', 'AndreasSlideUp3.csv', 'AndreasSlideUp4.csv', 'AndreasSlideUp5.csv', 'ArenSlideUp1.csv', 'ArenSlideUp2.csv', 'ArenSlideUp3.csv', 'JohanSlideUp2.csv', 'JuliaSlideUp1.csv', 'LindaSlideUp1.csv', 'LinusSlideUp1.csv', 'MartinSlideUp1.csv', 'MatildaSlideUp1.csv']
+input_slideup = [ "JohanSlideUp1.csv", "ArenSlideUp1.csv", "ArenSlideUp2.csv",
+                  "ArenSlideUp3.csv", "AndreasSlideUp1.csv", "AndreasSlideUp2.csv",
+                  "AndreasSlideUp3.csv", "AndreasSlideUp4.csv", "AndreasSlideUp5.csv",
+                  "AlexSlideUp1.csv", "JuliaSlideUp1.csv",  "LinusSlideUp1.csv",
+                  "MartinSlideUp1.csv", "MatildaSlideUp1.csv"]
 
-input_slidedown = ['AlexSlideDown1.csv', 'ArenSlideDown1.csv', 'JohanSlideDown1.csv', 'JohanSlideDown2.csv', 'JuliaSlideDown1.csv', 'JuliaSlideDown2.csv', 'LinusSlideDown1.csv', "MartinSlideDown1'.csv", 'MartinSlideDown1.csv', 'MatildaSlideDown1.csv']
+input_slidedown = ["AlexSlideDown1.csv", "JuliaSlideDown1.csv", "LinusSlideDown1.csv",
+                   "MartinSlideDown1.csv", "MatildaSlideDown1.csv"]
 
-input_flop = ['AlexFlop1.csv', 'ArenFlop1.csv', 'JohanFlop1.csv', 'JohanFlop2.csv', 'JuliaFlop1.csv', 'LinusFlop1.csv', 'MartinFlop1.csv', 'MatildaFlop1.csv']
+input_flop = ["AlexFlop1.csv", "JuliaFlop1.csv", "LinusFlop1.csv",
+              "MartinFlop1.csv", "MatildaFlop1.csv"]
 
 input_background = ["GoodBackground1.csv", "GoodBackground2.csv"]
 
@@ -51,6 +66,7 @@ outputs = 7
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 epochs = 300
 time_steps = 10
@@ -66,16 +82,19 @@ decay = 1/(10**6)
 >>>>>>> parent of 870ab52... Merge branch 'master' of https://github.com/thomjohs/Kandidat
 =======
 epochs = 10
+=======
+epochs = 2000
+>>>>>>> parent of 870ab52... Merge branch 'master' of https://github.com/thomjohs/Kandidat
 time_steps = 10
 batch_size = 10
-learning_rate = 0.00025
+learning_rate = 0.00001
 decay = 1/(10**6)
 >>>>>>> parent of 8991593... Update ML_tester.py
 
 training_ratio = 0.7
 
 # used in both models
-lstm_output = 20
+lstm_output = 10
 stateful = True
 
 # only used in combined model
@@ -86,13 +105,8 @@ repeats = 1
 
 # for saving the model and weights
 export = True
-modelSaveFile = f'ts{time_steps}bs{batch_size}lstmout{lstm_output}st{stateful}lr{learning_rate}.json'
-weightSaveFile = f'ts{time_steps}bs{batch_size}lstmout{lstm_output}st{stateful}lr{learning_rate}.h5'
-
-# Model loading data
-load = False
-modelFile = "ts10bs10lstmout20stTruelr0.00025.json"
-weightFile = "ts10bs10lstmout20stTruelr0.00025.h5"
+modelFile = f'ts{time_steps}bs{batch_size}lstmout{lstm_output}st{stateful}lr{learning_rate}.json'
+weightFile = f'ts{time_steps}bs{batch_size}lstmout{lstm_output}st{stateful}lr{learning_rate}.h5'
 
 # optimizers
 # adam standard: (lr=0.001, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0, amsgrad=False)
@@ -110,9 +124,7 @@ plotFile = f'Plots\\ts{time_steps}bs{batch_size}lstmout{lstm_output}st{stateful}
 # saves Result
 resultFile = "results.csv"
 
-
-data_norm, means, maxs = ml.load_zero_mean_normalize_data_folder(input_folder)
-
+data_norm, means, maxs = ml.load_zero_mean_normalize_data_multiple_files(input_files)  
 data = supp.shuffle_gestures(data_norm)
 
 # art_data = ml.load_folder(art_folder)
@@ -151,12 +163,9 @@ seqtest = []
 
 for i in range(repeats):
 
-    if load:
-        model = ml.loadModel(modelFile, weightFile)
-    else:
-        model = ml.build_lstm(time_steps, vector_size, outputs, batch_size, lstm_output, stateful)
-        # model = ml.build_clstm(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output)
-        # model = ml.build_crrr(time_steps, vector_size, outputs, num_filters, batch_size, kernel_size, lstm_output, stateful)
+    model = ml.build_lstm(time_steps, vector_size, outputs, batch_size, lstm_output, stateful)
+    # model = ml.build_clstm(time_steps, vector_size, outputs, num_filters, kernel_size, lstm_output)
+    # model = ml.build_crrr(time_steps, vector_size, outputs, num_filters, batch_size, kernel_size, lstm_output, stateful)
 
     model.compile(loss='categorical_crossentropy',
                   optimizer=runopt,
@@ -170,8 +179,9 @@ for i in range(repeats):
 
     seqtest.append(model.evaluate_generator(test_seq))
 
-    predictions = model.predict_generator(test_seq)
+    predictions = model.predict_generator(train_seq)
     predictions = np.argmax(predictions, axis=1)
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
     cm = confusion_matrix(np.argmax(y_test[time_steps:], axis=1), predictions)
@@ -179,6 +189,10 @@ for i in range(repeats):
     print()
     print()
 >>>>>>> parent of 8991593... Update ML_tester.py
+=======
+    cm = confusion_matrix(np.argmax(y_train[:len(y_train) // 1000 * 1000], axis=1), predictions)
+    print(cm)
+>>>>>>> parent of 870ab52... Merge branch 'master' of https://github.com/thomjohs/Kandidat
 
     cm = confusion_matrix(np.argmax(y_train[:len(y_train) // 1000 * 1000+ time_steps], axis=1), predictions)
     cm = ml.cm_to_percentage(cm)
@@ -211,9 +225,9 @@ for i in range(repeats):
 
     if export:
         json_model = model.to_json()
-        with open("Model\\" + modelSaveFile, 'w') as file:
+        with open("Model\\" + modelFile, 'w') as file:
             file.write(json_model)
-        model.save_weights("Model\\" + weightSaveFile)
+        model.save_weights("Model\\" + weightFile)
 
 plt.show()
 with open(resultFile, 'w') as file:
