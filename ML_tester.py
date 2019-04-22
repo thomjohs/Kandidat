@@ -53,27 +53,27 @@ input_flop = ["AlexFlop1.csv", "JuliaFlop1.csv", "LinusFlop1.csv",
 input_background = ["GoodBackground1.csv", "GoodBackground2.csv"]
 
 
-input_files = input_button + input_swipenext + input_background#+ input_swipeprev + \
-              #input_slideup + input_slidedown + input_flop
+input_files = input_button + input_swipenext + input_background+ input_swipeprev + \
+              input_slideup + input_slidedown + input_flop
 
 input_folder = "ProcessedData"
 art_folder = "TranslatedData"
 
 # Number of categories
-outputs = 3
+outputs = 7
 
 # training hyperparameters
 
-epochs = 300
+epochs = 2000
 time_steps = 10
-batch_size = 50
-learning_rate = 0.001
-decay = 0
+batch_size = 10
+learning_rate = 0.00001
+decay = 1/(10**6)
 
 training_ratio = 0.7
 
 # used in both models
-lstm_output = 20
+lstm_output = 10
 stateful = True
 
 # only used in combined model
@@ -94,7 +94,7 @@ optadam = optimizers.adam(lr=learning_rate, beta_1=0.9, beta_2=0.999, epsilon=No
 # rmsprop standard: (lr=0.001, rho=0.9, epsilon=None, decay=0.0)
 optprop = optimizers.rmsprop(lr=learning_rate, rho=0.9, epsilon=None, decay=decay)
 
-runopt = optprop
+runopt = optadam
 
 # saves plot
 plot = True
@@ -103,7 +103,7 @@ plotFile = f'Plots\\ts{time_steps}bs{batch_size}lstmout{lstm_output}st{stateful}
 # saves Result
 resultFile = "results.csv"
 
-data_norm, means, maxs = ml.load_zero_mean_normalize_data_multiple_files(input_files)
+data_norm, means, maxs = ml.load_zero_mean_normalize_data_multiple_files(input_files)  
 data = supp.shuffle_gestures(data_norm)
 
 # art_data = ml.load_folder(art_folder)
@@ -111,11 +111,6 @@ data = supp.shuffle_gestures(data_norm)
 
 # art_data = supp.shuffle_gestures(np.concatenate
 #                                ([art_data, art_background], axis=0))
-
-
-
-
-
 
 x_train, x_test, y_train, y_test = ml.split_data(data, vector_size, outputs,
                                                  training_ratio)
