@@ -23,32 +23,17 @@ starttime = datetime.datetime.now()
 input_file = "ArenSwipeNext1"
 
 
-input_button = ["JohanButton1.csv", "ArenButton1.csv", "ArenButton2.csv",
-                "ArenButton3.csv", "AndreasButton1.csv", "AndreasButton2.csv",
-                "AndreasButton3.csv", "AndreasButton4.csv", "AndreasButton5.csv",
-                "AlexButton1.csv", "JuliaButton1.csv", "LinusButton1.csv",
-                "MartinButton1.csv", "MatildaButton1.csv"]
+input_button = ['AlexButton1.csv', 'AlexButton5.csv', 'AndreasButton1.csv', 'AndreasButton2.csv', 'AndreasButton3.csv', 'AndreasButton4.csv', 'AndreasButton5.csv', 'ArenButton1.csv', 'ArenButton2.csv', 'ArenButton3.csv', 'JohanButton1.csv', 'JohanButton2.csv', 'JuliaButton1.csv', 'LinusButton1.csv', 'MartinButton1.csv', 'MatildaButton1.csv']
 
-input_swipenext = ["JohanSwipeNext1.csv", "ArenSwipeNext1.csv", "ArenSwipeNext2.csv",
-                   "ArenSwipeNext3.csv", "AndreasSwipeNext1.csv", "AndreasSwipeNext2.csv",
-                   "AndreasSwipeNext3.csv", "AndreasSwipeNext4.csv", "AndreasSwipeNext5.csv",
-                   "AlexSwipeNext1.csv", "JuliaSwipeNext1.csv", "LinusSwipeNext1.csv",
-                   "MartinSwipeNext1.csv", "MatildaSwipeNext1.csv"]
+input_swipenext = ['AlexSwipeNext1.csv', 'AlexSwipeNext5.csv', 'AndreasSwipeNext1.csv', 'AndreasSwipeNext2.csv', 'AndreasSwipeNext3.csv', 'AndreasSwipeNext4.csv', 'AndreasSwipeNext5.csv', 'ArenSwipeNext1.csv', 'ArenSwipeNext2.csv', 'ArenSwipeNext3.csv', 'JohanSwipeNext1.csv', 'JohanSwipeNext2.csv', 'JuliaSwipeNext1.csv', 'LinusSwipeNext.csv', 'LinusSwipeNext1.csv', 'MartinSwipeNext1.csv', 'MatildaSwipeNext1.csv']
 
-input_swipeprev = ["AlexSwipePrev1.csv", "JuliaSwipePrev1.csv", "LinusSwipePrev1.csv",
-                   "MartinSwipePrev1.csv", "MatildaSwipePrev1.csv"]
+input_swipeprev = ['AlexSwipePrev1.csv', 'ArenSwipePrev1.csv', 'JohanSwipePrev1.csv', 'JohanSwipePrev2.csv', 'JuliaSwipePrev1.csv', 'LinusSwipePrev.csv', 'LinusSwipePrev1.csv', 'MartinSwipePrev1.csv', 'MatildaSwipePrev.csv', 'MatildaSwipePrev1.csv']
 
-input_slideup = [ "JohanSlideUp1.csv", "ArenSlideUp1.csv", "ArenSlideUp2.csv",
-                  "ArenSlideUp3.csv", "AndreasSlideUp1.csv", "AndreasSlideUp2.csv",
-                  "AndreasSlideUp3.csv", "AndreasSlideUp4.csv", "AndreasSlideUp5.csv",
-                  "AlexSlideUp1.csv", "JuliaSlideUp1.csv",  "LinusSlideUp1.csv",
-                  "MartinSlideUp1.csv", "MatildaSlideUp1.csv"]
+input_slideup = ['AlexSlideUp1.csv', 'AlexSlideUp5.csv', 'AndreaSlideUp1.csv', 'AndreasSlideUp1.csv', 'AndreasSlideUp2.csv', 'AndreasSlideUp3.csv', 'AndreasSlideUp4.csv', 'AndreasSlideUp5.csv', 'ArenSlideUp1.csv', 'ArenSlideUp2.csv', 'ArenSlideUp3.csv', 'JohanSlideUp2.csv', 'JuliaSlideUp1.csv', 'LindaSlideUp1.csv', 'LinusSlideUp1.csv', 'MartinSlideUp1.csv', 'MatildaSlideUp1.csv']
 
-input_slidedown = ["AlexSlideDown1.csv", "JuliaSlideDown1.csv", "LinusSlideDown1.csv",
-                   "MartinSlideDown1.csv", "MatildaSlideDown1.csv"]
+input_slidedown = ['AlexSlideDown1.csv', 'ArenSlideDown1.csv', 'JohanSlideDown1.csv', 'JohanSlideDown2.csv', 'JuliaSlideDown1.csv', 'JuliaSlideDown2.csv', 'LinusSlideDown1.csv', "MartinSlideDown1'.csv", 'MartinSlideDown1.csv', 'MatildaSlideDown1.csv']
 
-input_flop = ["AlexFlop1.csv", "JuliaFlop1.csv", "LinusFlop1.csv",
-              "MartinFlop1.csv", "MatildaFlop1.csv"]
+input_flop = ['AlexFlop1.csv', 'ArenFlop1.csv', 'JohanFlop1.csv', 'JohanFlop2.csv', 'JuliaFlop1.csv', 'LinusFlop1.csv', 'MartinFlop1.csv', 'MatildaFlop1.csv']
 
 input_background = ["GoodBackground1.csv", "GoodBackground2.csv"]
 
@@ -64,16 +49,16 @@ outputs = 7
 
 # training hyperparameters
 
-epochs = 2000
-time_steps = 10
+epochs = 300
+time_steps = 20
 batch_size = 10
-learning_rate = 0.00001
-decay = 1/(10**6)
+learning_rate = 0.001
+decay = 1/(10**5)
 
 training_ratio = 0.7
 
 # used in both models
-lstm_output = 10
+lstm_output = 20
 stateful = True
 
 # only used in combined model
