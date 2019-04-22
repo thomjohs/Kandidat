@@ -305,37 +305,7 @@ def main():
 #in_file='PreprocessedData\\JohanButton1.csv'   
 #out_file='ProcessedData\\JohanButton1.csv'
 #processFiles_folder('PreprocessedData','ProcessedData')
-#translateFolder('ProcessedData','TranslatedData')
-#for root, dirs, files in os.walk('ProcessedData'):
-#    input_button = []
-#    input_swipenext = []
-#    input_swipeprev = []
-#    input_slideup = []
-#    input_slidedown = []
-#    input_flop = []
-#    if '.csv' in files:
-#        files.remove('.csv')
-#    for file in files:
-#        if 'Button' in file:
-#            input_button.append(file)
-#        elif 'SwipeNext' in file:
-#            input_swipenext.append(file)
-#        elif 'SwipePrev' in file:
-#            input_swipeprev.append(file)
-#        elif 'SlideUp' in file:
-#            input_slideup.append(file)
-#        elif 'SlideDown' in file:
-#            input_slidedown.append(file)
-#        elif 'Flop' in file:
-#            input_flop.append(file)
-#    print(input_button)
-#    print(input_swipenext)
-#    print(input_swipeprev)
-#    print(input_slideup)
-#    print(input_slidedown)
-#    print(input_flop)
-#    print(files)
-    #processFiles(files,files)
+# translateFolder('ProcessedData','TranslatedData')
 # Translate
 #in_file='JohanButton1'   
 #out_file=f'TranslatedData\\JohanButton1.csv'
