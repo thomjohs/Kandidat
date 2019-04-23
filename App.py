@@ -1,4 +1,4 @@
-import readData_AWR1642 as radar
+# import readData_AWR1642 as radar
 from keras.models import model_from_json
 import supp
 import ML_functions as ml
@@ -10,7 +10,7 @@ from tkinter import *
 from pynput.keyboard import KeyCode, Controller
 import time
 
-testData = False
+testData = True
 input_files = ["JohanButton1.csv", "JohanSlideUp1.csv", "JohanSwipeNext1.csv",
                "ArenButton1.csv", "ArenSlideUp1.csv", "ArenSwipeNext1.csv"]
 data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
@@ -35,6 +35,7 @@ confNumber = 5
 guesses = []
 guessLen = 9
 confNumberGuess = 2
+
 
 def confidentGuess(predictions, confNumber):
     counts = {}
@@ -134,8 +135,8 @@ while True:
             #    frameKeys = []
 
             if len(frameData) == time_step + 1:
-                predict_seq = sequence.TimeseriesGenerator(frameData, frameKeys, length=time_step, batch_size=1)
-                predict = model.predict_generator(predict_seq, verbose=1)
+                predict_seq = sequence.TimeseriesGenerator(frameData, frameKeys, length=time_step, batch_size=10)
+                predict = model.predict_generator(predict_seq, steps=10)
                 frameData = frameData[1:]
                 frameKeys = frameKeys[1:]
 
@@ -152,8 +153,8 @@ while True:
                             predictions = predictions[1:]
                         i += 1'''
 
-                    predict = np.amax(predict, axis=1)
-                    predictions.append(supp.int_to_label(predict))
+                    predict = np.argmax(predict, axis=1)
+                    predictions.append(map(supp.int_to_label, predict))
                     while len(predictions) > predLen:
                         predictions = predictions[1:]
 

@@ -247,3 +247,20 @@ def build_lstm(time_steps, vector_size, outputs, batch_size, lstm_output, statef
                    stateful=stateful))
     model.add(Dense(outputs, activation='softmax'))
     return model
+
+
+def build_lstm_single_predict(time_steps, vector_size, outputs, batch_size, lstm_output, stateful):
+    model = Sequential()
+    model.add(LSTM(lstm_output,
+                   return_sequences=True,
+                   stateful=stateful,
+                   input_shape=(1, vector_size - 1),
+                   batch_size=batch_size))
+    model.add(Dropout(0.1))
+    model.add(LSTM(lstm_output,
+                   return_sequences=True,
+                   stateful=stateful))
+    model.add(LSTM(lstm_output,
+                   stateful=stateful))
+    model.add(Dense(outputs, activation='softmax'))
+    return model
