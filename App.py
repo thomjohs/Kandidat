@@ -122,7 +122,7 @@ while True:
             # Store the current frame into frameData
             if testData:
                 frameData.append(detObj[:51])
-                frameKeys.append(detObj[51])
+                frameKeys.append(currentIndex)#detObj[51])
                 currentIndex += 1
             else:
                 frameData.append(detObj)
@@ -136,7 +136,7 @@ while True:
 
             if len(frameData) == time_step + 1:
                 predict_seq = sequence.TimeseriesGenerator(frameData, frameKeys, length=time_step, batch_size=10)
-                predict = model.predict_generator(predict_seq, steps=10)
+                predict = model.predict_generator(predict_seq, steps=None)
                 frameData = frameData[1:]
                 frameKeys = frameKeys[1:]
 
@@ -153,8 +153,8 @@ while True:
                             predictions = predictions[1:]
                         i += 1'''
 
-                    predict = np.argmax(predict, axis=1)
-                    predictions.extend(list(map(supp.int_to_label,predict)))
+                    predict1 = np.argmax(predict, axis=1)
+                    predictions.extend(list(map(supp.int_to_label, predict1)))
                     while len(predictions) > predLen:
                         predictions = predictions[1:]
 
