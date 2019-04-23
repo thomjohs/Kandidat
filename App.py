@@ -8,40 +8,49 @@ import ManipuleraData as manip
 import msvcrt
 from tkinter import *
 from pynput.keyboard import KeyCode, Controller
+import time
 
 testData = False
-input_files = ["JohanButton1", "JohanSlideUp1", "JohanSwipeNext1",
-               "ArenButton1", "ArenSlideUp1", "ArenSwipeNext1"]
-data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
-data = data[:len(data)//100 * 100]
+if testData:
+    input_files = ["JohanButton1.csv", "JohanSlideUp1.csv", "JohanSwipeNext1.csv",
+               "ArenButton1.csv", "ArenSlideUp1.csv", "ArenSwipeNext1.csv"]
+    data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
+    data = data[:len(data)//100 * 100]
 
 # ML variables set to the same as current model
-batch_size = 5
-time_step = 5
+batch_size = 10
+time_step = 10
 
 
 # Model loading data
-modelFile = "Test_1_model.json"
-weightFile = "Test_1_weights.h5"
+modelFile = "ts10bs10lstmout20stTruelr0.0025.json"
+weightFile = "ts10bs10lstmout20stTruelr0.0025.h5"
 
 
 # Prediction values
 predictions = []
-predLen = 7
-confNumber = 4
+predLen = 8
+confNumber = 5
+
+# Guesses
+guesses = []
+guessLen = 9
+confNumberGuess = 2
 
 
 def confidentGuess(predictions, confNumber):
     counts = {}
     for pred in predictions:
-        if pred in counts:
-            counts[pred] += 1
-        else:
-            counts[pred] = 1
+        if pred != 'background':
+            if pred in counts:
+                counts[pred] += 1
+            else:
+                counts[pred] = 1
 
     for key, val in counts.items():
         if val >= confNumber:
             return key
+    return 'background'
 
 
 def loadModel(jsonFile, weightFile):
@@ -78,15 +87,18 @@ frameKeys = []
 currentIndex = 0
 i = 0
 
-model = loadModel(modelFile, weightFile)
+model = ml.build_lstm_single_predict(time_steps=0, vector_size=52, outputs=7, batch_size=10, lstm_output=20, stateful=True)
+model.load_weights("Model\\ts10bs10lstmout20stTruelr0.0025.h5")
 model.compile(loss='categorical_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
 
+temp, means, maxs = ml.load_zero_mean_normalize_data_folder("ProcessedData")
+
 swiped = False
 button = False
 slide = False
-
+tic=0
 while True:
     try:
         # Update the data and check if the data is okay
@@ -96,9 +108,15 @@ while True:
             detObj = data[i]
             i += 1
         else:
+            
+            elapsed=time.time()-tic
+            print("Tid mellan hämtning", elapsed)
+            
             dataOk, detObj = radar.update(detObj)
             if dataOk:
                 detObj = manip.toStandardVector(detObj)
+                detObj = ml.zero_mean_normalize_data_frame(detObj,means,maxs)
+            tic=time.time()
 
         if dataOk:
             if msvcrt.kbhit():
@@ -121,51 +139,74 @@ while True:
             #    frameData = []
             #    frameKeys = []
 
-            if len(frameData) == time_step + 1:
-                predict_seq = sequence.TimeseriesGenerator(frameData, frameKeys, length=time_step, batch_size=1)
-                predict = model.predict_generator(predict_seq, verbose=1)
+            if len(frameData) == time_step:
+                #predict_seq = sequence.TimeseriesGenerator(frameData, frameKeys, length=1, batch_size=10)
+                predict_seq=np.asarray(frameData)
+                predict = model.predict(predict_seq.reshape(-1,1,51))
                 frameData = frameData[1:]
                 frameKeys = frameKeys[1:]
 
+
+
                 i = 0
                 if not mute:
-                    for pred in predict:
+                    '''for pred in predict:
                         # print(f'Prediction: {supp.int_to_label(np.where(pred == np.amax(pred))[0])},
                         #                       Confidence: {np.amax(pred)}, Actual: {lastLabels[i]}')
+                        #print(supp.int_to_label(np.where(pred == np.amax(pred))[0]))
                         predictions.append(supp.int_to_label(np.where(pred == np.amax(pred))[0]))
                         while len(predictions) > predLen:
                             predictions = predictions[1:]
-                        i += 1
+                        i += 1'''
 
-                    if update == '-':
-                        update = '|'
-                    else:
-                        update = '-'
-                    guess = confidentGuess(predictions, confNumber)
-                    templabel.config(text=f'{guess} {update}')
-                    root.update()
+                    predict1 = np.argmax(predict, axis=1)
+                    #predictions.extend(list(map(supp.int_to_label,predict1)))
+                    for pred in predict1:
+                        predictions.append(supp.int_to_label(pred))
+                        while len(predictions) > predLen:
+                            predictions = predictions[1:]
 
-                    if guess == 'swipeNext' and not swiped:
-                        swiped = True
-                        print("skip")
-                        keyboard.press(VK_next)
-                        keyboard.release(VK_next)
-                    elif guess != 'swipeNext':
-                        swiped = False
 
-                    if guess == 'button' and not button:
-                        button = True
-                        print('click')
-                        keyboard.press(Vk_play_pause)
-                        keyboard.release(Vk_play_pause)
-                    elif guess != 'button':
-                        button = False
+                        if update == '-':
+                            update = '|'
+                        else:
+                            update = '-'
+                        guess = confidentGuess(predictions, confNumber)
 
-                    if guess == 'slideUp':
-                        if volume < 10:
-                            keyboard.press(VK_volume_up)
-                            keyboard.release(VK_volume_up)
-                            volume += 1
+                        guesses.append(guess)
+                        print("hej")
+                        while len(guesses) > guessLen:
+                            print(guesses)
+                            guesses=guesses[1:]
+                            finalGuess = confidentGuess(guesses, confNumberGuess)
+                            print(finalGuess)
+                            if finalGuess !='background':
+                                guesses = []
+
+                            templabel.config(text=f'{finalGuess} {update}')
+                            root.update()
+
+                            if finalGuess == 'swipeNext' and not swiped:
+                                swiped = True
+                                print("skip")
+                                keyboard.press(VK_next)
+                                keyboard.release(VK_next)
+                            elif finalGuess != 'swipeNext':
+                                swiped = False
+
+                            if finalGuess == 'button' and not button:
+                                button = True
+                                print('click')
+                                keyboard.press(Vk_play_pause)
+                                keyboard.release(Vk_play_pause)
+                            elif finalGuess != 'button':
+                                button = False
+
+                            if finalGuess == 'slideUp':
+                                if volume < 10:
+                                    keyboard.press(VK_volume_up)
+                                    keyboard.release(VK_volume_up)
+                                    volume += 1
 
     # Stop the program and close everything if Ctrl + c is pressed
     except KeyboardInterrupt:
@@ -175,5 +216,3 @@ while True:
         # print(frameData)
         # win.close()
         break
-
-
