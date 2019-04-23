@@ -178,7 +178,33 @@ def zero_mean_normalized_without_padding(arr,elements, boolarr):
     max_of_arr_zero_mean=np.amax(np.absolute(arr_zero_mean))
     arr_normilized=np.divide(arr_zero_mean,max_of_arr_zero_mean)
     return arr_normilized, zero_mean, max_of_arr_zero_mean
+def zero_mean_normalize_data_frame(data,means,maxs):
+    standardLen=10
+    data_array=np.asarray(data)
+    numMatrix=data_array[:1]
+    rangeMatrix = data_array[1:standardLen*1+1]
+    dopplerMatrix = data_array[1+standardLen*1:standardLen*2+1]
+    peakMatrix = data_array[1+standardLen*2:standardLen*3+1]
+    xMatrix = data_array[1+standardLen*3:standardLen*4+1]
+    yMatrix = data_array[1+standardLen*4:standardLen*5+1]
+    labelMatrix=data_array[standardLen*5+1:]
 
+    n=int(data[0])
+    boolarr = np.hstack((np.ones(n),np.zeros(standardLen-n)))
+
+    numMatrix = np.divide(np.subtract(numMatrix,means['numObj']),maxs['numObj'])
+    rangeMatrix = np.divide(np.subtract(rangeMatrix,np.multiply(boolarr,means['range'])),maxs['range'])
+    dopplerMatrix = np.divide(np.subtract(dopplerMatrix,np.multiply(boolarr,means['doppler'])),maxs['doppler'])
+    peakMatrix = np.divide(np.subtract(peakMatrix,np.multiply(boolarr,means['peak'])),maxs['peak'])
+    xMatrix = np.divide(np.subtract(xMatrix,np.multiply(boolarr,means['x'])),maxs['x'])
+    yMatrix = np.divide(np.subtract(yMatrix,np.multiply(boolarr,means['y'])),maxs['y'])
+
+    data_new=np.hstack((numMatrix, rangeMatrix, dopplerMatrix, peakMatrix, xMatrix, yMatrix,labelMatrix))
+    return data_new.tolist()
+def zero_mean_normalized_frame(arr, mean, max):
+    arr_zero_mean=np.subtract(arr,mean)
+    arr_normilized=np.divide(arr_zero_mean,max)
+    return arr_normilized
 def count_gestures(data):
     gest_count = [0, 0, 0, 0, 0, 0, 0]
     for gesture in data:
@@ -264,3 +290,7 @@ def build_lstm_single_predict(time_steps, vector_size, outputs, batch_size, lstm
                    stateful=stateful))
     model.add(Dense(outputs, activation='softmax'))
     return model
+
+#data_new, means, maxs = load_zero_mean_normalize_data_folder("ProcessedData")
+#print(means)
+#print(maxs)

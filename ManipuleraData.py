@@ -373,7 +373,7 @@ def main():
 #out_file=f'TranslatedData\\JohanButton1.csv'
 #translateFile(in_file,out_file)
 #print(translate_data(test,2,1.5))
-gestures_in_files_folder("ProcessedData")
+#gestures_in_files_folder("ProcessedData")
 
 
 
