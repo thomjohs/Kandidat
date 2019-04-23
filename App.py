@@ -134,9 +134,9 @@ while True:
             #    frameKeys = []
 
             if len(frameData) == time_step + 1:
-                predict_seq = sequence.TimeseriesGenerator(frameData, frameKeys, length=time_step, batch_size=batch_size)
+                predict_seq = sequence.TimeseriesGenerator(frameData, frameKeys, length=10, batch_size=1)
                 #print(predict_seq)
-                predict = model.predict_generator(predict_seq, verbose=1)
+                predict = model.predict(predict_seq)
                 frameData = frameData[1:]
                 frameKeys = frameKeys[1:]
 
@@ -153,8 +153,8 @@ while True:
                             predictions = predictions[1:]
                         i += 1'''
 
-                    predict = np.amax(predict, axis=1)
-                    predictions.append(supp.int_to_label(predict))
+                    predict = np.argmax(predict, axis=1)
+                    predictions.extend(list(map(supp.int_to_label,predict)))
                     while len(predictions) > predLen:
                         predictions = predictions[1:]
 
