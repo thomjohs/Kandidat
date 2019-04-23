@@ -49,10 +49,10 @@ outputs = 7
 
 # training hyperparameters
 
-epochs = 10
+epochs = 20
 time_steps = 10
 batch_size = 10
-learning_rate = 0.00025
+learning_rate = 0.0025
 decay = 1/(10**6)
 
 training_ratio = 0.7

@@ -286,6 +286,38 @@ def processFiles_folder(input_folder,output_folder):
             files.remove('.csv')
         print(files)
         processFiles(files,files)
+    
+def gestures_in_data(data):
+    current_class = 7
+    number_of_gestures=np.array([0, 0, 0, 0, 0, 0, 0, 0])
+    for frame in data:
+        label = int(frame[len(frame)-1])
+        if label != current_class:
+            number_of_gestures[label]+=1
+            current_class=label
+    return number_of_gestures
+ 
+def gestures_in_files_folder(input_folder):
+    gesture_array=np.array([0,0,0,0,0,0,0,0])
+    for root, dirs, files in os.walk(input_folder):
+        for file in files:
+            number_of_gestures = gestures_in_data(ml.load_data(file))
+            bol = sum(number_of_gestures[:7]>0)
+            if bol>1:
+                print(file)
+            gesture_array=np.vstack((gesture_array,number_of_gestures))
+    print('Number of Slide Ups: ',np.sum(gesture_array[:,0]))
+    print('Number of Slide Downs: ',np.sum(gesture_array[:,1]))
+    print('Number of Buttons: ',np.sum(gesture_array[:,2]))
+    print('Number of Swipe Nexts: ',np.sum(gesture_array[:,3]))
+    print('Number of Swipe Prevs: ',np.sum(gesture_array[:,4]))
+    print('Number of Flops: ',np.sum(gesture_array[:,5]))
+    print('Number of Good Backgrounds: ',np.sum(gesture_array[:,6]))
+    print('Number of Backgrounds: ',np.sum(gesture_array[:,7]))
+
+        
+        
+
 
     
 
@@ -341,6 +373,7 @@ def main():
 #out_file=f'TranslatedData\\JohanButton1.csv'
 #translateFile(in_file,out_file)
 #print(translate_data(test,2,1.5))
+gestures_in_files_folder("ProcessedData")
 
 
 
