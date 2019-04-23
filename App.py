@@ -155,7 +155,7 @@ while True:
                         guesses = []
 
                     templabel.config(text=f'{finalGuess} {update}')
-                        root.update()
+                    root.update()
 
                     if finalGuess == 'swipeNext' and not swiped:
                         swiped = True
