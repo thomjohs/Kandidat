@@ -140,17 +140,24 @@ while True:
                 frameData = frameData[1:]
                 frameKeys = frameKeys[1:]
 
+
+
                 i = 0
                 if not mute:
-                    #print(predict)
-                    for pred in predict:
+                    '''for pred in predict:
                         # print(f'Prediction: {supp.int_to_label(np.where(pred == np.amax(pred))[0])},
                         #                       Confidence: {np.amax(pred)}, Actual: {lastLabels[i]}')
                         #print(supp.int_to_label(np.where(pred == np.amax(pred))[0]))
                         predictions.append(supp.int_to_label(np.where(pred == np.amax(pred))[0]))
                         while len(predictions) > predLen:
                             predictions = predictions[1:]
-                        i += 1
+                        i += 1'''
+
+                    predict = np.amax(predict, axis=1)
+                    predictions.append(supp.int_to_label(predict))
+                    while len(predictions) > predLen:
+                        predictions = predictions[1:]
+
 
                     if update == '-':
                         update = '|'
