@@ -147,14 +147,14 @@ while True:
                     '''for pred in predict:
                         # print(f'Prediction: {supp.int_to_label(np.where(pred == np.amax(pred))[0])},
                         #                       Confidence: {np.amax(pred)}, Actual: {lastLabels[i]}')
-                        print(supp.int_to_label(np.where(pred == np.amax(pred))[0]))
+                        #print(supp.int_to_label(np.where(pred == np.amax(pred))[0]))
                         predictions.append(supp.int_to_label(np.where(pred == np.amax(pred))[0]))
                         while len(predictions) > predLen:
                             predictions = predictions[1:]
                         i += 1'''
 
                     predict = np.argmax(predict, axis=1)
-                    predictions.append(map(supp.int_to_label, predict))
+                    predictions.extend(list(map(supp.int_to_label,predict)))
                     while len(predictions) > predLen:
                         predictions = predictions[1:]
 
