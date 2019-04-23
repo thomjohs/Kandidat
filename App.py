@@ -134,17 +134,19 @@ while True:
             #    frameKeys = []
 
             if len(frameData) == time_step + 1:
-                predict_seq = sequence.TimeseriesGenerator(frameData, frameKeys, length=time_step, batch_size=1)
+                predict_seq = sequence.TimeseriesGenerator(frameData, frameKeys, length=time_step, batch_size=batch_size)
+                #print(predict_seq)
                 predict = model.predict_generator(predict_seq, verbose=1)
                 frameData = frameData[1:]
                 frameKeys = frameKeys[1:]
 
                 i = 0
                 if not mute:
+                    #print(predict)
                     for pred in predict:
                         # print(f'Prediction: {supp.int_to_label(np.where(pred == np.amax(pred))[0])},
                         #                       Confidence: {np.amax(pred)}, Actual: {lastLabels[i]}')
-                        print(supp.int_to_label(np.where(pred == np.amax(pred))[0]))
+                        #print(supp.int_to_label(np.where(pred == np.amax(pred))[0]))
                         predictions.append(supp.int_to_label(np.where(pred == np.amax(pred))[0]))
                         while len(predictions) > predLen:
                             predictions = predictions[1:]
