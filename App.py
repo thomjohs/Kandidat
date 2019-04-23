@@ -154,9 +154,10 @@ while True:
                         i += 1'''
 
                     predict1 = np.argmax(predict, axis=1)
-                    predictions.extend(list(map(supp.int_to_label, predict1)))
+                    predictions.append((supp.int_to_label(predict1[time_step - 2])))
                     while len(predictions) > predLen:
                         predictions = predictions[1:]
+                    print(predictions)
 
 
                     if update == '-':
@@ -166,7 +167,7 @@ while True:
                     guess = confidentGuess(predictions, confNumber)
 
                     guesses.append(guess)
-                    print("hej")
+                    print(guesses)
                     while len(guesses) > guessLen:
                         print(guesses)
                         guesses=guesses[1:]
