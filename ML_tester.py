@@ -45,7 +45,7 @@ input_folder = "ProcessedData"
 art_folder = "TranslatedData"
 
 # Number of categories
-outputs = 7
+outputs = 4
 
 # training hyperparameters
 
@@ -68,7 +68,7 @@ kernel_size = 5
 repeats = 1
 
 # for saving the model and weights
-export = True
+export = False
 modelSaveFile = f'ts{time_steps}bs{batch_size}lstmout{lstm_output}st{stateful}lr{learning_rate}.json'
 weightSaveFile = f'ts{time_steps}bs{batch_size}lstmout{lstm_output}st{stateful}lr{learning_rate}.h5'
 

@@ -44,7 +44,7 @@ def shuffle_gestures(frameList):
             group.append(frame)
         else:
             if label != 7:
-                if label == 6:
+                if label == 3:
                     backgrounds.extend(group)
                 else:
                     gestures.append(group)
@@ -52,20 +52,20 @@ def shuffle_gestures(frameList):
             group = [frame]
 
     if label != 7:
-        if label == 6:
+        if label == 3:
             backgrounds.extend(group)
         else:
             gestures.append(group)
 
     while len(backgrounds) != 0 and len(gestures) != 0:
-        if random.randint(0, 4) == 1:
-            if len(backgrounds) < 25:
-                shuffled.extend(backgrounds)
-            else:
-                randLength = random.randint(10, 25)
-                i = random.randint(0, len(backgrounds)-1 - randLength)
-                shuffled.extend(backgrounds[i:i + randLength])
-                del backgrounds[i:i + randLength]
+
+        if len(backgrounds) < 25:
+            shuffled.extend(backgrounds)
+        else:
+            randLength = random.randint(5, 25)
+            i = random.randint(0, len(backgrounds)-1 - randLength)
+            shuffled.extend(backgrounds[i:i + randLength])
+            del backgrounds[i:i + randLength]
 
         i = random.randint(0, len(gestures) - 1)
         shuffled.extend(gestures[i])
@@ -123,20 +123,15 @@ def count_gesture_length(data):
 
 def label_to_int(frame):
     last = len(frame)-1
-    if frame[last] == 'slideUp' or frame[last] == '0.0':
+
+    if frame[last] == 'button' or frame[last] == '0.0':
         frame[last] = 0
-    elif frame[last] == 'slideDown' or frame[last] == '1.0':
+    elif frame[last] == 'swipeNext' or frame[last] == '1.0':
         frame[last] = 1
-    elif frame[last] == 'button' or frame[last] == '2.0':
+    elif frame[last] == 'swipePrev' or frame[last] == '2.0':
         frame[last] = 2
-    elif frame[last] == 'swipeNext' or frame[last] == '3.0':
+    elif frame[last] == 'goodBackground' or frame[last] == '3.0':
         frame[last] = 3
-    elif frame[last] == 'swipePrev' or frame[last] == '4.0':
-        frame[last] = 4
-    elif frame[last] == 'flop' or frame[last] == '5.0':
-        frame[last] = 5
-    elif frame[last] == 'goodBackground' or frame[last] == '6.0':
-        frame[last] = 6
     else:
         frame[last] = 7
     return frame
@@ -144,17 +139,11 @@ def label_to_int(frame):
 
 def int_to_label(i):
     if i == 0:
-        return 'slideUp'
-    elif i == 1:
-        return 'slideDown'
-    elif i == 2:
         return 'button'
-    elif i == 3:
+    elif i == 1:
         return 'swipeNext'
-    elif i == 4:
+    elif i == 2:
         return 'swipePrev'
-    elif i == 5:
-        return 'flop'
     else:
         return 'background'
 
