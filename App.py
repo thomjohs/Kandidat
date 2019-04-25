@@ -28,8 +28,11 @@ weightFile = "ts10bs10lstmout20stTruelr0.0025.h5"
 
 # Prediction values
 predictions = []
+predictionWindow = []
 predLen = 8
 confNumber = 5
+guess = 'background'
+finalGuess = 'background'
 
 # Guesses
 guesses = []
@@ -105,13 +108,13 @@ while True:
             i += 1
         else:
             
-            elapsed=time.time()-tic
+            elapsed = time.time()-tic
             print("Tid mellan hämtning", elapsed)
             
             dataOk, detObj = radar.update(detObj)
             if dataOk:
                 detObj = manip.toStandardVector(detObj)
-            tic=time.time()
+                tic = time.time()
 
         if dataOk:
             if msvcrt.kbhit():
@@ -122,7 +125,7 @@ while True:
             # Store the current frame into frameData
             if testData:
                 frameData.append(detObj[:51])
-                frameKeys.append(currentIndex)#detObj[51])
+                frameKeys.append(detObj[51])
                 currentIndex += 1
             else:
                 frameData.append(detObj)
@@ -134,72 +137,61 @@ while True:
             #    frameData = []
             #    frameKeys = []
 
-            if len(frameData) == time_step + 1:
+            if len(frameData) == 5*time_step + 1:
                 predict_seq = sequence.TimeseriesGenerator(frameData, frameKeys, length=time_step, batch_size=10)
                 predict = model.predict_generator(predict_seq, steps=None)
-                frameData = frameData[1:]
-                frameKeys = frameKeys[1:]
+                frameData = []
+                frameKeys = []
+                predict1 = np.argmax(predict, axis=1)
+                predictions.extend(list(map(supp.int_to_label, predict1)))
 
+            if len(predictions) > 0:
+                predictionWindow.append(predictions.pop(0))
+                while len(predictionWindow) > predLen:
+                    predictionWindow = predictionWindow[1:]
+                guess = confidentGuess(predictionWindow, confNumber)
 
+            if not mute:
 
-                i = 0
-                if not mute:
-                    '''for pred in predict:
-                        # print(f'Prediction: {supp.int_to_label(np.where(pred == np.amax(pred))[0])},
-                        #                       Confidence: {np.amax(pred)}, Actual: {lastLabels[i]}')
-                        #print(supp.int_to_label(np.where(pred == np.amax(pred))[0]))
-                        predictions.append(supp.int_to_label(np.where(pred == np.amax(pred))[0]))
-                        while len(predictions) > predLen:
-                            predictions = predictions[1:]
-                        i += 1'''
+                if update == '-':
+                    update = '|'
+                else:
+                    update = '-'
 
-                    predict1 = np.argmax(predict, axis=1)
-                    predictions.append((supp.int_to_label(predict1[time_step - 2])))
-                    while len(predictions) > predLen:
-                        predictions = predictions[1:]
-                    print(predictions)
+                guesses.append(guess)
+                print(guesses)
+                while len(guesses) > guessLen:
+                    guesses = guesses[1:]
+                if len(guesses) > 1:
+                    finalGuess = confidentGuess(guesses, confNumberGuess)
+                    print(finalGuess)
+                    if finalGuess !='background':
+                        guesses = []
 
+                templabel.config(text=f'{finalGuess} {update}')
+                root.update()
 
-                    if update == '-':
-                        update = '|'
-                    else:
-                        update = '-'
-                    guess = confidentGuess(predictions, confNumber)
+                if finalGuess == 'swipeNext' and not swiped:
+                    swiped = True
+                    print("skip")
+                    keyboard.press(VK_next)
+                    keyboard.release(VK_next)
+                elif finalGuess != 'swipeNext':
+                    swiped = False
 
-                    guesses.append(guess)
-                    print(guesses)
-                    while len(guesses) > guessLen:
-                        print(guesses)
-                        guesses=guesses[1:]
-                        finalGuess = confidentGuess(guesses, confNumberGuess)
-                        print(finalGuess)
-                        if finalGuess !='background':
-                            guesses = []
+                if finalGuess == 'button' and not button:
+                    button = True
+                    print('click')
+                    keyboard.press(Vk_play_pause)
+                    keyboard.release(Vk_play_pause)
+                elif finalGuess != 'button':
+                    button = False
 
-                        templabel.config(text=f'{finalGuess} {update}')
-                        root.update()
-
-                        if finalGuess == 'swipeNext' and not swiped:
-                            swiped = True
-                            print("skip")
-                            keyboard.press(VK_next)
-                            keyboard.release(VK_next)
-                        elif finalGuess != 'swipeNext':
-                            swiped = False
-
-                        if finalGuess == 'button' and not button:
-                            button = True
-                            print('click')
-                            keyboard.press(Vk_play_pause)
-                            keyboard.release(Vk_play_pause)
-                        elif finalGuess != 'button':
-                            button = False
-
-                        if finalGuess == 'slideUp':
-                            if volume < 10:
-                                keyboard.press(VK_volume_up)
-                                keyboard.release(VK_volume_up)
-                                volume += 1
+                if finalGuess == 'slideUp':
+                    if volume < 10:
+                        keyboard.press(VK_volume_up)
+                        keyboard.release(VK_volume_up)
+                        volume += 1
 
     # Stop the program and close everything if Ctrl + c is pressed
     except KeyboardInterrupt:
