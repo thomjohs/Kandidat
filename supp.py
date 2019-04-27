@@ -58,14 +58,14 @@ def shuffle_gestures(frameList):
             gestures.append(group)
 
     while len(backgrounds) != 0 and len(gestures) != 0:
-        if random.randint(0, 4) == 1:
-            if len(backgrounds) < 25:
-                shuffled.extend(backgrounds)
-            else:
-                randLength = random.randint(10, 25)
-                i = random.randint(0, len(backgrounds)-1 - randLength)
-                shuffled.extend(backgrounds[i:i + randLength])
-                del backgrounds[i:i + randLength]
+
+        if len(backgrounds) < 25:
+            shuffled.extend(backgrounds)
+        else:
+            randLength = random.randint(10, 25)
+            i = random.randint(0, len(backgrounds)-1 - randLength)
+            shuffled.extend(backgrounds[i:i + randLength])
+            del backgrounds[i:i + randLength]
 
         i = random.randint(0, len(gestures) - 1)
         shuffled.extend(gestures[i])
