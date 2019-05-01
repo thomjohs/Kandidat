@@ -23,8 +23,8 @@ time_step = 10
 
 
 # Model loading data
-modelFile = "ts10bs10lstmout20stTruelr0.0025.json"
-weightFile = "ts10bs10lstmout20stTruelr0.0025.h5"
+modelFile = "ts10bs10lstmout20stTruelr1e-05.json"
+weightFile = "ts10bs10lstmout20stTruelr1e-05.h5"
 
 
 # Prediction values
