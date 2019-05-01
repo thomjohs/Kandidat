@@ -38,7 +38,7 @@ input_flop = ['AlexFlop1.csv', 'ArenFlop1.csv', 'JohanFlop1.csv', 'JohanFlop2.cs
 input_background = ["GoodBackground1.csv", "GoodBackground2.csv"]
 
 
-input_files = input_button + input_swipenext + input_background+ input_swipeprev + \
+input_files = input_button + input_swipenext + input_background + input_swipeprev + \
               input_slideup + input_slidedown + input_flop
 
 input_folder = "ProcessedData"
@@ -49,16 +49,16 @@ outputs = 4
 
 # training hyperparameters
 
-epochs = 20
+epochs = 500
 time_steps = 10
 batch_size = 10
-learning_rate = 0.0025
+learning_rate = 0.00001
 decay = 1/(10**6)
 
 training_ratio = 0.7
 
 # used in both models
-lstm_output = 20
+lstm_output = 10
 stateful = True
 
 # only used in combined model
@@ -68,7 +68,7 @@ kernel_size = 5
 repeats = 1
 
 # for saving the model and weights
-export = False
+export = True
 modelSaveFile = f'ts{time_steps}bs{batch_size}lstmout{lstm_output}st{stateful}lr{learning_rate}.json'
 weightSaveFile = f'ts{time_steps}bs{batch_size}lstmout{lstm_output}st{stateful}lr{learning_rate}.h5'
 
