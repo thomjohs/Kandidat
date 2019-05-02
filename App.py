@@ -22,6 +22,7 @@ else:
 # ML variables set to the same as current model
 batch_size = 10
 time_step = 10
+lstm_output = 20
 
 
 # Model loading data
@@ -75,7 +76,9 @@ update = '-'
 # init control
 keyboard = Controller()
 VK_volume_up = KeyCode.from_vk(0xAF)
+VK_volume_down = KeyCode.from_vk(0xAE)
 VK_next = KeyCode.from_vk(0xB0)
+VK_prev = KeyCode.from_vk(0xB1)
 Vk_play_pause = KeyCode.from_vk(0xB3)
 volume = 0
 
@@ -89,18 +92,20 @@ frameKeys = []
 currentIndex = 0
 i = 0
 
-model = ml.build_lstm_single_predict(time_steps=0, vector_size=52, outputs=7, batch_size=10, lstm_output=20, stateful=True)
+model = ml.build_lstm_single_predict(time_steps=0, vector_size=52, outputs=7, batch_size=batch_size, lstm_output=lstm_output, stateful=True)
 model.load_weights("Model\\ts10bs10lstmout20stTruelr0.0025.h5")
 model.compile(loss='categorical_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
 
-temp, means, maxs = ml.load_zero_mean_normalize_data_folder("ProcessedData")
+_, means, maxs = ml.load_zero_mean_normalize_data_folder("ProcessedData")
 
 swiped = False
 button = False
 slide = False
-tic=0
+tic = 0
+j = 10
+
 while True:
     try:
         # Update the data and check if the data is okay
@@ -111,14 +116,14 @@ while True:
             i += 1
         else:
             
-            elapsed=time.time()-tic
+            elapsed = time.time()-tic
             print("Tid mellan hämtning", elapsed)
             
             dataOk, detObj = radar.update(detObj)
             if dataOk:
                 detObj = manip.toStandardVector(detObj)
                 detObj = ml.zero_mean_normalize_data_frame(detObj,means,maxs)
-            tic=time.time()
+            tic = time.time()
 
         if dataOk:
             if msvcrt.kbhit():
@@ -174,14 +179,24 @@ while True:
 
                             templabel.config(text=f'{finalGuess} {update}')
                             root.update()
+                            if swiped:
+                                j += 1
+                                if j < 10:
+                                    swiped = False
+                                    j = 0
 
-                            if finalGuess == 'swipeNext' and not swiped:
+                            elif finalGuess == 'swipeNext':
                                 swiped = True
+                                j = 0
                                 print("skip")
                                 keyboard.press(VK_next)
                                 keyboard.release(VK_next)
-                            elif finalGuess != 'swipeNext':
-                                swiped = False
+                            elif finalGuess == 'swipePrev':
+                                swiped = True
+                                j = 0
+                                print("skip")
+                                keyboard.press(VK_prev)
+                                keyboard.release(VK_prev)
 
                             if finalGuess == 'button' and not button:
                                 button = True
@@ -196,6 +211,13 @@ while True:
                                     keyboard.press(VK_volume_up)
                                     keyboard.release(VK_volume_up)
                                     volume += 1
+
+                            if finalGuess == 'slideDown':
+                                if volume > 0:
+                                    keyboard.press(VK_volume_down)
+                                    keyboard.release(VK_volume_down)
+                                    volume -= 1
+                            
 
     # Stop the program and close everything if Ctrl + c is pressed
     except KeyboardInterrupt:
