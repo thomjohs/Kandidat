@@ -9,7 +9,7 @@ from tkinter import *
 from pynput.keyboard import KeyCode, Controller
 import time
 
-testData = True
+testData = False
 if testData:
     input_files = ["JohanButton1.csv", "JohanSlideUp1.csv", "JohanSwipeNext1.csv",
                "ArenButton1.csv", "ArenSlideUp1.csv", "ArenSwipeNext1.csv", "GoodBackground1.csv"]
@@ -117,14 +117,10 @@ while True:
             i += 1
         else:
             
-            elapsed = time.time()-tic
-            print("Tid mellan hämtning", elapsed)
-            
             dataOk, detObj = radar.update(detObj)
             if dataOk:
                 detObj = manip.toStandardVector(detObj)
                 detObj = ml.zero_mean_normalize_data_frame(detObj,means,maxs)
-            tic = time.time()
 
         if dataOk:
             if msvcrt.kbhit():
@@ -158,6 +154,7 @@ while True:
                     predict1 = np.argmax(predict, axis=1)
                     #predictions.extend(list(map(supp.int_to_label,predict1)))
                     for pred in predict1:
+                        print(supp.int_to_label(pred))
                         predictions.append(supp.int_to_label(pred))
                         while len(predictions) > predLen:
                             predictions = predictions[1:]
