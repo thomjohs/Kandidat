@@ -62,6 +62,8 @@ def shuffle_gestures(frameList):
 
         if len(backgrounds) < 25:
             shuffled.extend(backgrounds)
+            backgrounds = []
+            print("LAST BACKGROUND USED!")
         else:
             randLength = random.randint(10, 25)
             i = random.randint(0, len(backgrounds)-1 - randLength)
