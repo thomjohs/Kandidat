@@ -46,7 +46,6 @@ def shuffle_gestures(frameList):
             if label != 7:
                 if label == 6:
                     backgrounds.extend(group)
-                    print("LAST BACKGROUND USED!")
                 else:
                     gestures.append(group)
             label = frame[len(frame) - 1]
