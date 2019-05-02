@@ -1,4 +1,3 @@
-
 from keras.models import model_from_json
 import supp
 import ML_functions as ml
@@ -10,7 +9,7 @@ from tkinter import *
 from pynput.keyboard import KeyCode, Controller
 import time
 
-testData = True
+testData = False
 if testData:
     input_files = ["JohanButton1.csv", "JohanSwipeNext1.csv",
                "ArenButton1.csv", "ArenSwipeNext1.csv", "GoodBackground1.csv"]
@@ -22,11 +21,11 @@ else:
 # ML variables set to the same as current model
 batch_size = 10
 time_step = 10
-
+lstm_output=10
 
 # Model loading data
-modelFile = "ts10bs10lstmout20stTruelr1e-05.json"
-weightFile = "ts10bs10lstmout20stTruelr1e-05.h5"
+modelFile = "ts10bs10lstmout10stTruelr1e-05.json"
+weightFile = "ts10bs10lstmout10stTruelr1e-05.h5"
 
 
 # Prediction values
@@ -78,7 +77,9 @@ update = '-'
 # init control
 keyboard = Controller()
 VK_volume_up = KeyCode.from_vk(0xAF)
+VK_volume_down = KeyCode.from_vk(0xAE)
 VK_next = KeyCode.from_vk(0xB0)
+VK_prev = KeyCode.from_vk(0xB1)
 Vk_play_pause = KeyCode.from_vk(0xB3)
 volume = 0
 
@@ -99,7 +100,7 @@ model.compile(loss='categorical_crossentropy',
 
 
 
-model = ml.build_lstm_single_predict(time_steps=0, vector_size=52, outputs=4, batch_size=10, lstm_output=20, stateful=True)
+model = ml.build_lstm_single_predict(time_steps=0, vector_size=52, outputs=4, batch_size=batch_size, lstm_output=lstm_output, stateful=True)
 model.load_weights(f"Model\\{weightFile}")
 model.compile(loss='categorical_crossentropy',
               optimizer='adam',
@@ -112,6 +113,7 @@ swiped = False
 button = False
 slide = False
 tic=0
+j=10
 while True:
     try:
         # Update the data and check if the data is okay
@@ -175,6 +177,7 @@ while True:
 
                         guesses.append(guess)
                         while len(guesses) > guessLen:
+                            
                             #print(guesses)
                             guesses=guesses[1:]
                             finalGuess = confidentGuess(guesses, confNumberGuess)
@@ -184,28 +187,33 @@ while True:
 
                             templabel.config(text=f'{finalGuess} {update}')
                             root.update()
-
-                            if finalGuess == 'swipeNext' and not swiped:
+                            if swiped:
+                                j=j+1
+                                if j>10:
+                                    swiped = False
+                                    j = 0
+                            elif finalGuess == 'swipeNext':
                                 swiped = True
+                                j=0
                                 print("skip")
-                                #keyboard.press(VK_next)
-                                #keyboard.release(VK_next)
-                            elif finalGuess != 'swipeNext':
-                                swiped = False
+                                keyboard.press(VK_next)
+                                keyboard.release(VK_next)
+                            elif finalGuess == 'swipePrev':
+                                swiped = True
+                                j=0
+                                print("skip")
+                                keyboard.press(VK_prev)
+                                keyboard.release(VK_prev)
+                            
 
                             if finalGuess == 'button' and not button:
                                 button = True
+                                j=0
                                 print('click')
-                                #keyboard.press(Vk_play_pause)
-                                #keyboard.release(Vk_play_pause)
+                                keyboard.press(Vk_play_pause)
+                                keyboard.release(Vk_play_pause)
                             elif finalGuess != 'button':
                                 button = False
-
-                            if finalGuess == 'slideUp':
-                                if volume < 10:
-                                    #keyboard.press(VK_volume_up)
-                                    #keyboard.release(VK_volume_up)
-                                    volume += 1
 
     # Stop the program and close everything if Ctrl + c is pressed
     except KeyboardInterrupt:
