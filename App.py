@@ -1,4 +1,4 @@
-import readData_AWR1642 as radar
+# import readData_AWR1642 as radar
 from keras.models import model_from_json
 import supp
 import ML_functions as ml
@@ -10,10 +10,10 @@ from tkinter import *
 from pynput.keyboard import KeyCode, Controller
 import time
 
-testData = False
+testData = True
 if testData:
     input_files = ["JohanButton1.csv", "JohanSlideUp1.csv", "JohanSwipeNext1.csv",
-               "ArenButton1.csv", "ArenSlideUp1.csv", "ArenSwipeNext1.csv"]
+               "ArenButton1.csv", "ArenSlideUp1.csv", "ArenSwipeNext1.csv", "GoodBackground1.csv"]
     data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
     data = data[:len(data)//100 * 100]
 
@@ -105,7 +105,7 @@ while True:
 
         if testData:
             dataOk = True
-            detObj = data[i]
+            detObj = ml.zero_mean_normalize_data_frame(data[i], means, maxs)
             i += 1
         else:
             
@@ -142,30 +142,17 @@ while True:
             if len(frameData) == time_step:
                 #predict_seq = sequence.TimeseriesGenerator(frameData, frameKeys, length=1, batch_size=10)
                 predict_seq=np.asarray(frameData)
-                predict = model.predict(predict_seq.reshape(-1,1,51))
+                predict = model.predict(predict_seq.reshape(-1, 1, 51))
                 frameData = frameData[1:]
                 frameKeys = frameKeys[1:]
 
-
-
-                i = 0
                 if not mute:
-                    '''for pred in predict:
-                        # print(f'Prediction: {supp.int_to_label(np.where(pred == np.amax(pred))[0])},
-                        #                       Confidence: {np.amax(pred)}, Actual: {lastLabels[i]}')
-                        #print(supp.int_to_label(np.where(pred == np.amax(pred))[0]))
-                        predictions.append(supp.int_to_label(np.where(pred == np.amax(pred))[0]))
-                        while len(predictions) > predLen:
-                            predictions = predictions[1:]
-                        i += 1'''
-
                     predict1 = np.argmax(predict, axis=1)
                     #predictions.extend(list(map(supp.int_to_label,predict1)))
                     for pred in predict1:
                         predictions.append(supp.int_to_label(pred))
                         while len(predictions) > predLen:
                             predictions = predictions[1:]
-
 
                         if update == '-':
                             update = '|'
