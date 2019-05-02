@@ -9,7 +9,7 @@ from tkinter import *
 from pynput.keyboard import KeyCode, Controller
 import time
 
-testData = True
+testData = False
 if testData:
     input_files = ["JohanButton1.csv", "JohanSlideUp1.csv", "JohanSwipeNext1.csv",
                "ArenButton1.csv", "ArenSlideUp1.csv", "ArenSwipeNext1.csv", "GoodBackground1.csv"]
@@ -116,14 +116,10 @@ while True:
             i += 1
         else:
             
-            elapsed = time.time()-tic
-            print("Tid mellan hämtning", elapsed)
-            
             dataOk, detObj = radar.update(detObj)
             if dataOk:
                 detObj = manip.toStandardVector(detObj)
                 detObj = ml.zero_mean_normalize_data_frame(detObj,means,maxs)
-            tic = time.time()
 
         if dataOk:
             if msvcrt.kbhit():
@@ -157,66 +153,64 @@ while True:
                     predict1 = np.argmax(predict, axis=1)
                     #predictions.extend(list(map(supp.int_to_label,predict1)))
                     for pred in predict1:
+                        print(supp.int_to_label(pred))
                         predictions.append(supp.int_to_label(pred))
-                        while len(predictions) > predLen:
-                            predictions = predictions[1:]
+                    while len(predictions) > predLen:
+                        predictions = predictions[1:]
 
-                        if update == '-':
-                            update = '|'
-                        else:
-                            update = '-'
-                        guess = confidentGuess(predictions, confNumber)
+                    if update == '-':
+                        update = '|'
+                    else:
+                        update = '-'
+                    guess = confidentGuess(predictions, confNumber)
 
-                        guesses.append(guess)
-                        print("hej")
-                        while len(guesses) > guessLen:
-                            print(guesses)
-                            guesses=guesses[1:]
-                            finalGuess = confidentGuess(guesses, confNumberGuess)
-                            print(finalGuess)
-                            if finalGuess !='background':
-                                guesses = []
+                    guesses.append(guess)
+                    while len(guesses) > guessLen:
+                        guesses=guesses[1:]
+                        finalGuess = confidentGuess(guesses, confNumberGuess)
+                        if finalGuess !='background':
+                            guesses = []
 
-                            templabel.config(text=f'{finalGuess} {update}')
-                            root.update()
-                            if swiped:
-                                j += 1
-                                if j < 10 and finalGuess != 'swipeNext' and finalGuess != 'swipePrev':
-                                    swiped = False
-                                    j = 0
-
-                            elif finalGuess == 'swipeNext':
-                                swiped = True
+                        templabel.config(text=f'{finalGuess} {update}')
+                        root.update()
+                        if swiped:
+                            j += 1
+                            if j < 10 and finalGuess != 'swipeNext' and finalGuess != 'swipePrev':
+                                swiped = False
                                 j = 0
-                                print("skip")
-                                keyboard.press(VK_next)
-                                keyboard.release(VK_next)
-                            elif finalGuess == 'swipePrev':
-                                swiped = True
-                                j = 0
-                                print("skip")
-                                keyboard.press(VK_prev)
-                                keyboard.release(VK_prev)
 
-                            if finalGuess == 'button' and not button:
-                                button = True
-                                print('click')
-                                keyboard.press(Vk_play_pause)
-                                keyboard.release(Vk_play_pause)
-                            elif finalGuess != 'button':
-                                button = False
+                        elif finalGuess == 'swipeNext':
+                            swiped = True
+                            j = 0
+                            keyboard.press(VK_next)
+                            keyboard.release(VK_next)
+                        elif finalGuess == 'swipePrev':
+                            swiped = True
+                            j = 0
+                            keyboard.press(VK_prev)
+                            keyboard.release(VK_prev)
 
-                            if finalGuess == 'slideUp':
-                                if volume < 10:
-                                    keyboard.press(VK_volume_up)
-                                    keyboard.release(VK_volume_up)
-                                    volume += 1
+                        if finalGuess == 'button' and not button:
+                            button = True
+                            keyboard.press(Vk_play_pause)
+                            keyboard.release(Vk_play_pause)
+                        elif finalGuess != 'button':
+                            button = False
 
-                            if finalGuess == 'slideDown':
-                                if volume > 0:
-                                    keyboard.press(VK_volume_down)
-                                    keyboard.release(VK_volume_down)
-                                    volume -= 1
+                        if finalGuess == 'slideUp':
+                            if volume < 10:
+                                keyboard.press(VK_volume_up)
+                                keyboard.release(VK_volume_up)
+                                volume += 1
+
+                        if finalGuess == 'slideDown':
+                            if volume > 0:
+                                keyboard.press(VK_volume_down)
+                                keyboard.release(VK_volume_down)
+                                volume -= 1
+                        if finalGuess == 'flop':
+                            print("FLOOOP!!!!!")
+                                    
 
 
     # Stop the program and close everything if Ctrl + c is pressed
