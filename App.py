@@ -91,15 +91,15 @@ frameData = []
 frameKeys = []
 currentIndex = 0
 i = 0
+
 model = loadModel(modelFile, weightFile)
 model.compile(loss='categorical_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
 
 
-
 model = ml.build_lstm_single_predict(time_steps=time_step, vector_size=52, outputs=4, batch_size=1, lstm_output=20, stateful=True)
-model.load_weights("Model\\ts10bs10lstmout20stTruelr0.0025.h5")
+model.load_weights("Model\\ts10bs10lstmout20stTruelr1e-05.h5")
 model.compile(loss='categorical_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
