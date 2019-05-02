@@ -102,7 +102,7 @@ _, means, maxs = ml.load_zero_mean_normalize_data_folder("ProcessedData")
 
 swiped = False
 button = False
-slide = False
+flop = False
 tic = 0
 j = 10
 lamp = False
@@ -233,6 +233,11 @@ while True:
                                         keyboard.release(VK_volume_down)
                                         volume -= 1
 
+                            if finalGuess == 'flop' and not flop:
+                                lamp = not lamp
+                                flop = True
+                            elif finalGuess != 'flop':
+                                flop = False
 
     # Stop the program and close everything if Ctrl + c is pressed
     except KeyboardInterrupt:
