@@ -113,7 +113,7 @@ swiped = False
 button = False
 slide = False
 tic=0
-j=10
+j=0
 while True:
     try:
         # Update the data and check if the data is okay
