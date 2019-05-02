@@ -122,7 +122,7 @@ def readAndParseData16xx(Dataport, configParameters):
     in_waiting=Dataport.in_waiting
     #print(in_waiting)
     if(in_waiting>0):
-        print("debug",debug)
+        #print("debug",debug)
         #debug=0
         elapsed=time.time()-tic
         #print("Tid mellan hämtning", elapsed)
