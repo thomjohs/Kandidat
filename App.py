@@ -181,7 +181,7 @@ while True:
                             root.update()
                             if swiped:
                                 j += 1
-                                if j < 10:
+                                if j < 10 and finalGuess != 'swipeNext' and finalGuess != 'swipePrev':
                                     swiped = False
                                     j = 0
 
@@ -217,7 +217,7 @@ while True:
                                     keyboard.press(VK_volume_down)
                                     keyboard.release(VK_volume_down)
                                     volume -= 1
-                            
+
 
     # Stop the program and close everything if Ctrl + c is pressed
     except KeyboardInterrupt:
