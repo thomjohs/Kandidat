@@ -290,30 +290,43 @@ def processFiles_folder(input_folder,output_folder):
 def gestures_in_data(data):
     current_class = 7
     number_of_gestures=np.array([0, 0, 0, 0, 0, 0, 0, 0])
+    number_of_frames=np.array([0, 0, 0, 0, 0, 0, 0, 0])
     for frame in data:
         label = int(frame[len(frame)-1])
         if label != current_class:
             number_of_gestures[label]+=1
             current_class=label
-    return number_of_gestures
+        else:
+            number_of_frames[current_class]+=1
+    return number_of_gestures, number_of_frames
  
 def gestures_in_files_folder(input_folder):
     gesture_array=np.array([0,0,0,0,0,0,0,0])
+    frames_array=np.array([0,0,0,0,0,0,0,0])
     for root, dirs, files in os.walk(input_folder):
         for file in files:
-            number_of_gestures = gestures_in_data(ml.load_data(file))
+            number_of_gestures, number_of_frames = gestures_in_data(ml.load_data(file))
             bol = sum(number_of_gestures[:7]>0)
             if bol>1:
                 print(file)
             gesture_array=np.vstack((gesture_array,number_of_gestures))
-    print('Number of Slide Ups: ',np.sum(gesture_array[:,0]))
-    print('Number of Slide Downs: ',np.sum(gesture_array[:,1]))
-    print('Number of Buttons: ',np.sum(gesture_array[:,2]))
-    print('Number of Swipe Nexts: ',np.sum(gesture_array[:,3]))
-    print('Number of Swipe Prevs: ',np.sum(gesture_array[:,4]))
-    print('Number of Flops: ',np.sum(gesture_array[:,5]))
-    print('Number of Good Backgrounds: ',np.sum(gesture_array[:,6]))
-    print('Number of Backgrounds: ',np.sum(gesture_array[:,7]))
+            frames_array=np.vstack((frames_array,number_of_frames))
+    a=np.sum(gesture_array[:,0])
+    b=np.sum(gesture_array[:,1])
+    c=np.sum(gesture_array[:,2])
+    d=np.sum(gesture_array[:,3])
+    e=np.sum(gesture_array[:,4])
+    f=np.sum(gesture_array[:,5])
+    g=np.sum(gesture_array[:,6])
+    h=np.sum(gesture_array[:,7])
+    print('Number of Buttons: ',a,'. Avrage length: ',np.sum(frames_array[:,0])/a)
+    print('Number of Swipe nexts: ',b,'. Avrage length: ',np.sum(frames_array[:,1])/b)
+    print('Number of Swipe prevs: ',c,'. Avrage length: ',np.sum(frames_array[:,2])/c)
+    print('Number of Good backgrounds: ',d,'. Avrage length: ',np.sum(frames_array[:,3])/d)
+    #print('Number of Swipe Prevs: ',e,'. Avrage length: ',np.sum(frames_array[:,4])/e)
+    #print('Number of Flops: ',f,'. Avrage length: ',np.sum(frames_array[:,5])/f)
+    #print('Number of Good Backgrounds: ',g,'. Avrage length: ',np.sum(frames_array[:,6])/g)
+    print('Number of Backgrounds: ',h,'. Avrage length: ',np.sum(frames_array[:,7])/h)
 
         
         
