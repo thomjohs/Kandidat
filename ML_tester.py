@@ -128,7 +128,6 @@ train_seq = sequence.TimeseriesGenerator(x_train, y_train, length=time_steps, ba
 test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch_size=batch_size)
 
 
-
 seqtest = []
 
 
