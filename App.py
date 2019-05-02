@@ -91,6 +91,7 @@ frameData = []
 frameKeys = []
 currentIndex = 0
 i = 0
+
 model = loadModel(modelFile, weightFile)
 model.compile(loss='categorical_crossentropy',
               optimizer='adam',
