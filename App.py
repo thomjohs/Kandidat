@@ -1,4 +1,3 @@
-# import readData_AWR1642 as radar
 from keras.models import model_from_json
 import supp
 import ML_functions as ml
@@ -16,6 +15,9 @@ if testData:
                "ArenButton1.csv", "ArenSlideUp1.csv", "ArenSwipeNext1.csv", "GoodBackground1.csv"]
     data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
     data = data[:len(data)//100 * 100]
+else:
+    import readData_AWR1642 as radar
+
 
 # ML variables set to the same as current model
 batch_size = 10
