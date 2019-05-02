@@ -98,8 +98,8 @@ model.compile(loss='categorical_crossentropy',
 
 
 
-model = ml.build_lstm_single_predict(time_steps=time_step, vector_size=52, outputs=4, batch_size=1, lstm_output=20, stateful=True)
-model.load_weights("Model\\ts10bs10lstmout20stTruelr0.0025.h5")
+model = ml.build_lstm_single_predict(time_steps=0, vector_size=52, outputs=4, batch_size=10, lstm_output=20, stateful=True)
+model.load_weights(f"Model\\{weightFile}")
 model.compile(loss='categorical_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
@@ -155,7 +155,6 @@ while True:
                 frameData = frameData[1:]
                 frameKeys = frameKeys[1:]
 
-                i = 0
                 if not mute:
                     predict1 = np.argmax(predict, axis=1)
                     #predictions.extend(list(map(supp.int_to_label,predict1)))
