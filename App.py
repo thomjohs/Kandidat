@@ -105,6 +105,7 @@ button = False
 slide = False
 tic = 0
 j = 10
+lamp = False
 
 while True:
     try:
@@ -189,34 +190,48 @@ while True:
                                 swiped = True
                                 j = 0
                                 print("skip")
-                                keyboard.press(VK_next)
-                                keyboard.release(VK_next)
+                                if lamp:
+                                    pass
+                                else:
+                                    keyboard.press(VK_next)
+                                    keyboard.release(VK_next)
                             elif finalGuess == 'swipePrev':
                                 swiped = True
                                 j = 0
                                 print("skip")
-                                keyboard.press(VK_prev)
-                                keyboard.release(VK_prev)
-
+                                if lamp:
+                                    pass
+                                else:
+                                    keyboard.press(VK_prev)
+                                    keyboard.release(VK_prev)
                             if finalGuess == 'button' and not button:
                                 button = True
                                 print('click')
-                                keyboard.press(Vk_play_pause)
-                                keyboard.release(Vk_play_pause)
+                                if lamp:
+                                    pass
+                                else:
+                                    keyboard.press(Vk_play_pause)
+                                    keyboard.release(Vk_play_pause)
                             elif finalGuess != 'button':
                                 button = False
 
                             if finalGuess == 'slideUp':
-                                if volume < 10:
-                                    keyboard.press(VK_volume_up)
-                                    keyboard.release(VK_volume_up)
-                                    volume += 1
+                                if lamp:
+                                    pass
+                                else:
+                                    if volume < 10:
+                                        keyboard.press(VK_volume_up)
+                                        keyboard.release(VK_volume_up)
+                                        volume += 1
 
                             if finalGuess == 'slideDown':
-                                if volume > 0:
-                                    keyboard.press(VK_volume_down)
-                                    keyboard.release(VK_volume_down)
-                                    volume -= 1
+                                if lamp:
+                                    pass
+                                else:
+                                    if volume > 0:
+                                        keyboard.press(VK_volume_down)
+                                        keyboard.release(VK_volume_down)
+                                        volume -= 1
 
 
     # Stop the program and close everything if Ctrl + c is pressed
