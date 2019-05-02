@@ -12,7 +12,7 @@ import time
 
 testData = True
 input_files = ["JohanButton1.csv", "JohanSlideUp1.csv", "JohanSwipeNext1.csv",
-               "ArenButton1.csv", "ArenSlideUp1.csv", "ArenSwipeNext1.csv"]
+               "ArenButton1.csv", "ArenSlideUp1.csv", "ArenSwipeNext1.csv", "GoodBackground1.csv"]
 data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
 data = data[:len(data)//100 * 100]
 
@@ -137,7 +137,7 @@ while True:
             #    frameData = []
             #    frameKeys = []
 
-            if len(frameData) == 5*time_step + 1:
+            if len(frameData) == 1*time_step + 1:
                 predict_seq = sequence.TimeseriesGenerator(frameData, frameKeys, length=time_step, batch_size=10)
                 predict = model.predict_generator(predict_seq, steps=None)
                 frameData = []
