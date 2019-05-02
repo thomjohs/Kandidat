@@ -38,7 +38,7 @@ input_flop = ['AlexFlop1.csv', 'ArenFlop1.csv', 'JohanFlop1.csv', 'JohanFlop2.cs
 input_background = ["GoodBackground1.csv", "GoodBackground2.csv"]
 
 
-input_files = input_button + input_swipenext + input_background+ input_swipeprev + \
+input_files = input_button + input_swipenext + input_background + input_swipeprev + \
               input_slideup + input_slidedown + input_flop
 
 input_folder = "ProcessedData"
@@ -49,11 +49,11 @@ outputs = 7
 
 # training hyperparameters
 
-epochs = 20
+epochs = 500
 time_steps = 10
 batch_size = 10
-learning_rate = 0.0025
-decay = 1/(10**6)
+learning_rate = 0.00025
+decay = 2.5/(10**6)
 
 training_ratio = 0.7
 
@@ -126,7 +126,6 @@ print(f'{len(x_train)}, {len(x_test)}, {len(y_train)}, {len(y_test)}')
 
 train_seq = sequence.TimeseriesGenerator(x_train, y_train, length=time_steps, batch_size=batch_size)
 test_seq = sequence.TimeseriesGenerator(x_test, y_test, length=time_steps, batch_size=batch_size)
-
 
 
 seqtest = []
