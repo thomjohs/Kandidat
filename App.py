@@ -1,4 +1,4 @@
-import readData_AWR1642 as radar
+# import readData_AWR1642 as radar
 from keras.models import model_from_json
 import supp
 import ML_functions as ml
@@ -10,10 +10,10 @@ from tkinter import *
 from pynput.keyboard import KeyCode, Controller
 import time
 
-testData = False
+testData = True
 if testData:
-    input_files = ["JohanButton1.csv", "JohanSlideUp1.csv", "JohanSwipeNext1.csv",
-               "ArenButton1.csv", "ArenSlideUp1.csv", "ArenSwipeNext1.csv"]
+    input_files = ["JohanButton1.csv", "JohanSwipeNext1.csv",
+               "ArenButton1.csv", "ArenSwipeNext1.csv", "GoodBackground1.csv"]
     data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
     data = data[:len(data)//100 * 100]
 
@@ -87,7 +87,7 @@ frameKeys = []
 currentIndex = 0
 i = 0
 
-model = ml.build_lstm_single_predict(time_steps=0, vector_size=52, outputs=7, batch_size=10, lstm_output=20, stateful=True)
+model = ml.build_lstm_single_predict(time_steps=time_step, vector_size=52, outputs=4, batch_size=1, lstm_output=20, stateful=True)
 model.load_weights("Model\\ts10bs10lstmout20stTruelr0.0025.h5")
 model.compile(loss='categorical_crossentropy',
               optimizer='adam',
@@ -105,7 +105,7 @@ while True:
 
         if testData:
             dataOk = True
-            detObj = data[i]
+            detObj = ml.zero_mean_normalize_data_frame(data[i], means, maxs)
             i += 1
         else:
             
@@ -115,7 +115,7 @@ while True:
             dataOk, detObj = radar.update(detObj)
             if dataOk:
                 detObj = manip.toStandardVector(detObj)
-                detObj = ml.zero_mean_normalize_data_frame(detObj,means,maxs)
+                detObj = ml.zero_mean_normalize_data_frame(detObj, means, maxs)
             tic=time.time()
 
         if dataOk:
