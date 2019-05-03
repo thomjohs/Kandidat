@@ -21,7 +21,7 @@ else:
     import readData_AWR1642 as radar
 
 # ML variables set to the same as current model
-batch_size = 20
+batch_size = 1
 time_step = 10
 lstm_output=20
 
@@ -157,8 +157,10 @@ while True:
                 #predict_seq = sequence.TimeseriesGenerator(frameData, frameKeys, length=1, batch_size=10)
                 predict_seq=np.asarray(frameData)
                 predict = model.predict(predict_seq.reshape(-1,1,51))
+                print(frameKeys)
                 frameData = frameData[1:]
                 frameKeys = frameKeys[1:]
+                
 
                 if not mute:
                     predict1 = np.argmax(predict, axis=1)
@@ -215,6 +217,7 @@ while True:
                                 keyboard.release(Vk_play_pause)
                             elif finalGuess != 'button':
                                 button = False
+        
 
     # Stop the program and close everything if Ctrl + c is pressed
     except KeyboardInterrupt:
