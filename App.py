@@ -21,18 +21,18 @@ else:
 # ML variables set to the same as current model
 batch_size = 10
 time_step = 10
-lstm_output=10
+lstm_output=20
 
 # Model loading data
-modelFile = "ts10bs10lstmout10stTruelr1e-05.json"
-weightFile = "ts10bs10lstmout10stTruelr1e-05.h5"
+modelFile = "ts10bs10lstmout20stTruelr1e-05.json"
+weightFile = "ts10bs10lstmout20stTruelr1e-05.h5"
 
 
 # Prediction values
 predictions = []
 predictionWindow = []
 predLen = 8
-confNumber = 5
+confNumber = 3
 guess = 'background'
 finalGuess = 'background'
 
@@ -189,7 +189,7 @@ while True:
                             root.update()
                             if swiped:
                                 j=j+1
-                                if j>10:
+                                if j>40:
                                     swiped = False
                                     j = 0
                             elif finalGuess == 'swipeNext':
@@ -204,10 +204,9 @@ while True:
                                 print("skip")
                                 keyboard.press(VK_prev)
                                 keyboard.release(VK_prev)
-                            
-
-                            if finalGuess == 'button' and not button:
-                                button = True
+                            elif finalGuess == 'button' and not button:
+                                #button = True
+                                swiped = True
                                 j=0
                                 print('click')
                                 keyboard.press(Vk_play_pause)
