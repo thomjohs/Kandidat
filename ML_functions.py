@@ -16,10 +16,10 @@ from keras.models import model_from_json
 
 
 def label_to_array(labels, label):
-    if labels[19] == label:
-        return True
+    if labels == label:
+        return 1
     else:
-        return False
+        return 0
 
 
 def cm_to_percentage(cm):
