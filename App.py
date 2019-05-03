@@ -92,6 +92,7 @@ detObj = {}
 key = '0'
 frameData = []
 frameKeys = []
+predict = []
 currentIndex = 0
 i = 0
 
@@ -218,6 +219,26 @@ while True:
                             elif finalGuess != 'button':
                                 button = False
         
+
+        plt.subplot(2, 1, 1)
+        plt.plot(ml.label_to_array(frameKeys,2), color='blue')
+        plt.plot(ml.label_to_array(frameKeys,3), color='orange')
+        plt.plot(ml.label_to_array(frameKeys,4), color='red')
+        plt.plot(ml.label_to_array(frameKeys,7), color='green')
+        plt.title('Input frame')
+        plt.ylabel('signal')
+        plt.xlabel('time')
+        plt.legend(['button', 'swipe next', 'swipe prev', 'backgrund'], loc='upper left')
+
+        plt.subplot(2, 1, 2)
+        plt.plot(predict[19][0], color='blue')
+        plt.plot(predict[19][1], color='orange')
+        plt.plot(predict[19][2], color='red')
+        plt.plot(predict[19][3], color='green')
+        plt.title('Input frame')
+        plt.ylabel('signal')
+        plt.xlabel('time')
+        plt.legend(['button', 'swipe next', 'swipe prev', 'backgrund'], loc='upper left')
 
     # Stop the program and close everything if Ctrl + c is pressed
     except KeyboardInterrupt:
