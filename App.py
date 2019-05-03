@@ -9,17 +9,19 @@ from tkinter import *
 from pynput.keyboard import KeyCode, Controller
 import time
 
-testData = False
+testData = True
 if testData:
-    input_files = ["JohanButton1.csv", "JohanSwipeNext1.csv",
-               "ArenButton1.csv", "ArenSwipeNext1.csv", "GoodBackground1.csv"]
-    data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
+    input_file="AndreasValidering.csv"
+    #input_files = ["JohanButton1.csv", "JohanSwipeNext1.csv",
+    #           "ArenButton1.csv", "ArenSwipeNext1.csv", "GoodBackground1.csv"]
+    data = ml.load_data(input_file)
+    #data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
     data = data[:len(data)//100 * 100]
 else:
     import readData_AWR1642 as radar
 
 # ML variables set to the same as current model
-batch_size = 10
+batch_size = 20
 time_step = 10
 lstm_output=20
 
@@ -151,7 +153,7 @@ while True:
             #    frameData = []
             #    frameKeys = []
 
-            if len(frameData) == time_step:
+            if len(frameData) == batch_size:
                 #predict_seq = sequence.TimeseriesGenerator(frameData, frameKeys, length=1, batch_size=10)
                 predict_seq=np.asarray(frameData)
                 predict = model.predict(predict_seq.reshape(-1,1,51))
