@@ -9,30 +9,32 @@ from tkinter import *
 from pynput.keyboard import KeyCode, Controller
 import time
 
-testData = False
+testData = True
 if testData:
-    input_files = ["JohanButton1.csv", "JohanSwipeNext1.csv",
-               "ArenButton1.csv", "ArenSwipeNext1.csv", "GoodBackground1.csv"]
-    data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
+    input_file="AndreasValidering.csv"
+    #input_files = ["JohanButton1.csv", "JohanSwipeNext1.csv",
+    #           "ArenButton1.csv", "ArenSwipeNext1.csv", "GoodBackground1.csv"]
+    data = ml.load_data(input_file)
+    #data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
     data = data[:len(data)//100 * 100]
 else:
     import readData_AWR1642 as radar
 
 # ML variables set to the same as current model
-batch_size = 10
+batch_size = 1
 time_step = 10
-lstm_output=10
+lstm_output=20
 
 # Model loading data
-modelFile = "ts10bs10lstmout10stTruelr1e-05.json"
-weightFile = "ts10bs10lstmout10stTruelr1e-05.h5"
+modelFile = "ts10bs10lstmout20stTruelr1e-05.json"
+weightFile = "ts10bs10lstmout20stTruelr1e-05.h5"
 
 
 # Prediction values
 predictions = []
 predictionWindow = []
 predLen = 8
-confNumber = 5
+confNumber = 3
 guess = 'background'
 finalGuess = 'background'
 
@@ -90,6 +92,7 @@ detObj = {}
 key = '0'
 frameData = []
 frameKeys = []
+predict = []
 currentIndex = 0
 i = 0
 
@@ -151,12 +154,14 @@ while True:
             #    frameData = []
             #    frameKeys = []
 
-            if len(frameData) == time_step:
+            if len(frameData) == batch_size:
                 #predict_seq = sequence.TimeseriesGenerator(frameData, frameKeys, length=1, batch_size=10)
                 predict_seq=np.asarray(frameData)
                 predict = model.predict(predict_seq.reshape(-1,1,51))
+                print(frameKeys)
                 frameData = frameData[1:]
                 frameKeys = frameKeys[1:]
+                
 
                 if not mute:
                     predict1 = np.argmax(predict, axis=1)
@@ -189,7 +194,7 @@ while True:
                             root.update()
                             if swiped:
                                 j=j+1
-                                if j>10:
+                                if j>40:
                                     swiped = False
                                     j = 0
                             elif finalGuess == 'swipeNext':
@@ -204,16 +209,36 @@ while True:
                                 print("skip")
                                 keyboard.press(VK_prev)
                                 keyboard.release(VK_prev)
-                            
-
-                            if finalGuess == 'button' and not button:
-                                button = True
+                            elif finalGuess == 'button' and not button:
+                                #button = True
+                                swiped = True
                                 j=0
                                 print('click')
                                 keyboard.press(Vk_play_pause)
                                 keyboard.release(Vk_play_pause)
                             elif finalGuess != 'button':
                                 button = False
+        
+
+        plt.subplot(2, 1, 1)
+        plt.plot(ml.label_to_array(frameKeys,2), color='blue')
+        plt.plot(ml.label_to_array(frameKeys,3), color='orange')
+        plt.plot(ml.label_to_array(frameKeys,4), color='red')
+        plt.plot(ml.label_to_array(frameKeys,7), color='green')
+        plt.title('Input frame')
+        plt.ylabel('signal')
+        plt.xlabel('time')
+        plt.legend(['button', 'swipe next', 'swipe prev', 'backgrund'], loc='upper left')
+
+        plt.subplot(2, 1, 2)
+        plt.plot(predict[19][0], color='blue')
+        plt.plot(predict[19][1], color='orange')
+        plt.plot(predict[19][2], color='red')
+        plt.plot(predict[19][3], color='green')
+        plt.title('Input frame')
+        plt.ylabel('signal')
+        plt.xlabel('time')
+        plt.legend(['button', 'swipe next', 'swipe prev', 'backgrund'], loc='upper left')
 
     # Stop the program and close everything if Ctrl + c is pressed
     except KeyboardInterrupt:
