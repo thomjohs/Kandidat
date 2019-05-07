@@ -12,12 +12,12 @@ import matplotlib.pyplot as plt
 
 testData = True
 if testData:
-    input_file="ValideringJohan2.csv"
+    input_file="ValideringJohan10st.csv"
     #input_files = ["JohanButton1.csv", "JohanSwipeNext1.csv",
     #           "ArenButton1.csv", "ArenSwipeNext1.csv", "GoodBackground1.csv"]
     data = ml.load_data(input_file)
     #data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
-    data = data[:len(data)//100 * 100]
+    data = data[:len(data)//10 * 10]
 else:
     import readData_AWR1642 as radar
     data=[0]*10
@@ -36,7 +36,7 @@ weightFile = "final.h5"
 predictions = []
 predictionWindow = []
 predLen = 8
-confNumber = 3
+confNumber = 4
 guess = 'background'
 finalGuess = 'background'
 
@@ -44,6 +44,7 @@ finalGuess = 'background'
 guesses = []
 guessLen = 9
 confNumberGuess = 5
+
 
 
 def confidentGuess(predictions, confNumber):
@@ -183,53 +184,53 @@ while i<len(data):
                         #print(predictions)    
 
 
-                        if update == '-':
-                            update = '|'
-                        else:
-                            update = '-'
-                        guess = confidentGuess(predictions, confNumber)
+                    if update == '-':
+                        update = '|'
+                    else:
+                        update = '-'
+                    guess = confidentGuess(predictions, confNumber)
 
-                        guesses.append(guess)
-                        while len(guesses) > guessLen:
-                            
-                            #print(guesses)
-                            guesses=guesses[1:]
-                            finalGuess = confidentGuess(guesses, confNumberGuess)
-                            #print(finalGuess)
-                            if finalGuess !='background':
-                                guesses = []
+                    guesses.append(guess)
+                    while len(guesses) > guessLen:
+                        
+                        #print(guesses)
+                        guesses=guesses[1:]
+                        finalGuess = confidentGuess(guesses, confNumberGuess)
+                        #print(finalGuess)
+                        if finalGuess !='background':
+                            guesses = []
 
-                            templabel.config(text=f'{finalGuess} {update}')
-                            root.update()
-                            if swiped:
-                                j=j+1
-                                if j>40:
-                                    swiped = False
-                                    j = 0
-                            elif finalGuess == 'swipeNext':
-                                swiped = True
-                                j=0
-                                r_next.append(r)
-                                print('skipNext at ', r)
-                                keyboard.press(VK_next)
-                                keyboard.release(VK_next)
-                            elif finalGuess == 'swipePrev':
-                                swiped = True
-                                j=0
-                                r_prev.append(r)
-                                print('skipPrev at ', r)
-                                keyboard.press(VK_prev)
-                                keyboard.release(VK_prev)
-                            elif finalGuess == 'button' and not button:
-                                #button = True
-                                swiped = True
-                                j=0
-                                r_button.append(r)
-                                print('click at ', r)
-                                keyboard.press(Vk_play_pause)
-                                keyboard.release(Vk_play_pause)
-                            elif finalGuess != 'button':
-                                button = False
+                        templabel.config(text=f'{finalGuess} {update}')
+                        root.update()
+                        if swiped:
+                            j=j+1
+                            if j>7:
+                                swiped = False
+                                j = 0
+                        elif finalGuess == 'swipeNext':
+                            swiped = True
+                            j=0
+                            r_next.append(r)
+                            print('skipNext at ', r)
+                            keyboard.press(VK_next)
+                            keyboard.release(VK_next)
+                        elif finalGuess == 'swipePrev':
+                            swiped = True
+                            j=0
+                            r_prev.append(r)
+                            print('skipPrev at ', r)
+                            keyboard.press(VK_prev)
+                            keyboard.release(VK_prev)
+                        elif finalGuess == 'button' and not button:
+                            #button = True
+                            swiped = True
+                            j=0
+                            r_button.append(r)
+                            print('click at ', r)
+                            keyboard.press(Vk_play_pause)
+                            keyboard.release(Vk_play_pause)
+                        elif finalGuess != 'button':
+                            button = False
                 if testData:
                     tmp=np.array([ml.label_to_array(label,0),ml.label_to_array(label,1),ml.label_to_array(label,2),ml.label_to_array(label,7)])
                     tmp=np.hstack((tmp, predict[len(predict)-1]))
@@ -244,21 +245,30 @@ while i<len(data):
         # win.close()
         break
 if testData:
-    start=50
-    length=len(prediction_data)
-    k=np.arange(start,start+length)
-    hit_button=np.asarray([1]*len(r_button))
-    hit_next=np.asarray([1]*len(r_next))
-    hit_prev=np.asarray([1]*len(r_prev))
-    r_button=np.asarray(r_button)
-    r_next=np.asarray(r_next)
-    r_prev=np.asarray(r_prev)
-    r_button_sub1=r_button[np.nonzero(r_button<=int(length/2))]
-    r_button_sub2=r_button[np.nonzero(r_button>int(length/2))]
-    r_next_sub1=r_next[np.nonzero(r_next<=int(length/2))]
-    r_next_sub2=r_next[np.nonzero(r_next>int(length/2))]
-    r_prev_sub1=r_prev[np.nonzero(r_prev<=int(length/2))]
-    r_prev_sub2=r_prev[np.nonzero(r_prev>int(length/2))]
+    start = 50
+    stop = len(prediction_data)
+    length = stop-start
+    mid = int((stop-start)/2)
+    k = np.arange(len(prediction_data))
+
+    r_button = np.asarray(r_button)
+    r_next = np.asarray(r_next)
+    r_prev = np.asarray(r_prev)
+
+    r_button_sub1 = r_button[np.nonzero(np.multiply(r_button<=mid,r_button>=start))]
+    r_button_sub2 = r_button[np.nonzero(np.multiply(r_button>mid,r_button<length))]
+    hit_button_sub1 = np.asarray([1]*len(r_button_sub1))
+    hit_button_sub2 = np.asarray([1]*len(r_button_sub2))
+
+    r_next_sub1 = r_next[np.nonzero(np.multiply(r_next<=mid,r_next>=start))]
+    r_next_sub2 = r_next[np.nonzero(np.multiply(r_next>mid,r_next<length))]
+    hit_next_sub1 = np.asarray([1]*len(r_next_sub1))
+    hit_next_sub2 = np.asarray([1]*len(r_next_sub2))
+
+    r_prev_sub1 = r_prev[np.nonzero(np.multiply(r_prev<=mid,r_prev>=start))]
+    r_prev_sub2 = r_prev[np.nonzero(np.multiply(r_prev>mid,r_prev<length))]
+    hit_prev_sub1 = np.asarray([1]*len(r_prev_sub1))
+    hit_prev_sub2 = np.asarray([1]*len(r_prev_sub2))
     #plt.subplot(2, 1, 1)
     #plt.plot(k,prediction_data[start:start+length,0],"--", color='blue')
     #plt.plot(k,prediction_data[start:start+length,1],"--", color='orange')
@@ -270,36 +280,44 @@ if testData:
     #plt.legend(['button', 'swipe next', 'swipe prev'], loc='upper left')
 
     #plt.subplot(2, 1, 2)
-    a4 = prediction_data[start:start+length,4]>prediction_data[start:start+length,7]
-    a5 = prediction_data[start:start+length,5]>prediction_data[start:start+length,7]
-    a6 = prediction_data[start:start+length,6]>prediction_data[start:start+length,7]
-    b4 = np.multiply(a4,prediction_data[start:start+length,4])
-    b5 = np.multiply(a5,prediction_data[start:start+length,5])
-    b6 = np.multiply(a6,prediction_data[start:start+length,6])
+    a4 = prediction_data[:,4]>prediction_data[:,7]
+    a5 = prediction_data[:,5]>prediction_data[:,7]
+    a6 = prediction_data[:,6]>prediction_data[:,7]
+
+    b4 = np.multiply(a4,prediction_data[:,4])
+    b5 = np.multiply(a5,prediction_data[:,5])
+    b6 = np.multiply(a6,prediction_data[:,6])
+
     plt.subplot(2, 1, 1)
-    plt.plot(k[:int(length/2)],prediction_data[start:start+int(length/2),0],"--", color='blue')
-    plt.plot(k[:int(length/2)],prediction_data[start:start+int(length/2),1],"--", color='orange')
-    plt.plot(k[:int(length/2)],prediction_data[start:start+int(length/2),2],"--", color='red')
-    plt.plot(k[:int(length/2)],b4[:int(length/2)], color='blue')
-    plt.plot(k[:int(length/2)],b5[:int(length/2)], color='orange')
-    plt.plot(k[:int(length/2)],b6[:int(length/2)], color='red')
-    plt.plot(r_button_sub1,hit_button[:len(r_button_sub1)],'o', color='blue')
-    plt.plot(r_next_sub1,hit_next[:len(r_next_sub1)],'o', color='orange')
-    plt.plot(r_prev_sub1,hit_prev[:len(r_prev_sub1)],'o', color='red')
+    plt.plot(k[start:mid],prediction_data[start:mid,0],"--", color='blue')
+    plt.plot(k[start:mid],prediction_data[start:mid,1],"--", color='orange')
+    plt.plot(k[start:mid],prediction_data[start:mid,2],"--", color='red')
+
+    plt.plot(k[start:mid],b4[start:mid], color='blue')
+    plt.plot(k[start:mid],b5[start:mid], color='orange')
+    plt.plot(k[start:mid],b6[start:mid], color='red')
+
+    plt.plot(r_button_sub1,hit_button_sub1,'o', color='blue')
+    plt.plot(r_next_sub1,hit_next_sub1,'o', color='orange')
+    plt.plot(r_prev_sub1,hit_prev_sub1,'o', color='red')
+
     plt.title('Input frame')
     plt.ylabel('signal')
     plt.xlabel('time')
     plt.legend(['button label', 'swipe next label', 'swipe prev label','button', 'swipe next', 'swipe prev'], loc='upper left')
+
     plt.subplot(2, 1, 2)
-    plt.plot(k[int(length/2):],prediction_data[start+int(length/2):,0],"--", color='blue')
-    plt.plot(k[int(length/2):],prediction_data[start+int(length/2):,1],"--", color='orange')
-    plt.plot(k[int(length/2):],prediction_data[start+int(length/2):,2],"--", color='red')
-    plt.plot(k[int(length/2):],b4[int(length/2):], color='blue')
-    plt.plot(k[int(length/2):],b5[int(length/2):], color='orange')
-    plt.plot(k[int(length/2):],b6[int(length/2):], color='red')
-    plt.plot(r_button_sub2,hit_button[len(r_button_sub1):],'o', color='blue')
-    plt.plot(r_next_sub2,hit_next[len(r_next_sub1):],'o', color='orange')
-    plt.plot(r_prev_sub2,hit_prev[len(r_prev_sub1):],'o', color='red')
+    plt.plot(k[mid:stop],prediction_data[mid:stop,0],"--", color='blue')
+    plt.plot(k[mid:stop],prediction_data[mid:stop,1],"--", color='orange')
+    plt.plot(k[mid:stop],prediction_data[mid:stop,2],"--", color='red')
+
+    plt.plot(k[mid:stop],b4[mid:stop], color='blue')
+    plt.plot(k[mid:stop],b5[mid:stop], color='orange')
+    plt.plot(k[mid:stop],b6[mid:stop], color='red')
+
+    plt.plot(r_button_sub2,hit_button_sub2,'o', color='blue')
+    plt.plot(r_next_sub2,hit_next_sub2,'o', color='orange')
+    plt.plot(r_prev_sub2,hit_prev_sub2,'o', color='red')
     #plt.plot(k,prediction_data[start:start+length,7], color='green')
     plt.title('Input frame')
     plt.ylabel('signal')
