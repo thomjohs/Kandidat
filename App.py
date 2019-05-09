@@ -10,12 +10,12 @@ from pynput.keyboard import KeyCode, Controller
 import time
 import matplotlib.pyplot as plt
 
-testData = True
+testData = False
 if testData:
-    input_file="ValideringJohan10st.csv"
+    input_file="JohanValidering7.csv"
     #input_files = ["JohanButton1.csv", "JohanSwipeNext1.csv",
-    #           "ArenButton1.csv", "ArenSwipeNext1.csv", "GoodBackground1.csv"]
-    data = ml.load_data(input_file)
+    #           "JohanSwipePrev1.csv",  "GoodBackground1.csv"]
+    data = ml.load_data(input_file, "ValideringData\\")
     #data = supp.shuffle_gestures(ml.load_data_multiple(input_files))
     data = data[:len(data)//10 * 10]
 else:
@@ -36,7 +36,7 @@ weightFile = "final.h5"
 predictions = []
 predictionWindow = []
 predLen = 8
-confNumber = 4
+confNumber = 3
 guess = 'background'
 finalGuess = 'background'
 
@@ -204,7 +204,7 @@ while i<len(data):
                         root.update()
                         if swiped:
                             j=j+1
-                            if j>7:
+                            if j>10:
                                 swiped = False
                                 j = 0
                         elif finalGuess == 'swipeNext':
@@ -245,7 +245,7 @@ while i<len(data):
         # win.close()
         break
 if testData:
-    start = 50
+    start = 0
     stop = len(prediction_data)
     length = stop-start
     mid = int((stop-start)/2)
@@ -301,10 +301,10 @@ if testData:
     plt.plot(r_next_sub1,hit_next_sub1,'o', color='orange')
     plt.plot(r_prev_sub1,hit_prev_sub1,'o', color='red')
 
-    plt.title('Input frame')
-    plt.ylabel('signal')
-    plt.xlabel('time')
-    plt.legend(['button label', 'swipe next label', 'swipe prev label','button', 'swipe next', 'swipe prev'], loc='upper left')
+    #plt.title('Input frame')
+    plt.ylabel('Probability')
+    plt.xlabel('Frame')
+    plt.legend(['button label', 'swipe next label', 'swipe prev label','button', 'swipe next', 'swipe prev','detected button', 'detected next', 'detected prev'], loc='center left')
 
     plt.subplot(2, 1, 2)
     plt.plot(k[mid:stop],prediction_data[mid:stop,0],"--", color='blue')
@@ -319,8 +319,8 @@ if testData:
     plt.plot(r_next_sub2,hit_next_sub2,'o', color='orange')
     plt.plot(r_prev_sub2,hit_prev_sub2,'o', color='red')
     #plt.plot(k,prediction_data[start:start+length,7], color='green')
-    plt.title('Input frame')
-    plt.ylabel('signal')
-    plt.xlabel('time')
-    plt.legend(['button label', 'swipe next label', 'swipe prev label','button', 'swipe next', 'swipe prev'], loc='upper left')
+    #plt.title('Input frame')
+    plt.ylabel('Probability')
+    plt.xlabel('Frame')
+    #plt.legend(['button label', 'swipe next label', 'swipe prev label','button', 'swipe next', 'swipe prev'], loc='upper left')
     plt.show()
