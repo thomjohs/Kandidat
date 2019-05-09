@@ -166,7 +166,7 @@ while i<len(data):
             if len(frameData) == batch_size:
                 #predict_seq = sequence.TimeseriesGenerator(frameData, frameKeys, length=1, batch_size=10)
                 predict_seq=np.asarray(frameData)
-                predict = model.predict(predict_seq.reshape(-1,1,51))
+                predict = model.predict(predict_seq.reshape(-1, 1, 51))
                 #print(frameKeys)
                 if testData:
                     label=int(frameKeys[len(frameKeys)-1])
@@ -183,7 +183,6 @@ while i<len(data):
                             predictions = predictions[1:]
                         #print(predictions)    
 
-
                     if update == '-':
                         update = '|'
                     else:
@@ -194,10 +193,10 @@ while i<len(data):
                     while len(guesses) > guessLen:
                         
                         #print(guesses)
-                        guesses=guesses[1:]
+                        guesses = guesses[1:]
                         finalGuess = confidentGuess(guesses, confNumberGuess)
                         #print(finalGuess)
-                        if finalGuess !='background':
+                        if finalGuess != 'background':
                             guesses = []
 
                         templabel.config(text=f'{finalGuess} {update}')
@@ -209,14 +208,14 @@ while i<len(data):
                                 j = 0
                         elif finalGuess == 'swipeNext':
                             swiped = True
-                            j=0
+                            j = 0
                             r_next.append(r)
                             print('skipNext at ', r)
                             keyboard.press(VK_next)
                             keyboard.release(VK_next)
                         elif finalGuess == 'swipePrev':
                             swiped = True
-                            j=0
+                            j = 0
                             r_prev.append(r)
                             print('skipPrev at ', r)
                             keyboard.press(VK_prev)
@@ -224,7 +223,7 @@ while i<len(data):
                         elif finalGuess == 'button' and not button:
                             #button = True
                             swiped = True
-                            j=0
+                            j = 0
                             r_button.append(r)
                             print('click at ', r)
                             keyboard.press(Vk_play_pause)
@@ -232,7 +231,7 @@ while i<len(data):
                         elif finalGuess != 'button':
                             button = False
                 if testData:
-                    tmp=np.array([ml.label_to_array(label,0),ml.label_to_array(label,1),ml.label_to_array(label,2),ml.label_to_array(label,7)])
+                    tmp=np.array([ml.label_to_array(label, 0), ml.label_to_array(label, 1),ml.label_to_array(label, 2),ml.label_to_array(label,7)])
                     tmp=np.hstack((tmp, predict[len(predict)-1]))
                     prediction_data=np.vstack((prediction_data,tmp))
                     r += 1
